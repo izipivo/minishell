@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -L/usr/include -lreadline
+CFLAGS = -Wall -Wextra -Werror
 
 HDRS = minishell.h
 
@@ -28,12 +28,8 @@ OBJS = $(addprefix ${BUILDIR}, ${SRC:.c=.o})
 
 all:	${BUILDIR} ${NAME}
 
-#%.o :	%.c ${HEADERS} Makefile
-#	${CC} -c ${CFLAGS} $< -o ${<:.c=.o}
-
 ${NAME}:	${OBJS} ${HEADERS}
-	${CC} ${CFLAGS} ${OBJS} -o $@
-
+	${CC} ${CFLAGS} ${OBJS} -o $@ -L/usr/include -lreadline
 ${BUILDIR}:
 	mkdir -p ${BUILDIR}
 
