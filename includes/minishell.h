@@ -19,4 +19,10 @@
 # define PROMPT "\001\033[1;93m\002" "MINI\001\033[1;94m\002" "GAY\001\033[1;93m\002SHELL$> \001\e[0m\002"
 
 
+typedef	struct	p_mshell
+{
+	char	**t_env;
+	
+}				t_mshell;
+
 #endif
