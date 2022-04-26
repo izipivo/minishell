@@ -1,5 +1,6 @@
 #ifndef	MINISHELL_H
 # define MINISHELL_H
+# include "../libft/libft.h"
 # include <stdlib.h>
 # include <string.h>
 # include <stdio.h>
@@ -16,8 +17,9 @@
 #define YELLOW "\001\033[1;93m\002"
 # define READLINE_BLUE		"\001\033[1;94m\002"
 #define RESET   "\001\e[0m\002"
-# define PROMPT "\001\033[1;93m\002" "MINI\001\033[1;94m\002" "GAY\001\033[1;93m\002SHELL$> \001\e[0m\002"
-
+# define RED "\001\033[1;91m\002"
+# define PROMPT YELLOW "MINI" READLINE_BLUE "GAY" YELLOW "SHELL$> " RESET
+#define PERROR YELLOW "mini" RED "error" RESET
 
 typedef	struct	p_mshell
 {

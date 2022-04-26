@@ -1,5 +1,7 @@
 CFLAGS = -Wall -Wextra -Werror
 
+LIBS = -L ./libft -L/usr/include -lft -lreadline
+
 HDRS = minishell.h
 
 HDRS_DIR = includes/
@@ -24,22 +26,35 @@ BUILDIR = ./obj/
 
 OBJS = $(addprefix ${BUILDIR}, ${SRC:.c=.o})
 
+LIBFT_NAME = libft.a
+
+LIBFTDIR = ./libft/
+
+LIBFT = $(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
+
 .PHONY:	clean all fclean re
 
-all:	${BUILDIR} ${NAME}
+all:	${LIBFT} ${BUILDIR} ${NAME}
+
+${LIBFT}:
+	${MAKE} -C ${LIBFTDIR}
 
 ${NAME}:	${OBJS} ${HEADERS}
-	${CC} ${CFLAGS} ${OBJS} -o $@ -L/usr/include -lreadline
+	${CC} ${CFLAGS} ${OBJS} -o $@ ${LIBS}
+
 ${BUILDIR}:
 	mkdir -p ${BUILDIR}
 
 ${BUILDIR}%.o:	${SRC_DIR}%.c ${HEADERS} Makefile
-	${CC} -c ${CFLAGS} $< -o $@
+	${CC} -c ${CFLAGS} $< -o $@ ${LIBS} 
+#	${CC} -c ${CFLAGS} $< -o $@
 
 clean:
+	${MAKE} clean -C ${LIBFTDIR}
 	${RM} ${BUILDIR}
 
 fclean:		clean
+	${MAKE} fclean -C ${LIBFTDIR}
 	${RM} ${NAME}
 
 re:	fclean all
