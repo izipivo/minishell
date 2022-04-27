@@ -6,13 +6,13 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/06 12:37:50 by sdonny            #+#    #+#             */
-/*   Updated: 2021/10/11 15:18:46 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/04/27 16:41:44 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstnew(void *content)
+t_list	*ft_lstnew(char key, char val, char in_q)
 {
 	t_list	*elem;
 
@@ -20,6 +20,8 @@ t_list	*ft_lstnew(void *content)
 	if (!elem)
 		return (0);
 	elem->next = NULL;
-	elem->content = content;
+	elem->key = key;
+	elem->val = val;
+	elem->in_q = in_q;
 	return (elem);
 }

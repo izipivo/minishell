@@ -46,8 +46,8 @@ ${BUILDIR}:
 	mkdir -p ${BUILDIR}
 
 ${BUILDIR}%.o:	${SRC_DIR}%.c ${HEADERS} Makefile
-	${CC} -c ${CFLAGS} $< -o $@ ${LIBS} 
-#	${CC} -c ${CFLAGS} $< -o $@
+#	${CC} -c ${CFLAGS} $< -o $@ ${LIBS} 
+	${CC} -c ${CFLAGS} $< -o $@
 
 clean:
 	${MAKE} clean -C ${LIBFTDIR}

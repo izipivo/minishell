@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/11 18:58:57 by sdonny            #+#    #+#             */
-/*   Updated: 2021/10/11 18:59:32 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/04/27 16:40:07 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@
 
 typedef struct s_list
 {
-	void			*content;
+	char			key;
+	char			*val;
+	char			in_q;
 	struct s_list	*next;
 }	t_list;
 
