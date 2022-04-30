@@ -10,9 +10,9 @@ CC = cc
 
 RM = rm -rf
 
-NAME = minishell
+NAME = parser
 
-SRC = main.c
+SRC = parser.c
 
 SRC_DIR = ./src/
 

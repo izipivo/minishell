@@ -6,7 +6,7 @@
 #    By: sdonny <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/07 11:44:18 by sdonny            #+#    #+#              #
-#    Updated: 2021/10/18 14:01:05 by sdonny           ###   ########.fr        #
+#    Updated: 2022/04/30 19:28:26 by sdonny           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ HEADERS_FILES = libft.h
 
 HEADERS = ${addprefix ${HEADERS_DIR}, ${HEADERS_FILES}}
 
-CC = gcc
+CC = cc
 
 RM = rm -f
 
@@ -43,7 +43,7 @@ OBJS_BONUS = $(patsubst %.c, %.o, ${BONUS_SOURCES})
 
 DFILES = $(patsubs %.c,%.d,${SOURCES})
 
-all:	${NAME}
+all:	bonus
 
 %.o :	%.c ${HEADERS}
 	${CC} -c ${CFLAGS} $< ${INCLUDE} -o ${<:.c=.o}
@@ -52,7 +52,7 @@ ${NAME}:	${OBJS}
 	ar rcs ${NAME} $?
 
 bonus:
-	make OBJS="${OBJS_BONUS} ${OBJS}" all
+	make OBJS="${OBJS_BONUS} ${OBJS}" ${NAME}
 
 clean:
 	${RM} -f ${OBJS} ${OBJS_BONUS}
