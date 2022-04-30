@@ -16,41 +16,41 @@
 //		readline colours
 */
 # define CYELLOW "\001\e[0;31m\002"
-# define YELLOW "\001\033[1;93m\002"
-# define READLINE_BLUE		"\001\033[1;94m\002"
+# define YELLOW "\001\033[1;33m\002"
+# define LYELLOW "\e[38;5;227m"
+# define READLINE_BLUE "\001\033[1;94m\002"
 # define RESET   "\001\e[0m\002"
 # define RED "\001\033[1;91m\002"
-# define PROMPT YELLOW "MINI" READLINE_BLUE "GAY" YELLOW "SHELL$> " RESET
+# define GREEN "\e[00;32m"
+# define SINIY "\e[00;34m"
+# define PURPLE "\e[00;35m"
+# define BRIGHT_BLUE "\e[01;34m"
+# define ORANGE "\e[38;5;202m"
+# define PROMPT RED "MI"ORANGE"NI"LYELLOW"GA"GREEN"YS"BRIGHT_BLUE"HE"SINIY"LL"\
+	PURPLE "$> "RESET
 # define PERROR YELLOW "mini" RED "error" RESET
 /*
 //		token's keys
 */
-# define COMMAND 0
+# define AND 0 
 # define PIPE 1
-# define INFILE 2
-# define OUTFILE 3
-# define DQUOTES 4
-# define SQUOTES 5
+# define OR 2
+# define INFILE 3
+# define HEREDOC 4
+# define OUTFILE 5
 # define APPEND 6 		//	>>
-# define HEREDOC 7
-# define SPACE 8
-# define AND 9
-# define OR 10
+# define DQUOTES 7
+# define SQUOTES 8
+# define SPC 9
+# define COMMAND 10
 # define PARENT_O 11
 # define PARENT_C 12
 # define DOLLAR 13
 
-typedef struct	s_token
-{
-	char		key;
-	char		**val;
-	char		in_q;		// 0 - не в кавычках; 1 - в одинарных; 2 - в двойных
-}				t_token;
-
-typedef	struct	p_mshell
+typedef	struct	s_mshell
 {
 	char		**env;
-	t_token		*tokens;
+	t_list		*tokens;
 }				t_mshell;
 
 #endif
