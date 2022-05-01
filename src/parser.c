@@ -95,6 +95,7 @@ char	*ft_getenv(t_env *lenv, char *key)
 	if (*key == 32 || (*key >=9 && *key <= 13))
 	{
 		free(key);
+		key = NULL;
 		tmp = ft_strdup("$");
 		if (!tmp)
 			exit(1);			//	!!!
@@ -105,6 +106,7 @@ char	*ft_getenv(t_env *lenv, char *key)
 		if (!ft_strncmp(lenv->key, key, len))
 		{
 			free(key);
+			key = NULL;
 			tmp = ft_strdup(lenv->val);
 			if (!tmp)
 				exit(1);			//	!!!
@@ -115,16 +117,25 @@ char	*ft_getenv(t_env *lenv, char *key)
 	return (NULL);
 }
 
+void	tfree(t_list *token)
+{
+	if (token->val)
+	{
+		free(token->val);
+		token->val = NULL;
+	}
+}
+
 void	streams(t_list *token)
 {
 	if (token->next->key == SPC)
 	{
-		free(token->next->val);
+		tfree(token->next);
 		token->next = token->next->next;
 	}
-	if (token->val)
-		free(token->val);
+	tfree(token);
 	token->val = ft_strdup(token->next->val);
+	tfree(token->next);
 	if (!token->val)
 		exit(1);				//	!!!
 	token->next = token->next->next;
@@ -136,16 +147,17 @@ void	dollar(t_list *token, t_env *lenv)
 	{
 		if (token->key == DOLLAR)
 		{
-			if (token->val)
-				free(token->val);
+			tfree(token);
 			token->val = ft_getenv(lenv, token->next->val);
 			token->next = token->next->next;
 			token->key = COMMAND;
 		}
 		else if (token->key == SPC)
 		{
-			free(token->val);
-			token->val = " ";
+			tfree(token);
+			token->val = ft_strdup(" ");
+			if (!token->val)
+				exit(1);				//		!!!
 		}
 		else if (token->key >= 3 && token->key <= 6)
 			streams(token);
@@ -155,7 +167,7 @@ void	dollar(t_list *token, t_env *lenv)
 
 char	*change_next(t_list *token, t_env *lenv)
 {
-	free(token->val);
+	tfree(token);
 	token->next->val = ft_getenv(lenv, token->next->val);
 	return (NULL);
 }
@@ -168,7 +180,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 
 	buf = NULL;
 	cpy = token;
-	free(token->val);
+	tfree(token);
 	token = token->next;
 	while (token && token->key != c)
 	{
@@ -178,7 +190,8 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 		buf = ft_strjoin(tmp, token->val);
 		if (tmp)
 			free(tmp);
-		free(token->val);
+		if (token->val)
+			tfree(token);
 		token = token->next;
 	}
 	if (!token)
@@ -186,7 +199,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->key = COMMAND;
 	cpy->val = buf;
 	cpy->next = token->next;
-	free(token->val);
+	tfree(token);
 	return (0);
 }
 int	concat(t_list *token, char c, t_env *lenv)
@@ -248,7 +261,7 @@ t_list	*parse(char *line, t_env *lenv)
 		{
 			if (make_token(&tokens[++n], line, i, j, sep))
 			{
-				free(tokens);
+				free(tokens);						//		!!!!!!!
 				return (invalid_args());
 			}
 			if (n > 0)
@@ -267,18 +280,16 @@ t_list	*parse(char *line, t_env *lenv)
 
 void	free_tokens(t_list *token)
 {
-	t_list	*bl;
+	int		i;
 
-	bl = token;
-	while (token)
+	i = -1;
+	while (token[++i].next)
 	{
-		free(token->val);
+		tfree(&token[i]);
 		token->next = NULL;
-		token->val = NULL;
-		token = token->next;
 	}
-	free(bl);
-	bl = NULL;
+	free(token);
+	token = NULL;
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -290,7 +301,8 @@ int	main(int argc, char **argv, char **envp)
 	//execve("/bin/echo", &argv[0], envp);
 	inf.env = envp;
 	inf.lenv = make_env_list(envp);
-	while (1)
+	int m=0;
+	while (++m <= 3)
 	{
 		line = readline(PROMPT);
 		inf.tokens = parse(line, inf.lenv);
