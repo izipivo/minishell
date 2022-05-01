@@ -32,25 +32,38 @@
 /*
 //		token's keys
 */
-# define AND 0 
-# define PIPE 1
-# define OR 2
-# define INFILE 3
-# define HEREDOC 4
-# define OUTFILE 5
+# define AND 0 			//	&&
+# define PIPE 1			//	|
+# define OR 2			//	||
+# define INFILE 3		//	<
+# define HEREDOC 4		//	<<
+# define OUTFILE 5		//	>
 # define APPEND 6 		//	>>
-# define DQUOTES 7
-# define SQUOTES 8
-# define SPC 9
-# define COMMAND 10
-# define PARENT_O 11
-# define PARENT_C 12
-# define DOLLAR 13
+# define DQUOTES 7		//	"
+# define SQUOTES 8		//	'
+# define SPC 9			//	_
+# define COMMAND 10		//	...
+# define PARENT_O 11	//	(
+# define PARENT_C 12	//	)
+# define DOLLAR 13		//	$
+
+typedef struct	s_env
+{
+	char			*key;
+	char			*val;
+	struct s_env	*next;
+}				t_env;
+
 
 typedef	struct	s_mshell
 {
 	char		**env;
+	t_env		*lenv;
 	t_list		*tokens;
 }				t_mshell;
+
+void	free_lenv(t_env *lenv);
+t_env	*make_env_list(char **envp);
+int	ft_arrlen(char **arr);
 
 #endif

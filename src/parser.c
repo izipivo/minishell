@@ -1,32 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cdpwdechoexit.c                                    :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/26 12:37:50 by sdonny            #+#    #+#             */
-/*   Updated: 2022/04/30 19:59:47 by sdonny           ###   ########.fr       */
+/*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
+/*   Updated: 2022/05/01 20:03:20 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-int	ft_npchararraylen(char **arr)
-{
-	int	i;
-
-	i = -1;
-	while (arr[++i])
-		;
-	return (i);
-}
 
 t_list	*invalid_args(void)
 {
 	ft_putstr_fd("tak nel'zya\n", 2);
 	return (NULL);
 }
+
+//void	print_list(t_list *tokens)
+//{
+//	while (token)
+//	{
+//		printf("key: %s, val: %s\n", tokens->key, tokens->val);
+//		tokens = tokens->next;
+//	}
+//}
 
 int	token_key(char *line, int end)
 {
@@ -52,18 +51,6 @@ int	token_key(char *line, int end)
 		return (AND);
 	else if (line[end] == '|')
 		return (OR);
-	//else if (line[end] && line[end] == '<' && line[end + 1] != '<')
-	//	return (INFILE);
-	//else if (line[end] && line[end] == '>' && line[end + 1] != '>')
-	//	return (OUTFILE);
-	//else if (line[end] && line[end] == '>' && line[end + 1] == '>')
-	//	return (APPEND);
-	//else if (line[end] && line[end] == '<' && line[end + 1] == '<')
-	//	return (HEREDOC);
-	//else if (line[end] && line[end] == '&' && line[end + 1] == '&')
-	//	return (AND);
-	//else if (line[end] && line[end] == '|' && line[end + 1] == '|')
-	//	return (OR);
 	else
 		return (COMMAND);
 }
@@ -75,13 +62,13 @@ int	make_token(t_list *token, char *line, int end, int shift, int sep)
 	token->val = (char *)malloc(sizeof(char) * (shift + 2));
 	if (!token->val)
 		exit(1);
-	if (sep == SPC)
-	{
-		token->val[0] = ' ';
-		token->val[1] = '\0';
-	}
-	else
-		ft_strlcpy(token->val, line + end - shift, sizeof(char) * (shift + 2));
+	//if (sep == SPC)
+	//{
+	//	token->val[0] = ' ';
+	//	token->val[1] = '\0';
+	//}
+	//else
+	ft_strlcpy(token->val, line + end - shift, sizeof(char) * (shift + 2));
 	//printf("val: %s\n", token->val);
 	if ((sep == OUTFILE || sep == INFILE || sep == PIPE) && shift == 1)
 		sep += 1;
@@ -99,10 +86,145 @@ int	is_separator(char c)
 		return (0);
 }
 
-//t_list	*cleaning(t_list *tokens, *env)
+char	*ft_getenv(t_env *lenv, char *key)
+{
+	int		len;
+	char	*tmp;
 
+	len = ft_strlen(key);
+	if (*key == 32 || (*key >=9 && *key <= 13))
+	{
+		free(key);
+		tmp = ft_strdup("$");
+		if (!tmp)
+			exit(1);			//	!!!
+		return (tmp);
+	}
+	while (lenv)
+	{
+		if (!ft_strncmp(lenv->key, key, len))
+		{
+			free(key);
+			tmp = ft_strdup(lenv->val);
+			if (!tmp)
+				exit(1);			//	!!!
+			return (tmp);
+		}
+		lenv = lenv->next;
+	}
+	return (NULL);
+}
 
-t_list	*parse(char *line, char **envp)
+void	streams(t_list *token)
+{
+	if (token->next->key == SPC)
+	{
+		free(token->next->val);
+		token->next = token->next->next;
+	}
+	if (token->val)
+		free(token->val);
+	token->val = ft_strdup(token->next->val);
+	if (!token->val)
+		exit(1);				//	!!!
+	token->next = token->next->next;
+}
+
+void	dollar(t_list *token, t_env *lenv)
+{
+	while (token)
+	{
+		if (token->key == DOLLAR)
+		{
+			if (token->val)
+				free(token->val);
+			token->val = ft_getenv(lenv, token->next->val);
+			token->next = token->next->next;
+			token->key = COMMAND;
+		}
+		else if (token->key == SPC)
+		{
+			free(token->val);
+			token->val = " ";
+		}
+		else if (token->key >= 3 && token->key <= 6)
+			streams(token);
+		token = token->next;
+	}
+}
+
+char	*change_next(t_list *token, t_env *lenv)
+{
+	free(token->val);
+	token->next->val = ft_getenv(lenv, token->next->val);
+	return (NULL);
+}
+
+int	first_occ(t_list *token, char c, t_env *lenv)
+{
+	t_list	*cpy;
+	char	*tmp;
+	char	*buf;
+
+	buf = NULL;
+	cpy = token;
+	free(token->val);
+	token = token->next;
+	while (token && token->key != c)
+	{
+		if (c == DQUOTES && token->key == DOLLAR)
+			token->val = change_next(token, lenv);
+		tmp = buf;
+		buf = ft_strjoin(tmp, token->val);
+		if (tmp)
+			free(tmp);
+		free(token->val);
+		token = token->next;
+	}
+	if (!token)
+		return (1);
+	cpy->key = COMMAND;
+	cpy->val = buf;
+	cpy->next = token->next;
+	free(token->val);
+	return (0);
+}
+int	concat(t_list *token, char c, t_env *lenv)
+{
+	while (token)
+	{
+		if (token->key == SQUOTES)
+		{
+			if (first_occ(token, SQUOTES, lenv))
+				return (1);
+		}
+		else if (token->key == DQUOTES)
+		{
+			if (first_occ(token, DQUOTES, lenv))
+				return (1);
+		}
+		token = token->next;
+	}
+	return (0);
+}
+
+t_list	*cleaning(t_list *tokens, t_env *lenv)
+{
+	if (concat(tokens, SQUOTES, lenv))
+	{
+		ft_putstr_fd("ne zakril\n", 2);
+		exit(1);
+	}
+	if (concat(tokens, DQUOTES, lenv))
+	{
+		ft_putstr_fd("ne zakril\n", 2);
+		exit(1);
+	}
+	dollar(tokens, lenv);
+	return (tokens);
+}
+
+t_list	*parse(char *line, t_env *lenv)
 {
 	t_list	*tokens;
 	int		i;
@@ -140,8 +262,23 @@ t_list	*parse(char *line, char **envp)
 			j++;
 	}
 	tokens[n].next = NULL;
-	return (tokens);
-	//return (cleaning(tokens, envp));
+	return (cleaning(tokens, lenv));
+}
+
+void	free_tokens(t_list *token)
+{
+	t_list	*bl;
+
+	bl = token;
+	while (token)
+	{
+		free(token->val);
+		token->next = NULL;
+		token->val = NULL;
+		token = token->next;
+	}
+	free(bl);
+	bl = NULL;
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -152,17 +289,22 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	//execve("/bin/echo", &argv[0], envp);
 	inf.env = envp;
+	inf.lenv = make_env_list(envp);
 	while (1)
 	{
 		line = readline(PROMPT);
-		inf.tokens = parse(line, inf.env);
+		inf.tokens = parse(line, inf.lenv);
 		free(line);
 		if (!inf.tokens)
 			continue ;
 		i = -1;
-		while (inf.tokens && inf.tokens[++i].next != NULL)
-			printf("key: %d, val:%s_\n", inf.tokens[i].key, inf.tokens[i].val);
-		printf("key: %d, val:%s_\n", inf.tokens[i].key, inf.tokens[i].val);
-		free(inf.tokens);
+		t_list	*tmp=inf.tokens;
+		while (tmp)
+		{
+			printf("key: %d, val:%s_\n", tmp->key, tmp->val);
+			tmp = tmp->next;
+		}
+		free_tokens(inf.tokens);
 	}
+	free_lenv(inf.lenv);
 }

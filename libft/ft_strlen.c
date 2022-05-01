@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/06 12:37:50 by sdonny            #+#    #+#             */
-/*   Updated: 2021/10/11 15:18:46 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/01 16:44:13 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ size_t	ft_strlen(const char *str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i])
 		i++;
 	return (i);

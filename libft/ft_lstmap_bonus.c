@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/06 12:37:50 by sdonny            #+#    #+#             */
-/*   Updated: 2022/04/30 19:38:34 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/01 14:58:54 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(char	*), void (*del)(char *))
 		return (0);
 	while (lst)
 	{
-		elem = ft_lstnew(lst->key, f(lst->val),lst->in_q);
+		elem = ft_lstnew(lst->key, f(lst->val), lst->in_q);
 		if (elem)
 			ft_lstadd_back(&bl, elem);
 		else
