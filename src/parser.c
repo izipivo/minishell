@@ -190,8 +190,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 		buf = ft_strjoin(tmp, token->val);
 		if (tmp)
 			free(tmp);
-		if (token->val)
-			tfree(token);
+		tfree(token);
 		token = token->next;
 	}
 	if (!token)
