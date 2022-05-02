@@ -6,11 +6,13 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/05/01 20:03:20 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/02 14:54:12 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int	to_free;
 
 t_list	*invalid_args(void)
 {
@@ -18,14 +20,23 @@ t_list	*invalid_args(void)
 	return (NULL);
 }
 
-//void	print_list(t_list *tokens)
-//{
-//	while (token)
-//	{
-//		printf("key: %s, val: %s\n", tokens->key, tokens->val);
-//		tokens = tokens->next;
-//	}
-//}
+void	free_val(t_list *token)
+{
+	if (token && token->val)
+	{
+		free(token->val);
+		token->val = NULL;
+	}
+}
+
+void	print_list(t_list *tokens)
+{
+	while (tokens)
+	{
+		printf("key: %d, val: %s\n", tokens->key, tokens->val);
+		tokens = tokens->next;
+	}
+}
 
 int	token_key(char *line, int end)
 {
@@ -86,75 +97,69 @@ int	is_separator(char c)
 		return (0);
 }
 
-char	*ft_getenv(t_env *lenv, char *key)
-{
-	int		len;
-	char	*tmp;
-
-	len = ft_strlen(key);
-	if (*key == 32 || (*key >=9 && *key <= 13))
-	{
-		free(key);
-		key = NULL;
-		tmp = ft_strdup("$");
-		if (!tmp)
-			exit(1);			//	!!!
-		return (tmp);
-	}
-	while (lenv)
-	{
-		if (!ft_strncmp(lenv->key, key, len))
-		{
-			free(key);
-			key = NULL;
-			tmp = ft_strdup(lenv->val);
-			if (!tmp)
-				exit(1);			//	!!!
-			return (tmp);
-		}
-		lenv = lenv->next;
-	}
-	return (NULL);
-}
-
-void	tfree(t_list *token)
-{
-	if (token->val)
-	{
-		free(token->val);
-		token->val = NULL;
-	}
-}
-
 void	streams(t_list *token)
 {
 	if (token->next->key == SPC)
 	{
-		tfree(token->next);
+		free_val(token->next);
 		token->next = token->next->next;
 	}
-	tfree(token);
+	free_val(token);
 	token->val = ft_strdup(token->next->val);
-	tfree(token->next);
+	free_val(token->next);
 	if (!token->val)
 		exit(1);				//	!!!
 	token->next = token->next->next;
 }
 
-void	dollar(t_list *token, t_env *lenv)
+void	dollar_find(t_list *token, t_env *lenv)
+{
+	int	len;
+
+	len = ft_strlen(token->val);
+	while (lenv)
+	{
+		if (!ft_strncmp(lenv->key, token->val, len))
+		{
+			free_val(token);
+			token->val = ft_strdup(lenv->val);
+			if (!token->val)
+				exit(1);
+			return ;
+		}
+		lenv = lenv->next;
+	}
+}
+
+void	dollar(t_list *dlr, t_env *lenv)
+{
+	free_val(dlr);
+	dlr->key = COMMAND;
+	if (!dlr->next || dlr->next->key == SPC)
+	{
+		free_val(dlr->next);
+		dlr->val = ft_strdup("$");
+		if (!dlr->val)
+			exit(1);
+		if (dlr->next)
+			dlr->next = dlr->next->next;
+		ft_putstr_fd("opa\n", 1);
+		return ;
+	}
+	dlr->val = dlr->next->val;
+	dlr->next = dlr->next->next;
+	dollar_find(dlr, lenv);
+}
+
+void	dol_spc_str(t_list *token, t_env *lenv)
 {
 	while (token)
 	{
 		if (token->key == DOLLAR)
-		{
-			tfree(token);
-			token->val = ft_getenv(lenv, token->next->val);
-			token->next = token->next->next;
-			token->key = COMMAND;
-		}
+			dollar(token, lenv);
 		else if (token->key == SPC)
 		{
-			tfree(token);
+			free_val(token);
 			token->val = ft_strdup(" ");
 			if (!token->val)
 				exit(1);				//		!!!
@@ -165,13 +170,6 @@ void	dollar(t_list *token, t_env *lenv)
 	}
 }
 
-char	*change_next(t_list *token, t_env *lenv)
-{
-	tfree(token);
-	token->next->val = ft_getenv(lenv, token->next->val);
-	return (NULL);
-}
-
 int	first_occ(t_list *token, char c, t_env *lenv)
 {
 	t_list	*cpy;
@@ -180,17 +178,18 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 
 	buf = NULL;
 	cpy = token;
-	tfree(token);
+	//print_list(token);
+	free_val(token);
 	token = token->next;
 	while (token && token->key != c)
 	{
 		if (c == DQUOTES && token->key == DOLLAR)
-			token->val = change_next(token, lenv);
+			dollar(token, lenv);
 		tmp = buf;
 		buf = ft_strjoin(tmp, token->val);
 		if (tmp)
 			free(tmp);
-		tfree(token);
+		free_val(token);
 		token = token->next;
 	}
 	if (!token)
@@ -198,9 +197,10 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->key = COMMAND;
 	cpy->val = buf;
 	cpy->next = token->next;
-	tfree(token);
+	free_val(token);
 	return (0);
 }
+
 int	concat(t_list *token, char c, t_env *lenv)
 {
 	while (token)
@@ -232,7 +232,7 @@ t_list	*cleaning(t_list *tokens, t_env *lenv)
 		ft_putstr_fd("ne zakril\n", 2);
 		exit(1);
 	}
-	dollar(tokens, lenv);
+	dol_spc_str(tokens, lenv);
 	return (tokens);
 }
 
@@ -241,6 +241,7 @@ t_list	*parse(char *line, t_env *lenv)
 	t_list	*tokens;
 	int		i;
 	int		sep;
+	int		tmp;
 	int		j;
 	int		n;
 
@@ -256,7 +257,10 @@ t_list	*parse(char *line, t_env *lenv)
 	while (line[++i])
 	{
 		//printf("sep: %d, tk: %d\n", sep, token_key(line, i+1));
-		if (!line[i + 1] || sep != token_key(line, i + 1))
+		if (line[i + 1])
+			tmp = token_key(line, i + 1);
+		if (!line[i + 1] || sep != tmp || tmp == SQUOTES || tmp == DQUOTES
+				|| tmp == DOLLAR)
 		{
 			if (make_token(&tokens[++n], line, i, j, sep))
 			{
@@ -266,14 +270,14 @@ t_list	*parse(char *line, t_env *lenv)
 			if (n > 0)
 				tokens[n - 1].next = &tokens[n];
 			j = 0;
-			if (line[i + 1])
-			sep = token_key(line, i + 1);
+			sep = tmp;
 			//printf("dkdkdkdkd %d\n", sep);
 		}
 		else
 			j++;
 	}
 	tokens[n].next = NULL;
+	to_free = n;
 	return (cleaning(tokens, lenv));
 }
 
@@ -282,11 +286,13 @@ void	free_tokens(t_list *token)
 	int		i;
 
 	i = -1;
-	while (token[++i].next)
+	while (--to_free >= 0)
 	{
-		tfree(&token[i]);
+		free_val(&token[to_free]);
 		token->next = NULL;
 	}
+	//free_val(&token[i]);
+	//token->next = NULL;
 	free(token);
 	token = NULL;
 }
@@ -301,7 +307,7 @@ int	main(int argc, char **argv, char **envp)
 	inf.env = envp;
 	inf.lenv = make_env_list(envp);
 	int m=0;
-	while (++m <= 3)
+	while (3)
 	{
 		line = readline(PROMPT);
 		inf.tokens = parse(line, inf.lenv);
