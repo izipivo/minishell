@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/05/04 15:29:20 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/04 16:04:52 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,12 @@ t_list	*invalid_args(void)
 
 void	free_val(t_list *token)
 {
-	if (token && token->val)
-	{
-		free(token->val);
-		token->val = NULL;
-	}
+	free(token->val);
+	//if (token && token->val)
+	//{
+	//	free(token->val);
+	//	token->val = NULL;
+	//}
 }
 
 void	print_list(t_list *tokens)
@@ -318,17 +319,19 @@ t_list	*parse(char *line, t_env *lenv)
 
 void	free_tokens(t_list *token)
 {
-	int		i;
+	int	i;
+	int	n;
 
 	i = -1;
-	while (--to_free > 0)
+	n = to_free;
+	while (n >= 0)
 	{
-		free_val(&token[to_free]);
-		token->next = NULL;
+		free_val(&token[n]);
+		token[n--].next = NULL;
 	}
 	//free_val(&token[i]);
 	//token->next = NULL;
-	if (!token)
+	if (token)
 		free(token);
 	token = NULL;
 }
@@ -343,7 +346,7 @@ int	main(int argc, char **argv, char **envp)
 	inf.env = envp;
 	inf.lenv = make_env_list(envp);
 	int m=0;
-	while (m++ < 3)
+	while (3)
 	{
 		line = readline(PROMPT);
 		inf.tokens = parse(line, inf.lenv);
