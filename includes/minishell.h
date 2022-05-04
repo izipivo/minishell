@@ -46,6 +46,7 @@
 # define PARENT_O 11	//	(
 # define PARENT_C 12	//	)
 # define DOLLAR 13		//	$
+# define WORD 14		//	a..z0..9...	
 
 typedef struct	s_env
 {

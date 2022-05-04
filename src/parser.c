@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/05/02 14:54:12 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/04 15:29:20 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,17 +99,20 @@ int	is_separator(char c)
 
 void	streams(t_list *token)
 {
-	if (token->next->key == SPC)
+	if (token->next && token->next->key == SPC)
 	{
 		free_val(token->next);
 		token->next = token->next->next;
 	}
 	free_val(token);
-	token->val = ft_strdup(token->next->val);
-	free_val(token->next);
-	if (!token->val)
-		exit(1);				//	!!!
-	token->next = token->next->next;
+	if (token->next)
+	{
+		token->val = ft_strdup(token->next->val);
+		free_val(token->next);
+		if (!token->val)
+			exit(1);				//	!!!
+		token->next = token->next->next;
+	}
 }
 
 void	dollar_find(t_list *token, t_env *lenv)
@@ -117,12 +120,21 @@ void	dollar_find(t_list *token, t_env *lenv)
 	int	len;
 
 	len = ft_strlen(token->val);
+	if (!ft_strncmp(token->val, "$", len))
+	{
+		//free_val(token);
+		token->val = ft_strdup("1488");
+		if (!token->val)
+			exit(1);
+		return ;
+	}
 	while (lenv)
 	{
 		if (!ft_strncmp(lenv->key, token->val, len))
 		{
-			free_val(token);
+			//free_val(token);
 			token->val = ft_strdup(lenv->val);
+			//printf("vot on: %s\n", token->val);
 			if (!token->val)
 				exit(1);
 			return ;
@@ -133,11 +145,11 @@ void	dollar_find(t_list *token, t_env *lenv)
 
 void	dollar(t_list *dlr, t_env *lenv)
 {
-	free_val(dlr);
-	dlr->key = COMMAND;
+	//free_val(dlr);
+	dlr->key = WORD;
 	if (!dlr->next || dlr->next->key == SPC)
 	{
-		free_val(dlr->next);
+		//free_val(dlr->next);
 		dlr->val = ft_strdup("$");
 		if (!dlr->val)
 			exit(1);
@@ -164,44 +176,71 @@ void	dol_spc_str(t_list *token, t_env *lenv)
 			if (!token->val)
 				exit(1);				//		!!!
 		}
-		else if (token->key >= 3 && token->key <= 6)
+		else if (token->key > 2 && token->key < 7)
+		{
+			if (token->next && (token->next->key > 2 || token->next->key < 7))
+			{
+				ft_putstr_fd("parser error near '<'\n", 2);
+				exit(1);
+			}
 			streams(token);
+		}
 		token = token->next;
 	}
+}
+
+int	ft_strapp(char **s1, char *s2)
+{
+	char	*tmp;
+
+	tmp = *s1;
+	*s1 = ft_strjoin(tmp, s2);
+	if (tmp)
+	{
+		free(tmp);
+		tmp = NULL;
+	}
+	if (!*s1)
+		return (1);					//		malloc_err
+	return (0);
 }
 
 int	first_occ(t_list *token, char c, t_env *lenv)
 {
 	t_list	*cpy;
-	char	*tmp;
 	char	*buf;
 
 	buf = NULL;
 	cpy = token;
 	//print_list(token);
-	free_val(token);
+	//free_val(token);
 	token = token->next;
 	while (token && token->key != c)
 	{
 		if (c == DQUOTES && token->key == DOLLAR)
 			dollar(token, lenv);
-		tmp = buf;
-		buf = ft_strjoin(tmp, token->val);
-		if (tmp)
-			free(tmp);
-		free_val(token);
+		//printf("dolare: %s\n", token->val);
+		if (ft_strapp(&buf, token->val))
+			return (1);
+		//free_val(token);
 		token = token->next;
+		//printf("buf: %s\n", buf);
 	}
-	if (!token)
+	if (!token)			//		not closed " or '
+	{
+		if (buf)
+			free(buf);
 		return (1);
-	cpy->key = COMMAND;
+	}
+	cpy->key = WORD;
 	cpy->val = buf;
+	//printf("cpy: %s\n", cpy->val);
 	cpy->next = token->next;
-	free_val(token);
+	//free_val(token);
 	return (0);
 }
 
-int	concat(t_list *token, char c, t_env *lenv)
+int	concat(t_list *token, t_env *lenv)
 {
 	while (token)
 	{
@@ -222,12 +261,7 @@ int	concat(t_list *token, char c, t_env *lenv)
 
 t_list	*cleaning(t_list *tokens, t_env *lenv)
 {
-	if (concat(tokens, SQUOTES, lenv))
-	{
-		ft_putstr_fd("ne zakril\n", 2);
-		exit(1);
-	}
-	if (concat(tokens, DQUOTES, lenv))
+	if (concat(tokens, lenv))
 	{
 		ft_putstr_fd("ne zakril\n", 2);
 		exit(1);
@@ -278,6 +312,7 @@ t_list	*parse(char *line, t_env *lenv)
 	}
 	tokens[n].next = NULL;
 	to_free = n;
+	//print_list(tokens);
 	return (cleaning(tokens, lenv));
 }
 
@@ -286,14 +321,15 @@ void	free_tokens(t_list *token)
 	int		i;
 
 	i = -1;
-	while (--to_free >= 0)
+	while (--to_free > 0)
 	{
 		free_val(&token[to_free]);
 		token->next = NULL;
 	}
 	//free_val(&token[i]);
 	//token->next = NULL;
-	free(token);
+	if (!token)
+		free(token);
 	token = NULL;
 }
 
@@ -307,7 +343,7 @@ int	main(int argc, char **argv, char **envp)
 	inf.env = envp;
 	inf.lenv = make_env_list(envp);
 	int m=0;
-	while (3)
+	while (m++ < 3)
 	{
 		line = readline(PROMPT);
 		inf.tokens = parse(line, inf.lenv);
