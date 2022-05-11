@@ -102,14 +102,14 @@ void	streams(t_list *token)
 {
 	if (token->next && token->next->key == SPC)
 	{
-		free_val(token->next);
+		//free_val(token->next);
 		token->next = token->next->next;
 	}
-	free_val(token);
 	if (token->next)
 	{
+		free_val(token);
 		token->val = ft_strdup(token->next->val);
-		free_val(token->next);
+		//free_val(token->next);
 		if (!token->val)
 			exit(1);				//	!!!
 		token->next = token->next->next;
@@ -123,7 +123,7 @@ void	dollar_find(t_list *token, t_env *lenv)
 	len = ft_strlen(token->val);
 	if (!ft_strncmp(token->val, "$", len))
 	{
-		//free_val(token);
+		free_val(token);
 		token->val = ft_strdup("1488");
 		if (!token->val)
 			exit(1);
@@ -133,7 +133,7 @@ void	dollar_find(t_list *token, t_env *lenv)
 	{
 		if (!ft_strncmp(lenv->key, token->val, len))
 		{
-			//free_val(token);
+			free_val(token);
 			token->val = ft_strdup(lenv->val);
 			//printf("vot on: %s\n", token->val);
 			if (!token->val)
@@ -150,7 +150,7 @@ void	dollar(t_list *dlr, t_env *lenv)
 	dlr->key = WORD;
 	if (!dlr->next || dlr->next->key == SPC)
 	{
-		//free_val(dlr->next);
+		free_val(dlr->next);
 		dlr->val = ft_strdup("$");
 		if (!dlr->val)
 			exit(1);
@@ -179,7 +179,7 @@ void	dol_spc_str(t_list *token, t_env *lenv)
 		}
 		else if (token->key > 2 && token->key < 7)
 		{
-			if (token->next && (token->next->key > 2 || token->next->key < 7))
+			if (token->next && (token->next->key > 2 && token->next->key < 7))
 			{
 				ft_putstr_fd("parser error near '<'\n", 2);
 				exit(1);
@@ -245,14 +245,9 @@ int	concat(t_list *token, t_env *lenv)
 {
 	while (token)
 	{
-		if (token->key == SQUOTES)
+		if (token->key == SQUOTES || token->key == DQUOTES)
 		{
-			if (first_occ(token, SQUOTES, lenv))
-				return (1);
-		}
-		else if (token->key == DQUOTES)
-		{
-			if (first_occ(token, DQUOTES, lenv))
+			if (first_occ(token, token->key, lenv))
 				return (1);
 		}
 		token = token->next;
