@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/05/04 16:04:52 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/13 19:29:39 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ t_list	*invalid_args(void)
 
 void	free_val(t_list *token)
 {
-	free(token->val);
-	//if (token && token->val)
-	//{
-	//	free(token->val);
-	//	token->val = NULL;
-	//}
+	//free(token->val);
+	if (token && token->val)
+	{
+		free(token->val);
+		token->val = NULL;
+	}
 }
 
 void	print_list(t_list *tokens)
@@ -123,7 +123,7 @@ void	dollar_find(t_list *token, t_env *lenv)
 	len = ft_strlen(token->val);
 	if (!ft_strncmp(token->val, "$", len))
 	{
-		free_val(token);
+		//free_val(token);
 		token->val = ft_strdup("1488");
 		if (!token->val)
 			exit(1);
@@ -133,7 +133,7 @@ void	dollar_find(t_list *token, t_env *lenv)
 	{
 		if (!ft_strncmp(lenv->key, token->val, len))
 		{
-			free_val(token);
+			//free_val(token);
 			token->val = ft_strdup(lenv->val);
 			//printf("vot on: %s\n", token->val);
 			if (!token->val)
@@ -148,9 +148,9 @@ void	dollar(t_list *dlr, t_env *lenv)
 {
 	//free_val(dlr);
 	dlr->key = WORD;
+	free_val(dlr);
 	if (!dlr->next || dlr->next->key == SPC)
 	{
-		free_val(dlr->next);
 		dlr->val = ft_strdup("$");
 		if (!dlr->val)
 			exit(1);
@@ -234,10 +234,11 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 		return (1);
 	}
 	cpy->key = WORD;
+	free_val(cpy);
 	cpy->val = buf;
 	//printf("cpy: %s\n", cpy->val);
 	cpy->next = token->next;
-	//free_val(token);
+	free_val(token);
 	return (0);
 }
 
@@ -308,7 +309,7 @@ t_list	*parse(char *line, t_env *lenv)
 	}
 	tokens[n].next = NULL;
 	to_free = n;
-	//print_list(tokens);
+	print_list(tokens);
 	return (cleaning(tokens, lenv));
 }
 
