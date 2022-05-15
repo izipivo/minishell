@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/05/15 15:54:13 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/15 17:58:21 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,18 +74,10 @@ int	make_token(t_list *token, char *line, int end, int shift, int sep)
 	token->val = (char *)malloc(sizeof(char) * (shift + 2));
 	if (!token->val)
 		exit(1);
-	//if (sep == SPC)
-	//{
-	//	token->val[0] = ' ';
-	//	token->val[1] = '\0';
-	//}
-	//else
 	ft_strlcpy(token->val, line + end - shift, sizeof(char) * (shift + 2));
-	//printf("val: %s\n", token->val);
 	if ((sep == OUTFILE || sep == INFILE || sep == PIPE) && shift == 1)
 		sep += 1;
 	token->key = sep;
-	//printf("key: %d\n", token->key);
 	return (0);
 }
 
@@ -171,12 +163,7 @@ void	dol_spc_str(t_list *token, t_env *lenv)
 		if (token->key == DOLLAR)
 			dollar(token, lenv);
 		else if (token->key == SPC)
-		{
 			free_val(token);
-			//token->val = ft_strdup(" ");
-			//if (!token->val)
-			//	exit(1);				//		!!!
-		}
 		else if (token->key > 2 && token->key < 7)
 		{
 			if (token->next && (token->next->key > 2 && token->next->key < 7))
@@ -256,6 +243,75 @@ int	concat(t_list *token, t_env *lenv)
 	return (0);
 }
 
+int	list_size(t_list *list)
+{
+	int	i;
+
+	i = 0;
+	while (list)
+	{
+		if (list->val)
+			i++;
+		list = list->next;
+	}
+	return (i);
+}
+
+void	free_tokens(t_list *token)
+{
+	t_list	*cp;
+	int		i;
+
+	i = -1;
+	cp = token;
+	while (1)
+	{
+		free_val(&(token[++i]));
+		if (token[i].next == NULL)
+			break ;
+	}
+	free(cp);
+	cp = NULL;
+}
+
+int	token_cp(t_list *new, t_list *old)
+{
+	new->key = old->key;
+	new->val = ft_strdup(old->val);
+	if (!new->val)
+		return (1);
+	return (0);
+}
+
+t_list	*remalloc(t_list *old)
+{
+	t_list	*cp;
+	t_list	*new;
+	int		size;
+	int		i;
+
+	i = -1;
+	cp = old;
+	size = list_size(old);
+	new = (t_list *) malloc(sizeof(t_list) * (size + 1));
+	if (!new)
+		exit(1);					//		!!!!
+	while (old)
+	{
+		if (old->val && old->key != SPC)
+		{
+			if (token_cp(&new[++i], old))
+				exit(1);			//		!!!!
+			if (i - 1 >= 0)
+				new[i - 1].next = &(new[i]);
+		}
+		old = old->next;
+	}
+	new[i].next = NULL;
+	free_tokens(cp);
+	return (new);
+}
+
 t_list	*cleaning(t_list *tokens, t_env *lenv)
 {
 	if (concat(tokens, lenv))
@@ -264,7 +320,7 @@ t_list	*cleaning(t_list *tokens, t_env *lenv)
 		exit(1);
 	}
 	dol_spc_str(tokens, lenv);
-	return (tokens);
+	return (remalloc(tokens));
 }
 
 t_list	*parse(char *line, t_env *lenv)
@@ -313,23 +369,40 @@ t_list	*parse(char *line, t_env *lenv)
 	return (cleaning(tokens, lenv));
 }
 
-void	free_tokens(t_list *token)
-{
-	int	i;
-	int	n;
 
-	i = -1;
-	n = to_free;
-	while (n >= 0)
+//void	free_tokens(t_list *token)
+//{
+//	int	i;
+//	int	n;
+//
+//	i = -1;
+//	n = to_free;
+//	while (n >= 0)
+//	{
+//		free_val(&token[n]);
+//		token[n--].next = NULL;
+//	}
+//	//free_val(&token[i]);
+//	//token->next = NULL;
+//	if (token)
+//		free(token);
+//	token = NULL;
+//}
+
+void	free_list(t_list *list)
+{
+	t_list	*cp;
+
+	cp = list;
+	while (list)
 	{
-		free_val(&token[n]);
-		token[n--].next = NULL;
+		if (list->val)
+			free(list->val);
+		list->val = NULL;
+		list = list->next;
 	}
-	//free_val(&token[i]);
-	//token->next = NULL;
-	if (token)
-		free(token);
-	token = NULL;
+	free(cp);
+	cp = NULL;
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -350,14 +423,8 @@ int	main(int argc, char **argv, char **envp)
 		free(line);
 		if (!inf.tokens)
 			continue ;
-		//i = -1;
-		t_list	*tmp=inf.tokens;
-		while (tmp)
-		{
-			printf("key: %d, val:%s_\n", tmp->key, tmp->val);
-			tmp = tmp->next;
-		}
-		free_tokens(inf.tokens);
+		print_list(inf.tokens);
+		free_list(inf.tokens);
 	}
 	free_lenv(inf.lenv);
 }
