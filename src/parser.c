@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/05/13 19:29:39 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/05/15 15:54:13 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,9 +173,9 @@ void	dol_spc_str(t_list *token, t_env *lenv)
 		else if (token->key == SPC)
 		{
 			free_val(token);
-			token->val = ft_strdup(" ");
-			if (!token->val)
-				exit(1);				//		!!!
+			//token->val = ft_strdup(" ");
+			//if (!token->val)
+			//	exit(1);				//		!!!
 		}
 		else if (token->key > 2 && token->key < 7)
 		{
@@ -309,7 +309,7 @@ t_list	*parse(char *line, t_env *lenv)
 	}
 	tokens[n].next = NULL;
 	to_free = n;
-	print_list(tokens);
+	//print_list(tokens);
 	return (cleaning(tokens, lenv));
 }
 
@@ -335,13 +335,14 @@ void	free_tokens(t_list *token)
 int	main(int argc, char **argv, char **envp)
 {
 	char		*line;
-	int			i;
+	//int			i;
 	t_mshell	inf;
 	(void)argc;
+	(void)argv;
 	//execve("/bin/echo", &argv[0], envp);
 	inf.env = envp;
 	inf.lenv = make_env_list(envp);
-	int m=0;
+	//int m=0;
 	while (3)
 	{
 		line = readline(PROMPT);
@@ -349,7 +350,7 @@ int	main(int argc, char **argv, char **envp)
 		free(line);
 		if (!inf.tokens)
 			continue ;
-		i = -1;
+		//i = -1;
 		t_list	*tmp=inf.tokens;
 		while (tmp)
 		{
