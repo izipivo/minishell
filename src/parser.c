@@ -117,7 +117,6 @@ int	dollar_find(t_list *token, t_env *lenv)
 		token->val = ft_strdup("1488");
 		if (!token->val)
 			exit(1);
-		//ft_putstr_fd(token->next->val, 1);
 		return (1);
 	}
 	while (lenv)
@@ -141,18 +140,15 @@ int	dollar(t_list *dlr, t_env *lenv)
 {
 	if (!dlr->next || (dlr->next->key != DOLLAR && dlr->next->key != COMMAND))
 	{
-		ft_putstr_fd("joj\n", 1);
 		free_val(dlr);
 		dlr->val = ft_strdup("$");
 		if (!dlr->val)
 			exit(1);
 		dlr->key = WORD;
-		ft_putstr_fd("opa\n", 1);
 		return (0);
 	}
 	dlr->val[0] = 0;
 	//dlr->next = dlr->next->next;
-	ft_putstr_fd("opa\n", 1);
 	return (dollar_find(dlr->next, lenv));
 }
 
@@ -322,7 +318,6 @@ t_list	*remalloc(t_list *old)
 	else
 		new[i].next = NULL;
 	free_tokens(cp);
-	ft_putstr_fd("chech\n", 1);
 	return (new);
 }
 
@@ -399,27 +394,26 @@ void	free_list(t_list *list)
 	cp = NULL;
 }
 
-int	main(int argc, char **argv, char **envp)
-{
-	char		*line;
-	//int			i;
-	t_mshell	inf;
-	(void)argc;
-	(void)argv;
-	//execve("/bin/echo", &argv[0], envp);
-	inf.env = envp;
-	inf.lenv = make_env_list(envp);
-	//int m=0;
-	while (3)
-	{
-		line = readline(PROMPT);
-		inf.tokens = parse(line, inf.lenv);
-		free(line);
-		ft_putstr_fd("uui\n", 1);
-		if (!inf.tokens)
-			continue ;
-		print_list(inf.tokens);
-		free_tokens(inf.tokens);
-	}
-	free_lenv(inf.lenv);
-}
+//int	main(int argc, char **argv, char **envp)
+//{
+//	char		*line;
+//	//int			i;
+//	t_mshell	inf;
+//	(void)argc;
+//	(void)argv;
+//	//execve("/bin/echo", &argv[0], envp);
+//	inf.env = envp;
+//	inf.lenv = make_env_list(envp);
+//	//int m=0;
+//	while (3)
+//	{
+//		line = readline(PROMPT);
+//		inf.tokens = parse(line, inf.lenv);
+//		free(line);
+//		if (!inf.tokens)
+//			continue ;
+//		print_list(inf.tokens);
+//		free_tokens(inf.tokens);
+//	}
+//	free_lenv(inf.lenv);
+//}
