@@ -22,7 +22,6 @@ t_list	*invalid_args(void)
 
 void	free_val(t_list *token)
 {
-	//free(token->val);
 	if (token && token->val)
 	{
 		free(token->val);
@@ -101,79 +100,91 @@ void	streams(t_list *token)
 	{
 		free_val(token);
 		token->val = ft_strdup(token->next->val);
-		//free_val(token->next);
+		free_val(token->next);
 		if (!token->val)
 			exit(1);				//	!!!
 		token->next = token->next->next;
 	}
 }
 
-void	dollar_find(t_list *token, t_env *lenv)
+int	dollar_find(t_list *token, t_env *lenv)
 {
 	int	len;
 
+	token->key = WORD;
 	len = ft_strlen(token->val);
 	if (!ft_strncmp(token->val, "$", len))
 	{
-		//free_val(token);
+		free_val(token);
 		token->val = ft_strdup("1488");
 		if (!token->val)
 			exit(1);
-		return ;
+		//ft_putstr_fd(token->next->val, 1);
+		return (1);
 	}
 	while (lenv)
 	{
 		if (!ft_strncmp(lenv->key, token->val, len))
 		{
-			//free_val(token);
+			free_val(token);
 			token->val = ft_strdup(lenv->val);
 			//printf("vot on: %s\n", token->val);
 			if (!token->val)
 				exit(1);
-			return ;
+			return (1);
 		}
 		lenv = lenv->next;
 	}
+	token->val[0] = 0;
+	return (1);
 }
 
-void	dollar(t_list *dlr, t_env *lenv)
+int	dollar(t_list *dlr, t_env *lenv)
 {
-	//free_val(dlr);
-	dlr->key = WORD;
-	free_val(dlr);
-	if (!dlr->next || dlr->next->key == SPC)
+	if (!dlr->next || (dlr->next->key != DOLLAR && dlr->next->key != COMMAND))
 	{
+		ft_putstr_fd("joj\n", 1);
+		free_val(dlr);
 		dlr->val = ft_strdup("$");
 		if (!dlr->val)
 			exit(1);
-		if (dlr->next)
-			dlr->next = dlr->next->next;
+		dlr->key = WORD;
 		ft_putstr_fd("opa\n", 1);
-		return ;
+		return (0);
 	}
-	dlr->val = dlr->next->val;
-	dlr->next = dlr->next->next;
-	dollar_find(dlr, lenv);
+	dlr->val[0] = 0;
+	//dlr->next = dlr->next->next;
+	ft_putstr_fd("opa\n", 1);
+	return (dollar_find(dlr->next, lenv));
 }
 
 void	dol_spc_str(t_list *token, t_env *lenv)
 {
+	t_list	*bl=token;
+
 	while (token)
 	{
 		if (token->key == DOLLAR)
-			dollar(token, lenv);
+		{
+			if (dollar(token, lenv))
+				token = token->next;
+		}
 		else if (token->key == SPC)
 			free_val(token);
 		else if (token->key > 2 && token->key < 7)
 		{
-			if (token->next && (token->next->key > 2 && token->next->key < 7))
+			if (!token->next || (token->next && (token->next->key > 2
+							&& token->next->key < 7)))
 			{
 				ft_putstr_fd("parser error near '<'\n", 2);
+				free_list(bl);
+				free_lenv(lenv);
 				exit(1);
 			}
 			streams(token);
 		}
-		token = token->next;
+		if (token)
+			token = token->next;
 	}
 }
 
@@ -200,8 +211,6 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 
 	buf = NULL;
 	cpy = token;
-	//print_list(token);
-	//free_val(token);
 	token = token->next;
 	while (token && token->key != c)
 	{
@@ -210,7 +219,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 		//printf("dolare: %s\n", token->val);
 		if (ft_strapp(&buf, token->val))
 			return (1);
-		//free_val(token);
+		free_val(token);
 		token = token->next;
 		//printf("buf: %s\n", buf);
 	}
@@ -223,7 +232,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->key = WORD;
 	free_val(cpy);
 	cpy->val = buf;
-	//printf("cpy: %s\n", cpy->val);
+	printf("cpy: %s\n", cpy->val);
 	cpy->next = token->next;
 	free_val(token);
 	return (0);
@@ -266,7 +275,8 @@ void	free_tokens(t_list *token)
 	cp = token;
 	while (1)
 	{
-		free_val(&(token[++i]));
+		if (token[++i].val != NULL)
+			free_val(&(token[i]));
 		if (token[i].next == NULL)
 			break ;
 	}
@@ -292,13 +302,14 @@ t_list	*remalloc(t_list *old)
 
 	i = -1;
 	cp = old;
+	//print_list(old);
 	size = list_size(old);
 	new = (t_list *) malloc(sizeof(t_list) * (size + 1));
 	if (!new)
 		exit(1);					//		!!!!
 	while (old)
 	{
-		if (old->val && old->key != SPC)
+		if (old->val && old->key != DOLLAR && old->key != SPC)
 		{
 			if (token_cp(&new[++i], old))
 				exit(1);			//		!!!!
@@ -307,8 +318,15 @@ t_list	*remalloc(t_list *old)
 		}
 		old = old->next;
 	}
-	new[i].next = NULL;
+	if (i == -1)
+	{
+		free(new);
+		new = NULL;
+	}
+	else
+		new[i].next = NULL;
 	free_tokens(cp);
+	ft_putstr_fd("chech\n", 1);
 	return (new);
 }
 
@@ -421,10 +439,11 @@ int	main(int argc, char **argv, char **envp)
 		line = readline(PROMPT);
 		inf.tokens = parse(line, inf.lenv);
 		free(line);
+		ft_putstr_fd("uui\n", 1);
 		if (!inf.tokens)
 			continue ;
 		print_list(inf.tokens);
-		free_list(inf.tokens);
+		free_tokens(inf.tokens);
 	}
 	free_lenv(inf.lenv);
 }

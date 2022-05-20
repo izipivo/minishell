@@ -66,5 +66,6 @@ typedef	struct	s_mshell
 void	free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
 int	ft_arrlen(char **arr);
+void	free_list(t_list *list);
 
 #endif
