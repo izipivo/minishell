@@ -93,17 +93,15 @@ void	streams(t_list *token)
 {
 	if (token->next && token->next->key == SPC)
 	{
-		//free_val(token->next);
 		token->next = token->next->next;
 	}
 	if (token->next)
 	{
 		free_val(token);
 		token->val = ft_strdup(token->next->val);
-		free_val(token->next);
+		token->next->key = SPC;
 		if (!token->val)
 			exit(1);				//	!!!
-		token->next = token->next->next;
 	}
 }
 
@@ -169,8 +167,6 @@ void	dol_spc_str(t_list *token, t_env *lenv)
 			if (dollar(token, lenv))
 				token = token->next;
 		}
-		else if (token->key == SPC)
-			free_val(token);
 		else if (token->key > 2 && token->key < 7)
 		{
 			if (!token->next || (token->next && (token->next->key > 2
@@ -386,26 +382,6 @@ t_list	*parse(char *line, t_env *lenv)
 	//print_list(tokens);
 	return (cleaning(tokens, lenv));
 }
-
-
-//void	free_tokens(t_list *token)
-//{
-//	int	i;
-//	int	n;
-//
-//	i = -1;
-//	n = to_free;
-//	while (n >= 0)
-//	{
-//		free_val(&token[n]);
-//		token[n--].next = NULL;
-//	}
-//	//free_val(&token[i]);
-//	//token->next = NULL;
-//	if (token)
-//		free(token);
-//	token = NULL;
-//}
 
 void	free_list(t_list *list)
 {
