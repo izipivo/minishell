@@ -294,7 +294,6 @@ t_list	*remalloc(t_list *old)
 
 	i = -1;
 	cp = old;
-	//print_list(old);
 	size = list_size(old);
 	new = (t_list *) malloc(sizeof(t_list) * (size + 1));
 	if (!new)
@@ -318,6 +317,12 @@ t_list	*remalloc(t_list *old)
 	else
 		new[i].next = NULL;
 	free_tokens(cp);
+	if (new->key == PIPE)
+	{
+		free_tokens(new);
+		ft_putstr_fd(PERROR": pipe can not be the first argument!\n", 2);
+		exit(1);
+	}
 	return (new);
 }
 
