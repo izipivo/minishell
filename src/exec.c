@@ -87,11 +87,23 @@ void	change_fd(t_list *token)
 	}
 }
 
+char	**get_one_string(t_list *tokens)
+{
+	char	**fds;
+	int		pipes;
+
+	fds = new_fds(tokens);
+	//pipes = count_pipes(tokens);
+	//fds = malloc(sizeof(char *) * pipes);
+}
+
 int     main(int argc, char **argv, char **envp)
 {
-        char            *line;
+        char		*line;
+		char		**pipex_args;
+		
         //int                   i;
-        t_mshell        inf;
+        t_mshell	inf;
         (void)argc;
         (void)argv;
         //execve("/bin/echo", &argv[0], envp);
@@ -100,13 +112,14 @@ int     main(int argc, char **argv, char **envp)
         //int m=0;
         while (3)
         {
-                line = readline(PROMPT);
+        		line = readline(PROMPT);
                 inf.tokens = parse(line, inf.lenv);
                 free(line);
                 if (!inf.tokens)
                         continue ;
                 print_list(inf.tokens);
-				change_fd(inf.tokens);
+				line = get_one_string(inf.tokens);
+	//			exec(line);
 
 
 

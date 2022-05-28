@@ -22,7 +22,7 @@ HEADERS = ${addprefix ${HEADERS_DIR}, ${HEADERS_FILES}}
 
 CC = cc
 
-RM = rm -f
+RM = rm -rf
 
 NAME = libft.a 
 
@@ -58,7 +58,7 @@ clean:
 	${RM} -f ${OBJS} ${OBJS_BONUS}
 
 fclean:		clean
-	${RM} -f ${NAME}
+	${RM} ${NAME}
 
 re: fclean all
 
