@@ -224,7 +224,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->key = WORD;
 	free_val(cpy);
 	cpy->val = buf;
-	printf("cpy: %s\n", cpy->val);
+	//printf("cpy: %s\n", cpy->val);
 	cpy->next = token->next;
 	free_val(token);
 	return (0);

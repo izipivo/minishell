@@ -14,7 +14,7 @@
 
 void	ft_putendl_fd(char *s, int fd)
 {
-	if (!s)
+	if (!s || !*s)
 		return ;
 	if (fd != -1)
 	{

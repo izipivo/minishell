@@ -83,7 +83,8 @@ ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
 
 ${NAME}:			${OBJS} ${HEADERS}
-					${CC} ${CFLAGS} ${LIBS} ${OBJS} -o $@
+					#${CC} ${CFLAGS} ${LIBS} ${OBJS} -o $@				#MacOS
+					${CC} ${CFLAGS} ${OBJS} -o $@ ${LIBS}				#Linux
 
 ${BUILDIR}:
 					mkdir -p ${BUILDIR}
@@ -92,13 +93,16 @@ ${BINDIR}:
 					mkdir -p ${BINDIR}
 
 ${PWD}:				${OBJS_PWD} ${HEADERS}
-					${CC} ${CFLAGS} ${LIBS} ${OBJS_PWD} -o $@
+					#${CC} ${CFLAGS} ${LIBS} ${OBJS_PWD} -o $@
+					${CC} ${CFLAGS} ${OBJS_PWD} -o $@ ${LIBS}
 
 ${CD}:				${OBJS_CD} ${HEADERS}
-					${CC} ${CFLAGS} ${LIBS} ${OBJS_CD} -o $@
+					#${CC} ${CFLAGS} ${LIBS} ${OBJS_CD} -o $@
+					${CC} ${CFLAGS} ${OBJS_CD} -o $@ ${LIBS}
 
 ${ECHO}:			${OBJS_ECHO} ${HEADERS}
-					${CC} ${CFLAGS} ${LIBS} ${OBJS_ECHO} -o $@
+					#${CC} ${CFLAGS} ${LIBS} ${OBJS_ECHO} -o $@
+					${CC} ${CFLAGS} ${OBJS_ECHO} -o $@ ${LIBS}
 
 ${BUILDIR}%.o:		${SRC_DIR}%.c ${HEADERS} Makefile
 					${CC} -c ${CFLAGS} $< -o $@
