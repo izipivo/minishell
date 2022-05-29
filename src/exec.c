@@ -22,31 +22,31 @@ void	print_sss(char ***str)
 	ft_putendl_fd("gg", 1);
 }
 
-void	find_redir(t_list *token, char ****files)
+void	find_redir(t_list *token, char ***files, int pipes)
 {
 	char	**file;
 
-	file = (char **)malloc(sizeof(char *) * 2);
-	if (!file)
-		exit(1);								//!
-	file[0] = NULL;
-	file[1] = NULL;
+	file = *files;
+	file[0] = "pipex";
+	file[1] = "/";
+	ft_putendl_fd("hui", 1);
+	file[pipes - 2] = "/";
+	file[pipes - 1] = NULL;
 	while (token)
 	{
 		if (token->key == INFILE)
-			file[0] = token->val;
-		else if (token->key == OUTFILE)
 			file[1] = token->val;
+		else if (token->key == OUTFILE)
+			file[pipes - 2] = token->val;
 		token = token->next;
 	}
-	**files = file;
 }
 
 int	count_pipes(t_list *token)
 {
 	int	count;
 
-	count = 4;
+	count = 5;
 	while (token)
 	{
 		if (token->key == PIPE)
@@ -56,109 +56,93 @@ int	count_pipes(t_list *token)
 	return (count);
 }
 
-//static char	*ft_strjoin_withspace(char const *s1, char const	*s2)
-//{
-//	char	*joined;
-//	int		i;
-//
-//	i = -1;
-//	joined = (char *) malloc(ft_strlen(s1) + ft_strlen(s2) + 2);
-//	if (!joined)
-//		return (0);
-//	while (s1 && *s1)
-//		joined[++i] = *s1++;
-//	if (i != -1)
-//		joined[++i] = ' ';
-//	while (s2 && *s2)
-//		joined[++i] = *s2++;
-//	joined[++i] = '\0';
-//	return (joined);
-//}
-
-void	make_ar_str(t_list *token, int count, char ***str, int i)
+static char	*ft_strjoin_withspace(char *s1, char const	*s2)
 {
-	char	**arr;
+	char	*joined;
+	int		i;
+	int		j;
 
-	arr = (char **)malloc(sizeof(char *) * (++count + 3));
-	if (!arr)
-		exit(1);									//!
-	//ft_putendl_fd(str[0][0], 1);
-	arr[count + 2] = NULL;
-	//ft_putendl_fd(str[0][1], 1);
-	if (!str[0][1])
-		arr[1 + count] = "/";
-	else
-		arr[1 + count] = str[0][1];
-	while (count > 1)
-	{
-		while (token->key != COMMAND && token->key != WORD)
-			token--;
-		arr[count] = token->val;
-		if (count-- - 1 >= 0)
-			token--;
-	}
-	if (!str[0][0])
-		arr[1] = "/";
-	else
-		arr[1] = str[0][0];
-	arr[0] = "pipex";
-	str[i] = arr;
+	i = -1;
+	j = 0;
+	joined = (char *) malloc(ft_strlen(s1) + ft_strlen(s2) + 2);
+	if (!joined)
+		return (0);
+	while (s1 && s1[j])
+		joined[++i] = s1[j++];
+	if (i != -1)
+		joined[++i] = ' ';
+	while (s2 && *s2)
+		joined[++i] = *s2++;
+	joined[++i] = '\0';
+	if (j != 0)
+		free(s1);
+	return (joined);
 }
 
-char	***get_one_string(t_list *token, int pipes)
+//void	make_str_com(t_list *token, int count, char ***str, int i)
+//{
+//	char	*arg;
+//
+//
+//}
+
+char	**get_one_string(t_list *token, int pipes)
 {
-	char	***string;
-	int		count;
+	char	**string;
+	char	*buf;
 	int		i;
 
 	//print_list(token);
-	i = 0;
-	count = 0;
-	string = (char ***)malloc(sizeof(char **) * pipes);
+	i = 1;
+	buf = NULL;
+	string = (char **)malloc(sizeof(char *) * pipes);
 	if (!string)
 		exit(1);									//!
-	find_redir(token, &string);
+	find_redir(token, &string, pipes);
 	while (token->next)
 	{
 		if (token->key == PIPE)
 		{
-			make_ar_str(token, count, string, i);
-			print_string(string[i]);
-			count = 0;
+			string[++i] = buf;
+			buf = NULL;
 		}
 		else if (token->key == WORD || token->key == COMMAND)
 		{
-			count++;
+			buf = ft_strjoin_withspace(buf, token->val);
+			//ft_putendl_fd(buf, 1);
+			if (!buf)
+				exit(1);							//!
 		}
 		token = token->next;
 	}
 	if (token->key == PIPE)
 		ft_putendl_fd("wtf?", 1);
-	make_ar_str(token, ++count, string, i);
-	string[++i] = NULL;
-	//print_sss(string);
+	buf = ft_strjoin_withspace(buf, token->val);
+	string[++i] = buf;
+	print_string(string);
 	return (string);
 }
 
-void	exec(char ***commands, char **envp)
+void	exec(char **commands, char **envp)
 {
 	pid_t	child;
-	int		i;
+	int		*a=malloc(sizeof(int));
 
 	child = fork();
 	if (child == -1)
 		exit(1);								//!
-	i = 0;
 	if (!child)
 	{
-		execve("./bin/pipex", commands[++i], envp);
+		execve("./bin/pipex", commands, envp);
 	}
+	else
+		waitpid(child, a, 0);
 }
 
 int     main(int argc, char **argv, char **envp)
 {
         char		*line;
-		char		***pipex_args;
+		char		**pipex_args;
 		
         //int                   i;
         t_mshell	inf;
