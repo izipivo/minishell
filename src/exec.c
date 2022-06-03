@@ -1,26 +1,27 @@
 #include "../includes/minishell.h"
 
-void	print_string(char **str)
+void	print_string(char **str, int i)
 {
-	while (*str)
+	int j=-1;
+
+	while (++j < i)
 	{
-		ft_putendl_fd(*str, 1);
-		str++;
+		ft_putendl_fd(str[j], 1);
 		ft_putendl_fd("---", 1);
 	}
 }
 
-void	print_sss(char ***str)
-{
-	str++;
-	while (str && *str)
-	{
-		ft_putendl_fd("new arr", 1);
-		print_string(*str);
-		str++;
-	}
-	ft_putendl_fd("gg", 1);
-}
+// void	print_sss(char ***str)
+// {
+// 	str++;
+// 	while (str && *str)
+// 	{
+// 		ft_putendl_fd("new arr", 1);
+// 		print_string(*str);
+// 		str++;
+// 	}
+// 	ft_putendl_fd("gg", 1);
+// }
 
 void	find_redir(t_list *token, char ***files, int pipes)
 {
@@ -29,7 +30,7 @@ void	find_redir(t_list *token, char ***files, int pipes)
 	file = *files;
 	file[0] = "pipex";
 	file[1] = "/";
-	ft_putendl_fd("hui", 1);
+	// ft_putendl_fd("hui", 1);
 	file[pipes - 2] = "/";
 	file[pipes - 1] = NULL;
 	while (token)
@@ -38,6 +39,10 @@ void	find_redir(t_list *token, char ***files, int pipes)
 			file[1] = token->val;
 		else if (token->key == OUTFILE)
 			file[pipes - 2] = token->val;
+		else if (token->key == HEREDOC)
+			file[1] = "here_doc";
+		else if (token->key == APPEND)
+			file[pipes - 2] = "/hui/";
 		token = token->next;
 	}
 }
@@ -117,9 +122,16 @@ char	**get_one_string(t_list *token, int pipes)
 	}
 	if (token->key == PIPE)
 		ft_putendl_fd("wtf?", 1);
-	buf = ft_strjoin_withspace(buf, token->val);
-	string[++i] = buf;
-	print_string(string);
+	if (token->key == WORD || token->key == COMMAND)
+	{
+		buf = ft_strjoin_withspace(buf, token->val);
+		if (!buf)
+			exit(1);                                //!
+	}
+	if (buf)
+		string[++i] = buf;
+	ft_putendl_fd("before pipex", 1);
+	print_string(string, pipes);
 	return (string);
 }
 

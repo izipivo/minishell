@@ -46,13 +46,15 @@ UNITS_B = ${addprefix ${UNITS_INCL_B}, ${UNITS_FUNC_B}}
 
 UNITS_GNL = ${addprefix ${GNL_INCL}, ${GNL_FUNC}}
 
+BUILDDIR = ../obj/
+
 OBJ1 = $(LIST:.c=.o)
 
-OBJ2 = $(UNITS:.c=.o)
+OBJ2 = $(addprefix ${BUILDDIR}, $(UNITS_FUNC:.c=.o))
 
-OBJ_B = $(UNITS_B:.c=.o)
+OBJ_B = $(addprefix ${BUILDDIR}, $(UNITS_FUNC_B:.c=.o))
 
-OBJ_GNL = $(UNITS_GNL:.c=.o)
+OBJ_GNL = $(addprefix ${BUILDDIR}, $(GNL_FUNC:.c=.o))
 
 LIBFT = ../libft/libft.a
 
@@ -61,7 +63,13 @@ LIB = -L../libft -lft
 ${NAME}:	${OBJ1} ${OBJ2}
 				${CC} ${FLAGS} $^ -o $@
 
-%.o : %.c ${HDR_PIPEX} Makefile
+${BUILDDIR}%.o : ${UNITS_INCL}%.c ${HDR_PIPEX} Makefile
+	${CC} ${FLAGS} -c $< -o $@
+
+${BUILDDIR}%.o : ${GNL_INCL}%.c ${HDR_PIPEX} Makefile
+	${CC} ${FLAGS} -c $< -o $@
+
+${BUILDDIR}%.o : ${UNITS_INCL_B}%.c ${HDR_PIPEX} Makefile
 	${CC} ${FLAGS} -c $< -o $@
 
 all: ${NAME}

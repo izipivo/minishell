@@ -24,6 +24,8 @@ CC = cc
 
 RM = rm -rf
 
+BUILDIR = ../obj/
+
 NAME = libft.a 
 
 SOURCES = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c\
@@ -37,16 +39,16 @@ BONUS_SOURCES = ft_lstnew_bonus.c ft_lstadd_front_bonus.c ft_lstsize_bonus.c\
 	ft_lstlast_bonus.c ft_lstadd_back_bonus.c ft_lstdelone_bonus.c\
 	ft_lstclear_bonus.c ft_lstiter_bonus.c ft_lstmap_bonus.c
 
-OBJS = $(patsubst %.c, %.o, ${SOURCES})
+OBJS = $(addprefix ${BUILDIR}, $(patsubst %.c, %.o, ${SOURCES}))
 
-OBJS_BONUS = $(patsubst %.c, %.o, ${BONUS_SOURCES})
+OBJS_BONUS = $(addprefix ${BUILDIR}, $(patsubst %.c, %.o, ${BONUS_SOURCES}))
 
 DFILES = $(patsubs %.c,%.d,${SOURCES})
 
 all:	bonus
 
-%.o :	%.c ${HEADERS}
-	${CC} -c ${CFLAGS} $< ${INCLUDE} -o ${<:.c=.o}
+${BUILDIR}%.o:	%.c ${HEADERS}
+	${CC} -c ${CFLAGS} $< ${INCLUDE} -o $@
 
 ${NAME}:	${OBJS}
 	ar rcs ${NAME} $?

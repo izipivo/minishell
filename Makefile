@@ -74,7 +74,7 @@ LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 
 .PHONY:				clean all fclean re
 
-all:				${LIBFT} ${BINDIR} ${PIPEX} ${BUILDIR} ${PWD} ${CD} ${ECHO} ${NAME}
+all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PIPEX} ${PWD} ${CD} ${ECHO} ${NAME}
 
 ${PIPEX}:
 					${MAKE} bonus -C ${PIPEXDIR}

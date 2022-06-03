@@ -46,17 +46,17 @@ void	infile(t_pipex_b *pipex, char **av, int ac)
 {
 	if (!ft_strncmp(av[1], "here_doc", 9))
 	{
-		if (ac >= 6)
+		if (ac >= 5)
 		{
 			pipex->here_doc = 1;
 			check_heredoc(pipex, av);
 		}
 		else
-			ft_error_in_out("ac < 6!");
+			ft_error_in_out("ac < 5!");
 	}
 	else
 	{
-		if (ac >= 5)
+		if (ac >= 4)
 		{
 			pipex->here_doc = 0;
 			if (!ft_strncmp("/", av[1], 2))
@@ -69,6 +69,6 @@ void	infile(t_pipex_b *pipex, char **av, int ac)
 				ft_error_in_out("Can not open: infile!");
 		}
 		else
-			ft_error_in_out("ac < 5");
+			ft_error_in_out("ac < 4!");
 	}
 }
