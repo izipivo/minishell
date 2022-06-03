@@ -29,7 +29,7 @@ void	check_heredoc(t_pipex_b *pipex, char **av)
 
 	fd_here_doc = open(".heredoc_tmp", O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	if (fd_here_doc < 0)
-		exit(1);
+		ft_error_in_out("can not open '.heredoc_tmp'!");
 	while (1)
 	{
 		flag = get_next_line(0, &line);
@@ -45,5 +45,5 @@ void	check_heredoc(t_pipex_b *pipex, char **av)
 	close(fd_here_doc);
 	pipex->in = open(".heredoc_tmp", O_RDONLY, 0777);
 	if (!pipex->in)
-		exit(1);
+		ft_error_in_out("Can not open '.heredoc_tmp'!");
 }

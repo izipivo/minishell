@@ -55,6 +55,6 @@ void	ft_child(t_pipex_b *pipex, char **argv, char **envp);
 void	ft_dup(int fd1, int fd2, t_pipex_b *pipex);
 void	ft_close(t_pipex_b *pipex);
 void	ft_close_pip(t_pipex_b *pipex);
-void	ft_error(t_pipex_b *pipex);
+void	ft_error(t_pipex_b *pipex, char *str);
 void	ft_error_in_out(char *str);
 #endif

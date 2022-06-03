@@ -17,6 +17,7 @@ void	ft_error_make(t_pipex_b *pipex)
 	ft_clean_main(*pipex);
 	ft_clean_child(pipex);
 	free(pipex->path);
+	ft_putendl_fd("error occured while making command :(", 2);
 	exit(1);
 }
 

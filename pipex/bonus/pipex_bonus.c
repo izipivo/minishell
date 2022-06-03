@@ -34,11 +34,12 @@ void	check_command(t_pipex_b *pipex)
 	{
 		ft_clean_main(*pipex);
 		free(pipex->path);
+		ft_putendl_fd("can not split your command :(", 2);
 		exit(1);
 	}
 }
 
-void	ft_error(t_pipex_b *pipex)
+void	ft_error(t_pipex_b *pipex, char *str)
 {
 	ft_close(pipex);
 	if (pipex->here_doc == 1)
@@ -47,6 +48,7 @@ void	ft_error(t_pipex_b *pipex)
 		free(pipex->pip);
 	if (pipex->path)
 		free(pipex->path);
+	ft_putendl_fd(str, 2);
 	exit(1);
 }
 
@@ -74,10 +76,10 @@ int	main(int argc, char **argv, char **envp)
 	pipex_b.pipe_num = 2 * (pipex_b.number_cmd - 1);
 	pipex_b.pip = (int *)malloc(sizeof(int) * pipex_b.pipe_num);
 	if (!pipex_b.pip)
-		ft_error(&pipex_b);
+		ft_error(&pipex_b, "can not malloc: pipex_b.pip!");
 	pipex_b.path = ft_parse_path(envp);
 	if (!pipex_b.path)
-		ft_error(&pipex_b);
+		ft_error(&pipex_b, "can not parse path!");
 	pipex_b.command = ft_split(pipex_b.path, ':');
 	check_command(&pipex_b);
 	create_pipe(&pipex_b);
