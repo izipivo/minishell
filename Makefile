@@ -77,7 +77,7 @@ LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PIPEX} ${PWD} ${CD} ${ECHO} ${NAME}
 
 ${PIPEX}:
-					${MAKE} bonus -C ${PIPEXDIR}
+					${MAKE} -C ${PIPEXDIR}
 
 ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}

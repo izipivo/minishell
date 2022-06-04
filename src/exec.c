@@ -131,7 +131,7 @@ char	**get_one_string(t_list *token, int pipes)
 	if (buf)
 		string[++i] = buf;
 	//ft_putendl_fd("before pipex", 1);
-	//print_string(string, pipes);
+	print_string(string, pipes);
 	return (string);
 }
 

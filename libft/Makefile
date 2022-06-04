@@ -50,17 +50,20 @@ all:	bonus
 ${BUILDIR}%.o:	%.c ${HEADERS}
 	${CC} -c ${CFLAGS} $< ${INCLUDE} -o $@
 
-${NAME}:	${OBJS}
-	ar rcs ${NAME} $?
+${NAME}:	${BUILDIR} ${OBJS}
+	ar rcs ${NAME} ${OBJS}
+
+${BUILDIR}:
+	mkdir ${BUILDIR}
 
 bonus:
-	make OBJS="${OBJS_BONUS} ${OBJS}" ${NAME}
+	@make OBJS="${OBJS_BONUS} ${OBJS}" ${NAME}
 
 clean:
-	${RM} -f ${OBJS} ${OBJS_BONUS}
+	@${RM} -f ${OBJS} ${OBJS_BONUS}
 
 fclean:		clean
-	${RM} ${NAME}
+	@${RM} ${NAME}
 
 re: fclean all
 
