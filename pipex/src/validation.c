@@ -14,6 +14,8 @@
 
 static void	check_outfile(char *outfile)
 {
+	if (!ft_strncmp("/", outfile, 2))
+		return ;
 	if (access(outfile, F_OK) != 0)
 		return ;
 	if (access(outfile, W_OK) != 0)
@@ -25,6 +27,8 @@ static void	check_outfile(char *outfile)
 
 static void	check_infile(char *infile, char *outfile)
 {
+	if (!ft_strncmp("/", infile, 2))
+		return ;
 	if (access(infile, F_OK) != 0)
 	{
 		perror(infile);

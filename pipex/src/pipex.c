@@ -71,6 +71,7 @@ void	close_fd(int quantity, int proc, int **fd)
 	}
 	if (proc != -1)
 	{
+		if (ft_strncmp("/", ))
 		dup2(fd[proc][0], 0);
 		close(fd[proc][0]);
 		dup2(fd[proc + 1][1], 1);

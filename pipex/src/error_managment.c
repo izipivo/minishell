@@ -25,6 +25,7 @@ void	exitmalloc(int quantity, int **fd)
 		free(fd);
 		fd = NULL;
 	}
+	ft_putendl_fd("pipex gone mad", 2);
 	exit(EXIT_FAILURE);
 }
 
