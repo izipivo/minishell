@@ -42,7 +42,7 @@ void	find_redir(t_list *token, char ***files, int pipes)
 		else if (token->key == HEREDOC)
 			file[1] = "here_doc";
 		else if (token->key == APPEND)
-			file[pipes - 2] = "/hui/";
+			file[pipes - 2] = ft_strjoin("\\/", token->val);				//!!!
 		token = token->next;
 	}
 }
@@ -131,7 +131,7 @@ char	**get_one_string(t_list *token, int pipes)
 	if (buf)
 		string[++i] = buf;
 	//ft_putendl_fd("before pipex", 1);
-	print_string(string, pipes);
+	//print_string(string, pipes);
 	return (string);
 }
 

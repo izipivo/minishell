@@ -92,16 +92,16 @@ static int	**multipipe(int m, int argc, char **argv)
 		fd[i] = (int *)malloc(sizeof(int) * 2);
 		if (!fd[i])
 			exitmalloc(i, fd);
-		if (i == 0 && !ft_strncmp(argv[1], "/", 2))
-		{
-			fd[0][0] = 0;
-			fd[0][1] = 1;
-		}
-		else if (i == m - 1 && !ft_strncmp(argv[argc - 1], "/", 2))
-		{
-			fd[i][0] = 0;
-			fd[i][1] = 1;
-		}
+//		if (i == 0 && !ft_strncmp("/", argv[1], 2))
+//		{
+//			fd[0][0] = 0;
+//			fd[0][1] = 1;
+//		}
+//		else if (i == m - 1 && !ft_strncmp("/", argv[argc - 1], 2))
+//		{
+//			fd[i][0] = 0;
+//			fd[i][1] = 1;
+//		}
 		if (pipe(fd[i]) == -1)
 			exitmalloc(i, fd);
 	}

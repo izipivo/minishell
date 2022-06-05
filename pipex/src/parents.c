@@ -28,6 +28,8 @@ int	parentread(char *cmp, int fd, char *filename)
 	int		file;
 
 	file = 0;
+	if (!ft_strncmp("/", filename, 2))
+		return (0);
 	if (!cmp)
 		file = open(filename, O_RDONLY);
 	if (file == -1)
@@ -56,10 +58,17 @@ int	parentwrite(int fd, char *filename, int flag)
 	char	*buf;
 	int		file;
 
-	if (!flag)
+	file = 1;
+	if (!flag && ft_strncmp("/", filename, 2))
+	{
+		ft_putstr_fd("otkrivet file\n", 1);
 		file = rmandopen(filename);
-	else
+	}
+	else if (ft_strncmp("/", filename, 2))
+	{
+		ft_putstr_fd("parentwrite otkrivet file\n", 1);
 		file = open(filename, O_APPEND | O_CREAT | O_WRONLY, 0664);
+	}
 	if (file == -1)
 		return (-1);
 	while (1)
