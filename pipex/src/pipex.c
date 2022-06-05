@@ -124,10 +124,9 @@ int	main(int argc, char **argv, char **envp)
 	fd = multipipe(argc - 2 - m, argc, argv);
 	pid = forks(fd, (argc - 3 - m) * (1 - 2 * m), argv, envp);
 	close_fd(argc - 2 - m, -1, fd);
-	if (!m)
-		check = parentread(NULL, fd[0][1], argv[1]);
-	else
-		check = parentread(argv[2], fd[0][1], NULL);
+	check = parentread(fd[0][1], argv[1]);
+//	else
+//		check = parentread(argv[2], fd[0][1], NULL);
 	if (check == -1)
 		exitpid(fd, pid, argc, "parentread");
 	check = parentwrite(fd[argc - 3 - m][0], argv[argc - 1], m);

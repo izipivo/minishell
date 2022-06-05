@@ -23,6 +23,18 @@ void	print_string(char **str, int i)
 // 	ft_putendl_fd("gg", 1);
 // }
 
+char	*change_filename(char **str, char *prefix)
+{
+	char	*buf;
+
+	buf = ft_strjoin(prefix, *str);
+	if (!buf)
+		exit(1);																//!!!
+	free(*str);
+	*str = buf;
+	return (*str);
+}
+
 void	find_redir(t_list *token, char ***files, int pipes)
 {
 	char	**file;
@@ -40,9 +52,9 @@ void	find_redir(t_list *token, char ***files, int pipes)
 		else if (token->key == OUTFILE)
 			file[pipes - 2] = token->val;
 		else if (token->key == HEREDOC)
-			file[1] = "here_doc";
+			file[1] = change_filename(&token->val, "//");
 		else if (token->key == APPEND)
-			file[pipes - 2] = ft_strjoin("\\/", token->val);				//!!!
+			file[pipes - 2] = change_filename(&token->val, "\\/");				//!!!
 		token = token->next;
 	}
 }
@@ -83,13 +95,6 @@ static char	*ft_strjoin_withspace(char *s1, char const	*s2)
 		free(s1);
 	return (joined);
 }
-
-//void	make_str_com(t_list *token, int count, char ***str, int i)
-//{
-//	char	*arg;
-//
-//
-//}
 
 char	**get_one_string(t_list *token, int pipes)
 {
@@ -138,7 +143,7 @@ char	**get_one_string(t_list *token, int pipes)
 void	exec(char **commands, char **envp)
 {
 	pid_t	child;
-	int		*a=malloc(sizeof(int));
+	//int		*a=malloc(sizeof(int));
 
 	child = fork();
 	if (child == -1)
@@ -148,22 +153,36 @@ void	exec(char **commands, char **envp)
 		execve("./bin/pipex", commands, envp);
 	}
 	else
-		waitpid(child, a, 0);
+		waitpid(child, NULL, 0);
+}
+
+void	free_pipex_args(char **ar, int pipes)
+{
+	int	i;
+
+	i = 1;
+	while (++i < pipes - 2)
+	{
+		if (ar[i])
+		{
+			free(ar[i]);
+			ar[i] = NULL;
+		}
+	}
+	free(ar);
+	ar = NULL;
 }
 
 int     main(int argc, char **argv, char **envp)
 {
+        t_mshell	inf;
         char		*line;
 		char		**pipex_args;
-		
-        //int                   i;
-        t_mshell	inf;
+		int			pipes;
         (void)argc;
         (void)argv;
-        //execve("/bin/echo", &argv[0], envp);
         inf.env = envp;
         inf.lenv = make_env_list(envp);
-        //int m=0;
         while (3)
         {
         		line = readline(PROMPT);
@@ -172,8 +191,8 @@ int     main(int argc, char **argv, char **envp)
                 if (!inf.tokens)
                         continue ;
                 //print_list(inf.tokens);
-				pipex_args = get_one_string(inf.tokens,
-					count_pipes(inf.tokens));
+				pipes = count_pipes(inf.tokens);
+				pipex_args = get_one_string(inf.tokens, pipes);
 				exec(pipex_args, envp);
 
 
@@ -181,6 +200,7 @@ int     main(int argc, char **argv, char **envp)
 
 
                 free_tokens(inf.tokens);
+				free_pipex_args(pipex_args, pipes);
         }
         free_lenv(inf.lenv);
 }

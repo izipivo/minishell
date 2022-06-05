@@ -57,9 +57,9 @@ int	validate(int argc, char **argv)
 	}
 	if (m)
 	{
-		check_outfile(argv[argc - 1]);
+//		check_outfile(argv[argc - 1]);
 		return (m);
 	}
-	check_infile(argv[1], argv[argc - 1]);
+//	check_infile(argv[1], argv[argc - 1]);
 	return (0);
 }

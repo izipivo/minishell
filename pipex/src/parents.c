@@ -12,8 +12,12 @@
 
 #include "../includes/pipex.h"
 
-static int	rmandopen(char *filename)
+static int	open_outfile(char *filename)
 {
+	if (!ft_strncmp("/", filename, 2))
+		return (1);
+	if (!ft_strncmp("\\/", filename, 2))
+		return (open(filename + 2, O_APPEND | O_CREAT | O_WRONLY, 0664));
 	if (access(filename, F_OK) == 0)
 	{
 		if (unlink(filename) == -1)
@@ -21,25 +25,37 @@ static int	rmandopen(char *filename)
 	}
 	return (open(filename, O_WRONLY | O_CREAT, 0664));
 }
+int	ifheredoc(char *filename)
+{
+	if (!ft_strncmp("//", filename, 2))
+		return (2);
+	return (0);
+}
 
-int	parentread(char *cmp, int fd, char *filename)
+int	parentread(int fd, char *filename)
 {
 	char	*buf;
 	int		file;
+	int		cmp;
 
 	file = 0;
-	if (!ft_strncmp("/", filename, 2))
+	cmp = ifheredoc(filename);
+	if (!cmp && !ft_strncmp("/", filename, 2))
 		return (0);
 	if (!cmp)
+	{
+//		ft_putendl_fd(filename, 1);
 		file = open(filename, O_RDONLY);
+//		ft_putnbr_fd(file, 1);
+	}
 	if (file == -1)
 		return (-1);
 	while (1)
 	{
 		buf = get_next_line(file);
-		if (!buf && !cmp)
+		if (!buf)
 			break ;
-		if (cmp && ft_strncmp(buf, cmp, ft_strlen(cmp)) == 0)
+		if (cmp && ft_strncmp(buf, filename + cmp, ft_strlen(filename + cmp)) == 0)
 		{
 			free(buf);
 			break ;
@@ -59,16 +75,19 @@ int	parentwrite(int fd, char *filename, int flag)
 	int		file;
 
 	file = 1;
-	if (!flag && ft_strncmp("/", filename, 2))
-	{
-		ft_putstr_fd("otkrivet file\n", 1);
-		file = rmandopen(filename);
-	}
-	else if (ft_strncmp("/", filename, 2))
-	{
-		ft_putstr_fd("parentwrite otkrivet file\n", 1);
-		file = open(filename, O_APPEND | O_CREAT | O_WRONLY, 0664);
-	}
+    file = open_outfile(filename);
+//	if (!flag && ft_strncmp("/", filename, 2))
+//	{
+//		ft_putstr_fd("otkrivet file: ", 1);
+//        ft_putendl_fd(filename, 1);
+//		file = rmandopen(filename);
+//	}
+//	else if (ft_strncmp("/", filename, 2))
+//	{
+//        ft_putstr_fd("otkrivet file: ", 1);
+//        ft_putendl_fd(filename, 1);
+//		file = open(filename, O_APPEND | O_CREAT | O_WRONLY, 0664);
+//	}
 	if (file == -1)
 		return (-1);
 	while (1)

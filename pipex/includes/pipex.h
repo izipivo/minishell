@@ -33,7 +33,7 @@ void	cleansplit(char **cmd);
 char	*checkpath(char *tmp, char **envp);
 void	close_fd(int quantity, int proc, int **fd);
 pid_t	*forks(int **fd, int quantity, char	**argv, char **envp);
-int		parentread(char *cmp, int fd, char *filename);
+int		parentread(int fd, char *filename);
 int		parentwrite(int fd, char *filename, int flag);
 void	waitchildren(pid_t *pid, int **fd, int argc);
 int		validate(int argc, char **argv);
