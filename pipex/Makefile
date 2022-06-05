@@ -48,7 +48,7 @@ ${BUILDIR}:
 				mkdir ${BUILDIR} 
 
 ${BUILDIR}%.o:	src/%.c ${HEADERS} ${{BUILDIR} ${LIBFT} Makefile
-				@${CC} ${FLAGS} -c $< -o $@
+				${CC} ${FLAGS} -c $< -o $@
 
 
 clean:

@@ -71,7 +71,6 @@ void	close_fd(int quantity, int proc, int **fd)
 	}
 	if (proc != -1)
 	{
-		if (ft_strncmp("/", ))
 		dup2(fd[proc][0], 0);
 		close(fd[proc][0]);
 		dup2(fd[proc + 1][1], 1);
@@ -79,7 +78,7 @@ void	close_fd(int quantity, int proc, int **fd)
 	}
 }
 
-static int	**multipipe(int m)
+static int	**multipipe(int m, int argc, char **argv)
 {
 	int	i;
 	int	**fd;
@@ -93,6 +92,16 @@ static int	**multipipe(int m)
 		fd[i] = (int *)malloc(sizeof(int) * 2);
 		if (!fd[i])
 			exitmalloc(i, fd);
+		if (i == 0 && !ft_strncmp(argv[1], "/", 2))
+		{
+			fd[0][0] = 0;
+			fd[0][1] = 1;
+		}
+		else if (i == m - 1 && !ft_strncmp(argv[argc - 1], "/", 2))
+		{
+			fd[i][0] = 0;
+			fd[i][1] = 1;
+		}
 		if (pipe(fd[i]) == -1)
 			exitmalloc(i, fd);
 	}
@@ -112,7 +121,7 @@ int	main(int argc, char **argv, char **envp)
 		exit(EXIT_FAILURE);
 	}
 	m = validate(argc, argv);
-	fd = multipipe(argc - 2 - m);
+	fd = multipipe(argc - 2 - m, argc, argv);
 	pid = forks(fd, (argc - 3 - m) * (1 - 2 * m), argv, envp);
 	close_fd(argc - 2 - m, -1, fd);
 	if (!m)
