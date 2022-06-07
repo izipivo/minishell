@@ -9,4 +9,5 @@
 10. enum Errors
 11. Написать функции unset, env, exit
 12. Связать функции pwd, echo, export, cd, unset, env, exit
+Выпить пивка
 ...
