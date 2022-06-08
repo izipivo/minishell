@@ -30,6 +30,9 @@
 # define PROMPT RED "MI"ORANGE"NI"LYELLOW"GA"GREEN"YS"BRIGHT_BLUE"HE"SINIY"LL"\
 	PURPLE "$> "RESET
 # define PERROR YELLOW "mini" RED "error" RESET
+# define RL_PROMT_START_IGNORE '\001'
+# define RL_PROMT_END_IGNORE '\002'
+
 /*
 //		token's keys
 */

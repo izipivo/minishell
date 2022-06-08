@@ -187,6 +187,8 @@ int     main(int argc, char **argv, char **envp)
         {
         		line = readline(PROMPT);
                 inf.tokens = parse(line, inf.lenv);
+				if (ft_strlen(line))
+					add_history(line);
                 free(line);
                 if (!inf.tokens)
                         continue ;
@@ -195,8 +197,7 @@ int     main(int argc, char **argv, char **envp)
 				pipex_args = get_one_string(inf.tokens, pipes);
 				exec(pipex_args, envp);
 
-
-
+				rl_redisplay();
 
 
                 free_tokens(inf.tokens);
