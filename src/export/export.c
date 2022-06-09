@@ -82,16 +82,16 @@ void	sort_env(t_mshell	*inf)
 int main(int argc, char *argv[], char *envp[])
 {
 	char **exp;
-	(void)argc;
 	(void)argv;
 	t_mshell	inf;
 
 	inf.lenv = make_env_list(envp);
 	if (argc > 2)
-		add_variable(&inf, argc, argv);
+		inf.lenv = add_variable(&inf, argc, argv);
 	sort_env(&inf);
 	free_lenv(inf.lenv);
 	return (0);
 }
 
-//gcc export.c ../../includes/minishell.h ../../libft/ft_strjoin.c ../../libft/ft_strlen.c ../../libft/ft_strchr.c ../../libft/ft_strdup.c ../env_list.c export_utils.c ../../libft/ft_strncmp.c
+
+//gcc export.c ../../includes/minishell.h ../../libft/ft_strjoin.c ../../libft/ft_strlen.c ../../libft/ft_strchr.c ../../libft/ft_strdup.c ../env_list.c export_utils.c ../../libft/ft_strncmp.c update.c 
