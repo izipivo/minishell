@@ -258,13 +258,13 @@ int	list_size(t_list *list)
 	return (i);
 }
 
-void	free_tokens(t_list *token)
+void	*free_tokens(t_list **tokens)
 {
-	t_list	*cp;
+	t_list	*token;
 	int		i;
 
 	i = -1;
-	cp = token;
+	token = *tokens;
 	while (1)
 	{
 		if (token[++i].val != NULL)
@@ -272,8 +272,9 @@ void	free_tokens(t_list *token)
 		if (token[i].next == NULL)
 			break ;
 	}
-	free(cp);
-	cp = NULL;
+	free(*tokens);
+	tokens = NULL;
+	return (NULL);
 }
 
 int	token_cp(t_list *new, t_list *old)
@@ -316,10 +317,10 @@ t_list	*remalloc(t_list *old)
 	}
 	else
 		new[i].next = NULL;
-	free_tokens(cp);
+	free_tokens(&cp);
 	if (new->key == PIPE)
 	{
-		free_tokens(new);
+		free_tokens(&new);
 		ft_putstr_fd(PERROR": pipe can not be the first argument!\n", 2);
 		exit(1);
 	}

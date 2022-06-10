@@ -1,5 +1,7 @@
 #include "../includes/minishell.h"
 
+t_mshell	inf;
+
 void	print_string(char **str, int i)
 {
 	int j=-1;
@@ -140,7 +142,7 @@ char	**get_one_string(t_list *token, int pipes)
 	return (string);
 }
 
-void	exec(char **commands, char **envp)
+void	exec(void)
 {
 	pid_t	child;
 	//int		*a=malloc(sizeof(int));
@@ -150,13 +152,17 @@ void	exec(char **commands, char **envp)
 		exit(1);								//!
 	if (!child)
 	{
-		execve("./bin/pipex", commands, envp);
+		execve("./bin/pipex", inf.pipex_args, inf.env);
 	}
 	else
+	{
+		inf.pipex_child = child;
 		waitpid(child, NULL, 0);
+		inf.pipex_child = 0;
+	}
 }
 
-void	free_pipex_args(char **ar, int pipes)
+void	*free_pipex_args(char **ar, int pipes)
 {
 	int	i;
 
@@ -171,37 +177,77 @@ void	free_pipex_args(char **ar, int pipes)
 	}
 	free(ar);
 	ar = NULL;
+	return (NULL);
+}
+
+void	exit_ms(int sig)
+{
+	if (inf.pipex_child)
+	{
+		kill(inf.pipex_child, SIGKILL);
+		inf.pipex_child = 0;
+	}
+	if (inf.tokens)
+		inf.tokens = free_tokens(inf.tokens);
+	if (inf.lenv)
+		inf.lenv = free_lenv(inf.lenv);
+	if (inf.pipex_args)
+		inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
+	exit(sig);
+}
+
+void	sig_hand(int sig)
+{
+	ft_putendl_fd("\nbye", 1);
+	exit_ms(sig);
+}
+
+void	sig_quit(int sig)
+{
+	(void)sig;
+	if (inf.pipex_child)
+	{
+		kill(inf.pipex_child, SIGKILL);
+		printf("\nquited process with ID: %d\n", inf.pipex_child);
+		inf.pipex_child = 0;
+	}
 }
 
 int     main(int argc, char **argv, char **envp)
 {
-        t_mshell	inf;
         char		*line;
-		char		**pipex_args;
-		int			pipes;
+		t_list		*tokens;
         (void)argc;
         (void)argv;
         inf.env = envp;
         inf.lenv = make_env_list(envp);
+		signal(SIGQUIT, sig_quit);
+		signal(SIGINT, sig_hand);
         while (3)
         {
         		line = readline(PROMPT);
-                inf.tokens = parse(line, inf.lenv);
-				if (ft_strlen(line))
-					add_history(line);
+				if (!ft_strlen(line))
+				{
+					free(line);
+					continue ;
+				}
+				add_history(line);
+                tokens = parse(line, inf.lenv);
                 free(line);
-                if (!inf.tokens)
+				inf.tokens = &tokens;
+                if (!(*inf.tokens))
                         continue ;
                 //print_list(inf.tokens);
-				pipes = count_pipes(inf.tokens);
-				pipex_args = get_one_string(inf.tokens, pipes);
-				exec(pipex_args, envp);
+				inf.pipes = count_pipes(*inf.tokens);
+				inf.pipex_args = get_one_string(*inf.tokens, inf.pipes);
+				exec();
 
 				rl_redisplay();
 
 
                 free_tokens(inf.tokens);
-				free_pipex_args(pipex_args, pipes);
+				inf.tokens = NULL;
+				inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
         }
         free_lenv(inf.lenv);
 }

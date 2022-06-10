@@ -63,17 +63,21 @@ typedef struct	s_env
 typedef	struct	s_mshell
 {
 	char		**env;
+	int			pipes;
+	char		**pipex_args;
 	t_env		*lenv;
-	t_list		*tokens;
+	t_list		**tokens;
+	pid_t		pipex_child;
 }				t_mshell;
 
-void	free_lenv(t_env *lenv);
+void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
 int		ft_arrlen(char **arr);
 void	free_list(t_list *list);
 t_list	*parse(char *line, t_env *lenv);
 void	print_list(t_list *tokens);
 void	free_val(t_list *token);
-void	free_tokens(t_list *tokens);
+void	*free_tokens(t_list **tokens);
+void	*free_pipex_args(char **ar, int pipes);
 
 #endif

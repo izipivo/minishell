@@ -102,7 +102,7 @@ t_env	*make_env_list(char **envp)
 	return (lenv);
 }
 
-void	free_lenv(t_env *lenv)
+void	*free_lenv(t_env *lenv)
 {
 	t_env	*bl;
 
@@ -123,4 +123,5 @@ void	free_lenv(t_env *lenv)
 	}
 	free(bl);
 	bl = NULL;
+	return (NULL);
 }
