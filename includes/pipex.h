@@ -21,8 +21,8 @@
 # include <fcntl.h>
 # include <errno.h>
 # include "get_next_line.h"
-# include "../../libft/libft.h"
-# include "../../includes/minishell.h"
+# include "../libft/libft.h"
+# include "minishell.h"
 
 typedef struct s_pip
 {

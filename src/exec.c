@@ -2,28 +2,25 @@
 
 t_mshell	inf;
 
-void	print_string(char **str, int i)
+void	print_string(char **str)
 {
-	int j=-1;
-
-	while (++j < i)
+	while (*str)
 	{
-		ft_putendl_fd(str[j], 1);
-		ft_putendl_fd("---", 1);
+		ft_putendl_fd(*str, 1);
+		str++;
+		//ft_putendl_fd("---", 1);
 	}
 }
 
-// void	print_sss(char ***str)
-// {
-// 	str++;
-// 	while (str && *str)
-// 	{
-// 		ft_putendl_fd("new arr", 1);
-// 		print_string(*str);
-// 		str++;
-// 	}
-// 	ft_putendl_fd("gg", 1);
-// }
+void	print_pipes(t_pipes *pipe)
+{
+	while (pipe)
+	{
+		printf("cmd:\n");
+		print_string(pipe->cmd);
+		pipe = pipe->next;
+	}
+}
 
 char	*change_filename(char **str, char *prefix)
 {
@@ -65,7 +62,8 @@ int	count_pipes(t_list *token)
 {
 	int	count;
 
-	count = 5;
+	//count = 5;
+	count = 1;
 	while (token)
 	{
 		if (token->key == PIPE)
@@ -144,22 +142,27 @@ char	**get_one_string(t_list *token, int pipes)
 
 void	exec(void)
 {
-	pid_t	child;
+	//pid_t	child;
 	//int		*a=malloc(sizeof(int));
 
-	child = fork();
-	if (child == -1)
-		exit(1);								//!
-	if (!child)
-	{
-		execve("./bin/pipex", inf.pipex_args, inf.env);
-	}
-	else
-	{
-		inf.pipex_child = child;
-		waitpid(child, NULL, 0);
-		inf.pipex_child = 0;
-	}
+	pipex();
+
+
+
+
+	//child = fork();
+	//if (child == -1)
+	//	exit(1);								//!
+	//if (!child)
+	//{
+	//	execve("./bin/pipex", inf.pipex_args, inf.env);
+	//}
+	//else
+	//{
+	//	inf.pipex_child = child;
+	//	waitpid(child, NULL, 0);
+	//	inf.pipex_child = 0;
+	//}
 }
 
 void	*free_pipex_args(char **ar, int pipes)
@@ -191,8 +194,8 @@ void	exit_ms(int sig)
 		inf.tokens = free_tokens(inf.tokens);
 	if (inf.lenv)
 		inf.lenv = free_lenv(inf.lenv);
-	if (inf.pipex_args)
-		inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
+	//if (inf.pipex_args)
+	//	inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
 	exit(sig);
 }
 
@@ -226,29 +229,29 @@ int     main(int argc, char **argv, char **envp)
         while (3)
         {
         		line = readline(PROMPT);
+				//line = argv[2];
 				if (!ft_strlen(line))
 				{
 					free(line);
 					continue ;
 				}
 				add_history(line);
-                tokens = parse(line, inf.lenv);
+                inf.pipes = parse(line, inf.lenv);
                 free(line);
-				inf.tokens = &tokens;
+//				inf.tokens = &tokens;
                 if (!(*inf.tokens))
                         continue ;
-                //print_list(inf.tokens);
-				inf.pipes = count_pipes(*inf.tokens);
-				inf.pipex_args = get_one_string(*inf.tokens, inf.pipes);
+                print_pipes(inf.pipes);
+				inf.mask |= count_pipes(*inf.tokens) << 24;
+				//inf.pipex_args = get_one_string(*inf.tokens, inf.mask);
 				exec();
 
-				rl_redisplay();
+				//rl_redisplay();
 
 
                 free_tokens(inf.tokens);
 				inf.tokens = NULL;
-				inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
+				//inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
         }
-        free_lenv(inf.lenv);
 }
 

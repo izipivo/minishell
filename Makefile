@@ -1,5 +1,5 @@
-CFLAGS =			-Wall -Wextra -Werror -fsanitize=address
-
+CFLAGS =			-fsanitize=address
+#-Wall -Wextra -Werror
 LIBS =				-L./libft -lft -L /usr/include -lreadline
 
 HDRS =				minishell.h
@@ -24,7 +24,8 @@ ECHO =				$(addprefix ${BINDIR}, ${ECHO_CMD})
 
 NAME =				minishell
 
-SRC =				parser.c exec.c env_list.c
+SRC =				parser.c exec.c env_list.c pipex.c parents.c fork.c error_managment.c validation.c get_next_line.c\
+					get_next_line_utils.c
 
 SRC_PWD =			pwd.c
 
@@ -54,7 +55,7 @@ BUILDIR =			./obj/
 
 BINDIR =			./bin/
 
-PIPEX =				.bin/pipex
+PIPEX =				$(addprefix ${BUILDIR}, pipex/src/*)
 
 PIPEXDIR =			./pipex/
 
@@ -72,9 +73,11 @@ LIBFTDIR =			./libft/
 
 LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 
+#PIPEX =				bin/libpipex.a
+
 .PHONY:				clean all fclean re
 
-all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PIPEX} ${PWD} ${CD} ${ECHO} ${NAME}
+all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PWD} ${CD} ${ECHO} ${NAME}
 
 ${PIPEX}:
 					${MAKE} -C ${PIPEXDIR}
@@ -83,8 +86,8 @@ ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
 
 ${NAME}:			${OBJS} ${HEADERS}
-					#${CC} ${CFLAGS} ${LIBS} ${OBJS} -o $@				#MacOS
-					${CC} ${CFLAGS} ${OBJS} -o $@ ${LIBS}				#Linux
+					${CC} ${CFLAGS} ${LIBS} ${OBJS} -o $@				#MacOS
+					#${CC} ${CFLAGS} obj/* -o $@ ${LIBS}				#Linux
 
 ${BUILDIR}:
 					mkdir -p ${BUILDIR}

@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror
+#CFLAGS = -Wall -Wextra -Werror
 
 HDRS = pipex.h get_next_line.h
 
@@ -14,7 +14,7 @@ LFT = -L ${LIBFTDIR} -lft
 
 BINDIR = ../bin/
 
-NAME = $(addprefix ${BINDIR}, pipex)
+NAME = $(addprefix ${BINDIR}, libpipex.a)
 
 SRC = pipex.c validation.c parents.c error_managment.c fork.c\
 		get_next_line.c get_next_line_utils.c
@@ -33,13 +33,14 @@ SOURCES = $(addprefix src/, ${SRC})
 
 .PHONY:	clean all fclean re
 
-all:			${NAME}
+all:			${OBJS}
 
 ${LIBFT}:
 				${MAKE} re -C ${LIBFTDIR}
 
 ${NAME}:		${LIBFT} ${BINDIR} ${OBJS}
-				${CC} ${FLAGS} ${OBJS} -o $@ ${LFT}
+				ar rcs ${NAME} ${OBJS}
+				#${CC} ${FLAGS} ${OBJS} -o $@ ${LFT}
 
 ${BINDIR}:
 				mkdir ${BINDIR}
@@ -48,7 +49,7 @@ ${BUILDIR}:
 				mkdir ${BUILDIR} 
 
 ${BUILDIR}%.o:	src/%.c ${HEADERS} ${{BUILDIR} ${LIBFT} Makefile
-				${CC} ${FLAGS} -c $< -o $@
+				${CC} ${CFLAGS} -c $< -o $@
 
 
 clean:

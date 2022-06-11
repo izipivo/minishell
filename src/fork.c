@@ -39,6 +39,7 @@ static pid_t	*createpids(int **fd)
 {
 	pid_t	*pid;
 
+	printf("%d pipes\n", PIPES);
 	pid = (pid_t *)malloc(sizeof(pid_t) * PIPES);
 	if (!pid)
 		exitmalloc(fd);
@@ -57,8 +58,12 @@ pid_t	*forks(int **fd)
 	token = *(inf.tokens);
 	quantity = PIPES;
 	pid = createpids(fd);
-	while (token)
-	{
+	while (token) {
+		if (token->key != WORD && token->key != COMMAND)
+		{
+			token = token->next;
+			continue;
+		}
 		pid[m] = fork();
 		if (pid[m] < 0)
 			exitpid(fd, pid, "fork");

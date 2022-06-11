@@ -13,6 +13,8 @@
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <dirent.h>
+# include "pipex.h"
+
 /*
 //		readline colours
 */
@@ -52,32 +54,44 @@
 # define DOLLAR 13		//	$
 # define WORD 14		//	a..z0..9...	
 
+# define PIPES (inf.mask >> 24)
+
 typedef struct	s_env
 {
 	char			*key;
 	char			*val;
 	struct s_env	*next;
-}				t_env;
+}					t_env;
 
-
-typedef	struct	s_mshell
+typedef struct		s_pipes
 {
-	char		**env;
-	int			pipes;
-	char		**pipex_args;
-	t_env		*lenv;
-	t_list		**tokens;
-	pid_t		pipex_child;
-}				t_mshell;
+	char			**cmd;
+	char			*in;
+	char			*out;
+	char 			mask;					//1 значит один знак "<"/">", 0 - два знака "<"/">"
+	struct s_pipes	*next;
+}					t_pipes;
+
+typedef	struct		s_mshell
+{
+	char			**env;
+	int				mask;					//	1 бит наличие here_doc, первые 8 бит кол-во пайпов
+	t_env			*lenv;
+	t_list			**tokens;
+	t_pipes			*pipes;
+	pid_t			pipex_child;
+}					t_mshell;
+
+t_mshell	inf;
 
 void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
 int		ft_arrlen(char **arr);
 void	free_list(t_list *list);
-t_list	*parse(char *line, t_env *lenv);
-void	print_list(t_list *tokens);
+t_pipes	*parse(char *line, t_env *lenv);
+void	print_list(t_list **tok);
 void	free_val(t_list *token);
 void	*free_tokens(t_list **tokens);
 void	*free_pipex_args(char **ar, int pipes);
-
+int	count_pipes(t_list *token);
 #endif

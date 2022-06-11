@@ -105,8 +105,6 @@ static int	**multipipe(int m)
 	int	i;
 	int	**fd;
 
-	ft_putnbr_fd(m, 1);
-	ft_putendl_fd(" mults", 1);
 	fd = (int **)malloc(sizeof(int *) * m);
 	if (!fd)
 		exitmalloc( fd);
@@ -128,9 +126,9 @@ int	pipex(void)
 	//int		check;
 	pid_t	*pid;
 
-	fd = multipipe((inf.mask >> 24) + 1);
+	fd = multipipe(PIPES + 1);
 	pid = forks(fd);
-	//close_fd(argc - 2 - m, -1, fd);
+	close_fd(PIPES + 1, -1, fd);
 	//check = parentread(fd[0][1], argv[1]);
 //	//else
 //	//	check = parentread(argv[2], fd[0][1], NULL);

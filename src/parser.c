@@ -6,7 +6,7 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/05/15 17:58:21 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/06/11 18:33:08 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	to_free;
 
-t_list	*invalid_args(void)
+t_pipes	*invalid_args(void)
 {
 	ft_putstr_fd("tak nel'zya\n", 2);
 	return (NULL);
@@ -29,8 +29,9 @@ void	free_val(t_list *token)
 	}
 }
 
-void	print_list(t_list *tokens)
+void	print_list(t_list **tok)
 {
+	t_list	*tokens=*tok;
 	while (tokens)
 	{
 		printf("key: %d, val: %s\n", tokens->key, tokens->val);
@@ -286,27 +287,69 @@ int	token_cp(t_list *new, t_list *old)
 	return (0);
 }
 
-t_list	*remalloc(t_list *old)
+int	q_args(t_list *token)
 {
-	t_list	*cp;
-	t_list	*new;
-	int		size;
-	int		i;
+	int	count;
 
-	i = -1;
-	cp = old;
-	size = list_size(old);
-	new = (t_list *) malloc(sizeof(t_list) * (size + 1));
-	if (!new)
-		exit(1);					//		!!!!
+	count = 1;
+	while (token->key != PIPE)
+	{
+		if (token->key == WORD || token->key == COMMAND)
+			count++;
+		token = token->next;
+	}
+	return (count);
+}
+
+t_pipes	*copy_pipes(t_pipes *new, t_list *old)
+{
+	t_list	*cp=old;
+	char	*buf;
+	int		i;
+	int		j;
+
+	j = -1;
+	i = 0;
+	if (old->key == PIPE)
+	{
+		ft_putendl_fd("??", 2);
+		exit(1);						///!!!
+	}
 	while (old)
 	{
-		if (old->val && old->key != DOLLAR && old->key != SPC)
+		if (old->key == PIPE)
 		{
-			if (token_cp(&new[++i], old))
-				exit(1);			//		!!!!
-			if (i - 1 >= 0)
-				new[i - 1].next = &(new[i]);
+			new[i].cmd[++j] = NULL;
+			j = -1;
+			new[i].next = &new[i + 1];
+			new[++i].mask = 0;
+			new[i].cmd = (char **) malloc(sizeof(char *) * q_args(old));
+			if (!q_args(old) && new->cmd)
+				exit(1);					//!!!!
+		}
+		else if (old->key > 2 && old->key < 5)
+		{
+			if (new[i].in)
+				free(new[i].in);
+			new->in = ft_strdup(old->val);
+			if (!new[i].in)
+				exit(1);					//!!!!
+			new[i].mask |= old->key % 2;
+		}
+		else if (old->key > 4 && old->key < 7)
+		{
+			if (new[i].out)
+				free(new[i].out);
+			new[i].out = ft_strdup(old->val);
+			if (!new[i].in)
+				exit(1);					//!!!!
+			new[i].mask |= (old->key % 2) << 1;
+		}
+		else
+		{
+			new[i].cmd[++j] = ft_strdup(old->val);
+			if (!new[i].cmd)
+				exit(1);					//!!!!
 		}
 		old = old->next;
 	}
@@ -318,16 +361,31 @@ t_list	*remalloc(t_list *old)
 	else
 		new[i].next = NULL;
 	free_tokens(&cp);
-	if (new->key == PIPE)
-	{
-		free_tokens(&new);
-		ft_putstr_fd(PERROR": pipe can not be the first argument!\n", 2);
-		exit(1);
-	}
 	return (new);
 }
 
-t_list	*cleaning(t_list *tokens, t_env *lenv)
+t_pipes	*remalloc(t_list *old)
+{
+	t_list	*cp;
+	t_pipes	*new;
+	int		size;
+	int		i;
+
+	i = -1;
+	cp = old;
+	size = count_pipes(old);
+	//size = list_size(old);
+	new = (t_pipes *) malloc(sizeof(t_pipes) * (size + 1));
+	if (!new)
+		exit(1);					//		!!!!
+	new[0].mask = 0;
+	new[0].cmd = (char **) malloc(sizeof(char *) * q_args(old));
+	if (!new[0].cmd)
+		exit(1);					//		!!!!
+	return (copy_pipes(new, old));
+}
+
+t_pipes	*cleaning(t_list *tokens, t_env *lenv)
 {
 	if (concat(tokens, lenv))
 	{
@@ -338,7 +396,7 @@ t_list	*cleaning(t_list *tokens, t_env *lenv)
 	return (remalloc(tokens));
 }
 
-t_list	*parse(char *line, t_env *lenv)
+t_pipes	*parse(char *line, t_env *lenv)
 {
 	t_list	*tokens;
 	int		i;

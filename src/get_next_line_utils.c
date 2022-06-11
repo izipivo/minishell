@@ -1,37 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cdpwdechoexit.c                                    :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/26 12:37:50 by sdonny            #+#    #+#             */
-/*   Updated: 2022/06/11 12:43:17 by sdonny           ###   ########.fr       */
+/*   Created: 2021/10/27 15:35:01 by sdonny            #+#    #+#             */
+/*   Updated: 2022/01/13 12:03:55 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../includes/get_next_line.h"
 
-void	cd(char	*path)
+size_t	ft_strlen(const char *str)
 {
-	int	error;
+	int	i;
 
-	if (!path)
-		return ;
-	if (access(path, F_OK) != 0)
-	{
-		ft_putendl_fd("not existing directory!", 2);
-		return ;
-	}
-	error = chdir(path);
-	if (!error)
-		return ;
-	perror(PERROR);
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
 }
 
-int	main(int argc, char **argv)
+char	*ft_strdup(const char *src)
 {
-	if (argc > 1)
-		cd(argv[1]);
-	return (0);
+	char	*a;
+	int		i;
+
+	i = 0;
+	a = malloc(sizeof(char) * (ft_strlen(src) + 1));
+	if (a == NULL)
+		return (a);
+	while (src[i])
+	{
+		a[i] = src[i];
+		i++;
+	}
+	a[i] = '\0';
+	return (a);
 }

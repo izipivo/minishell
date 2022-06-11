@@ -1,37 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cdpwdechoexit.c                                    :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/26 12:37:50 by sdonny            #+#    #+#             */
-/*   Updated: 2022/06/11 12:43:17 by sdonny           ###   ########.fr       */
+/*   Created: 2021/10/21 18:57:09 by sdonny            #+#    #+#             */
+/*   Updated: 2021/10/27 15:36:27 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
+# include <unistd.h>
+# include <stdlib.h>
 
-void	cd(char	*path)
-{
-	int	error;
+char	*get_next_line(int fd);
+size_t	ft_strlen(const char *str);
+char	*ft_strdup(const char *src);
+char	*ft_rebuf(char *buf, int i);
+char	*get_next_line_fd(int fd, int ii, int i);
 
-	if (!path)
-		return ;
-	if (access(path, F_OK) != 0)
-	{
-		ft_putendl_fd("not existing directory!", 2);
-		return ;
-	}
-	error = chdir(path);
-	if (!error)
-		return ;
-	perror(PERROR);
-}
-
-int	main(int argc, char **argv)
-{
-	if (argc > 1)
-		cd(argv[1]);
-	return (0);
-}
+#endif
