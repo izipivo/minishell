@@ -2,24 +2,50 @@
 
 t_mshell	inf;
 
+void	*free_pipes(t_pipes *pipes)
+{
+	t_pipes	*cp;
+	int		i;
+
+	cp = pipes;
+	while (pipes)
+	{
+		i = -1;
+		while (pipes->cmd[++i])
+			free(pipes->cmd[i]);
+		free(pipes->cmd);
+		if (pipes->in)
+			free(pipes->in);
+		if (pipes->out)
+			free(pipes->out);
+		pipes = pipes->next;
+	}
+	free(cp);
+	return (NULL);
+}
+
 void	print_string(char **str)
 {
-	while (*str)
+	int i=-1;
+
+	while (str[++i] && *str[i])
 	{
-		ft_putendl_fd(*str, 1);
-		str++;
-		//ft_putendl_fd("---", 1);
+		ft_putendl_fd(str[i], 1);
 	}
 }
+
+int cnt=1;
 
 void	print_pipes(t_pipes *pipe)
 {
 	while (pipe)
 	{
-		printf("cmd:\n");
+		// printf("%d cmd:\n", cnt);
 		print_string(pipe->cmd);
+		// printf("\n%d in: %s\nout: %s\nmask: %x\n\n", cnt++, pipe->in, pipe->out, pipe->mask);
 		pipe = pipe->next;
 	}
+	cnt = 1;
 }
 
 char	*change_filename(char **str, char *prefix)
@@ -194,8 +220,8 @@ void	exit_ms(int sig)
 		inf.tokens = free_tokens(inf.tokens);
 	if (inf.lenv)
 		inf.lenv = free_lenv(inf.lenv);
-	//if (inf.pipex_args)
-	//	inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
+	if (inf.pipes)
+		inf.pipes = free_pipes(inf.pipes);
 	exit(sig);
 }
 
@@ -221,7 +247,7 @@ int     main(int argc, char **argv, char **envp)
         char		*line;
 		t_list		*tokens;
         (void)argc;
-        (void)argv;
+        //(void)argv;
         inf.env = envp;
         inf.lenv = make_env_list(envp);
 		signal(SIGQUIT, sig_quit);
@@ -238,20 +264,12 @@ int     main(int argc, char **argv, char **envp)
 				add_history(line);
                 inf.pipes = parse(line, inf.lenv);
                 free(line);
-//				inf.tokens = &tokens;
-                if (!(*inf.tokens))
-                        continue ;
-                print_pipes(inf.pipes);
-				inf.mask |= count_pipes(*inf.tokens) << 24;
+                // print_pipes(inf.pipes);
+				//printf("%x\n", inf.mask);
 				//inf.pipex_args = get_one_string(*inf.tokens, inf.mask);
 				exec();
-
-				//rl_redisplay();
-
-
-                free_tokens(inf.tokens);
-				inf.tokens = NULL;
-				//inf.pipex_args = free_pipex_args(inf.pipex_args, inf.pipes);
+				inf.pipes = free_pipes(inf.pipes);
         }
+
 }
 

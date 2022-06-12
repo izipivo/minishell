@@ -6,196 +6,13 @@
 /*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
-/*   Updated: 2022/06/11 18:33:08 by sdonny           ###   ########.fr       */
+/*   Updated: 2022/06/12 15:14:55 by sdonny           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	to_free;
 
-t_pipes	*invalid_args(void)
-{
-	ft_putstr_fd("tak nel'zya\n", 2);
-	return (NULL);
-}
-
-void	free_val(t_list *token)
-{
-	if (token && token->val)
-	{
-		free(token->val);
-		token->val = NULL;
-	}
-}
-
-void	print_list(t_list **tok)
-{
-	t_list	*tokens=*tok;
-	while (tokens)
-	{
-		printf("key: %d, val: %s\n", tokens->key, tokens->val);
-		tokens = tokens->next;
-	}
-}
-
-int	token_key(char *line, int end)
-{
-	if (line[end] == '|')
-		return (PIPE);
-	else if ((line[end] >= 9 && line[end] <= 13) || line[end] == 32)
-		return (SPC);
-	else if (line[end] == '"')
-		return (DQUOTES);
-	else if (line[end] == 39)
-		return (SQUOTES);
-	else if (line[end] == '(')
-		return (PARENT_O);
-	else if (line[end] == ')')
-		return (PARENT_C);
-	else if (line[end] == '$')
-		return (DOLLAR);
-	else if (line[end] == '<')
-		return (INFILE);
-	else if (line[end] == '>')
-		return (OUTFILE);
-	else if (line[end] == '&')
-		return (AND);
-	else if (line[end] == '|')
-		return (OR);
-	else
-		return (COMMAND);
-}
-
-int	make_token(t_list *token, char *line, int end, int shift, int sep)
-{
-	if ((sep == AND  && shift != 1) || (sep <= 5 && shift > 1))
-		return (1);
-	token->val = (char *)malloc(sizeof(char) * (shift + 2));
-	if (!token->val)
-		exit(1);
-	ft_strlcpy(token->val, line + end - shift, sizeof(char) * (shift + 2));
-	if ((sep == OUTFILE || sep == INFILE || sep == PIPE) && shift == 1)
-		sep += 1;
-	token->key = sep;
-	return (0);
-}
-
-int	is_separator(char c)
-{
-	if ((c >= 9 && c <= 13) || c == ' ' || c == '&' || c == 39 || c == '"'
-		|| c == '<' || c == '>' || c == '(' || c == ')' || c == '|')
-		return (1);
-	else
-		return (0);
-}
-
-void	streams(t_list *token)
-{
-	if (token->next && token->next->key == SPC)
-	{
-		token->next = token->next->next;
-	}
-	if (token->next)
-	{
-		free_val(token);
-		token->val = ft_strdup(token->next->val);
-		token->next->key = SPC;
-		if (!token->val)
-			exit(1);				//	!!!
-	}
-}
-
-int	dollar_find(t_list *token, t_env *lenv)
-{
-	int	len;
-
-	token->key = WORD;
-	len = ft_strlen(token->val);
-	if (!ft_strncmp(token->val, "$", len))
-	{
-		free_val(token);
-		token->val = ft_strdup("1488");
-		if (!token->val)
-			exit(1);
-		return (1);
-	}
-	while (lenv)
-	{
-		if (!ft_strncmp(lenv->key, token->val, len))
-		{
-			free_val(token);
-			token->val = ft_strdup(lenv->val);
-			//printf("vot on: %s\n", token->val);
-			if (!token->val)
-				exit(1);
-			return (1);
-		}
-		lenv = lenv->next;
-	}
-	token->val[0] = 0;
-	return (1);
-}
-
-int	dollar(t_list *dlr, t_env *lenv)
-{
-	if (!dlr->next || (dlr->next->key != DOLLAR && dlr->next->key != COMMAND))
-	{
-		free_val(dlr);
-		dlr->val = ft_strdup("$");
-		if (!dlr->val)
-			exit(1);
-		dlr->key = WORD;
-		return (0);
-	}
-	dlr->val[0] = 0;
-	//dlr->next = dlr->next->next;
-	return (dollar_find(dlr->next, lenv));
-}
-
-void	dol_spc_str(t_list *token, t_env *lenv)
-{
-	t_list	*bl=token;
-
-	while (token)
-	{
-		if (token->key == DOLLAR)
-		{
-			if (dollar(token, lenv))
-				token = token->next;
-		}
-		else if (token->key > 2 && token->key < 7)
-		{
-			if (!token->next || (token->next && (token->next->key > 2
-							&& token->next->key < 7)))
-			{
-				ft_putstr_fd("parser error near '<'\n", 2);
-				free_list(bl);
-				free_lenv(lenv);
-				exit(1);
-			}
-			streams(token);
-		}
-		if (token)
-			token = token->next;
-	}
-}
-
-int	ft_strapp(char **s1, char *s2)
-{
-	char	*tmp;
-
-	tmp = *s1;
-	*s1 = ft_strjoin(tmp, s2);
-	if (tmp)
-	{
-		free(tmp);
-		tmp = NULL;
-	}
-	if (!*s1)
-		return (1);					//		malloc_err
-	return (0);
-}
 
 int	first_occ(t_list *token, char c, t_env *lenv)
 {
@@ -292,14 +109,60 @@ int	q_args(t_list *token)
 	int	count;
 
 	count = 1;
-	while (token->key != PIPE)
+	if (token->key == PIPE)
+		token = token->next;
+	while (token && token->key != PIPE)
 	{
 		if (token->key == WORD || token->key == COMMAND)
 			count++;
 		token = token->next;
 	}
+	// printf("quant of cmds = %d\n", count);
 	return (count);
 }
+
+void	cap(t_pipes *new, int i, int j)
+{
+	new[i].cmd[j] = NULL;
+	if (i)
+	{
+		// printf("i\n");
+		new[i - 1].next = &new[i];
+	}
+}
+
+
+void	copy_out(t_pipes *new, char *val, char key)
+{
+	if (new->out)
+		free(new->out);
+	new->out = ft_strdup(val);
+	if (!new->out)
+		exit(111);					//!!!!
+	new->mask |= key % 2 << 1;
+}
+
+void	copy_in(t_pipes *new, char *val, char key)
+{
+	if (new->in)
+		free(new->in);
+	new->in = ft_strdup(val);
+	if (!new->in)
+		exit(111);					//!!!!
+	new->mask |= key % 2;
+}
+
+void	copy_word(t_pipes *new, int j, char *val)
+{
+	// printf("new cmd %d\n", j);
+	new->cmd[j] = ft_strdup(val);
+	if (!new->cmd[j])
+	{
+		ft_putendl_fd("new cmd", 2);
+		exit(1);					//!!!!
+	}
+}
+
 
 t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 {
@@ -308,6 +171,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	int		i;
 	int		j;
 
+	// printf("1\n");
 	j = -1;
 	i = 0;
 	if (old->key == PIPE)
@@ -317,42 +181,30 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	}
 	while (old)
 	{
+		//printf("2\n");
 		if (old->key == PIPE)
 		{
-			new[i].cmd[++j] = NULL;
-			j = -1;
-			new[i].next = &new[i + 1];
-			new[++i].mask = 0;
+			cap(new, i, ++j);
+			ft_memset(&new[++i], 0, sizeof(t_pipes));
 			new[i].cmd = (char **) malloc(sizeof(char *) * q_args(old));
 			if (!q_args(old) && new->cmd)
+			{
+				ft_putendl_fd("q_args", 2);
 				exit(1);					//!!!!
+			}
+			j = -1;
 		}
 		else if (old->key > 2 && old->key < 5)
-		{
-			if (new[i].in)
-				free(new[i].in);
-			new->in = ft_strdup(old->val);
-			if (!new[i].in)
-				exit(1);					//!!!!
-			new[i].mask |= old->key % 2;
-		}
+			copy_in(&new[i], old->val, old->key);
 		else if (old->key > 4 && old->key < 7)
-		{
-			if (new[i].out)
-				free(new[i].out);
-			new[i].out = ft_strdup(old->val);
-			if (!new[i].in)
-				exit(1);					//!!!!
-			new[i].mask |= (old->key % 2) << 1;
-		}
-		else
-		{
-			new[i].cmd[++j] = ft_strdup(old->val);
-			if (!new[i].cmd)
-				exit(1);					//!!!!
-		}
+			copy_out(&new[i], old->val, old->key);
+		else if (old->key == WORD || old->key == COMMAND)
+			copy_word(&new[i], ++j, old->val);
 		old = old->next;
 	}
+	// printf("3\n");
+	cap(new, i, ++j);
+	//new[i].next = NULL;
 	if (i == -1)
 	{
 		free(new);
@@ -361,6 +213,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	else
 		new[i].next = NULL;
 	free_tokens(&cp);
+	// printf("4\n");
 	return (new);
 }
 
@@ -368,17 +221,19 @@ t_pipes	*remalloc(t_list *old)
 {
 	t_list	*cp;
 	t_pipes	*new;
-	int		size;
 	int		i;
 
 	i = -1;
+	//print_list(&old);
+	//printf("\n\n");
 	cp = old;
-	size = count_pipes(old);
-	//size = list_size(old);
-	new = (t_pipes *) malloc(sizeof(t_pipes) * (size + 1));
+	inf.mask = count_pipes(old) << 16;
+	//printf("2: %x - %d\n", inf.mask, inf.mask);
+	// printf("2: %x - %d\n", PIPES, PIPES);
+	new = (t_pipes *) malloc(sizeof(t_pipes) * (PIPES + 1));
 	if (!new)
 		exit(1);					//		!!!!
-	new[0].mask = 0;
+	ft_memset(&new[0], 0, sizeof(t_pipes));
 	new[0].cmd = (char **) malloc(sizeof(char *) * q_args(old));
 	if (!new[0].cmd)
 		exit(1);					//		!!!!
@@ -437,7 +292,6 @@ t_pipes	*parse(char *line, t_env *lenv)
 			j++;
 	}
 	tokens[n].next = NULL;
-	to_free = n;
 	//print_list(tokens);
 	return (cleaning(tokens, lenv));
 }

@@ -14,6 +14,8 @@
 
 static int	open_outfile(char *filename)
 {
+	if (!filename)
+		return (1);
 	if (!ft_strncmp("/", filename, 2))
 		return (1);
 	if (!ft_strncmp("\\/", filename, 2))
@@ -32,22 +34,14 @@ int	ifheredoc(char *filename)
 	return (0);
 }
 
-int	parentread(int fd, char *filename)
+int	parentread(int fd, char *filename, int hd)
 {
 	char	*buf;
 	int		file;
-	int		cmp;
 
 	file = 0;
-	cmp = ifheredoc(filename);
-	if (!cmp && !ft_strncmp("/", filename, 2))
-		return (0);
-	if (!cmp)
-	{
-//		ft_putendl_fd(filename, 1);
+	if (hd)
 		file = open(filename, O_RDONLY);
-//		ft_putnbr_fd(file, 1);
-	}
 	if (file == -1)
 		return (-1);
 	while (1)
@@ -55,7 +49,7 @@ int	parentread(int fd, char *filename)
 		buf = get_next_line(file);
 		if (!buf)
 			break ;
-		if (cmp && ft_strncmp(buf, filename + cmp, ft_strlen(filename + cmp)) == 0)
+		if (hd && ft_strncmp(buf, filename, ft_strlen(filename)) == 0)
 		{
 			free(buf);
 			break ;
@@ -64,7 +58,7 @@ int	parentread(int fd, char *filename)
 		free(buf);
 	}
 	close(fd);
-	if (!cmp)
+	if (!hd)
 		close(file);
 	return (0);
 }
@@ -76,18 +70,6 @@ int	parentwrite(int fd, char *filename, int flag)
 
 	file = 1;
     file = open_outfile(filename);
-//	if (!flag && ft_strncmp("/", filename, 2))
-//	{
-//		ft_putstr_fd("otkrivet file: ", 1);
-//        ft_putendl_fd(filename, 1);
-//		file = rmandopen(filename);
-//	}
-//	else if (ft_strncmp("/", filename, 2))
-//	{
-//        ft_putstr_fd("otkrivet file: ", 1);
-//        ft_putendl_fd(filename, 1);
-//		file = open(filename, O_APPEND | O_CREAT | O_WRONLY, 0664);
-//	}
 	if (file == -1)
 		return (-1);
 	while (1)
@@ -99,7 +81,8 @@ int	parentwrite(int fd, char *filename, int flag)
 		free(buf);
 	}
 	close(fd);
-	close(file);
+	if (file != 1)
+		close(file);
 	return (0);
 }
 

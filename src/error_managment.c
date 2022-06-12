@@ -28,24 +28,22 @@ void	exitmalloc(int **fd)
 		fd = NULL;
 	}
 	ft_putendl_fd("pipex gone mad", 2);
-	exit(EXIT_FAILURE);
+	exit(43);
 }
 
 void	exitpid(int **fd, pid_t *pid, char *desc)
 {
 	int	i;
-	int	quantity;
 
 	i = -1;
-	quantity = PIPES;
 	perror(desc);
-	while (++i < quantity + 1)
+	while (++i < PIPES + 1)
 		free(fd[i]);
 	free(fd);
 	fd = NULL;
 	free(pid);
 	pid = NULL;
-	exit(EXIT_FAILURE);
+	exit(22);
 }
 
 void	exitcmd(int **fd, pid_t *pid, char *cmd)
@@ -62,5 +60,5 @@ void	exitcmd(int **fd, pid_t *pid, char *cmd)
 	ft_putstr_fd(spl[0], 2);
 	ft_putstr_fd(": command not found\n", 2);
 	cleansplit(spl);
-	exit(EXIT_FAILURE);
+	exit(11);
 }

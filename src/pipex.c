@@ -73,25 +73,25 @@ char	*checkpath(char *tmp, char **envp)
 	return (NULL);
 }
 
-void	close_fd(int quantity, int proc, int **fd)
+void	close_fd(int proc, int **fd)
 {
 	int	i;
 	int	j;
 
 	i = -1;
-	while (++i < quantity)
+	while (++i < PIPES + 1)
 	{
 		j = -1;
 		while (++j < 2)
 		{
 			if ((i == proc && j == 0) || (i == proc + 1 && j == 1)
-				|| (((i == quantity - 1 && j == 0) || (i == 0 && j == 1))
+				|| (((i == PIPES && j == 0) || (i == 0 && j == 1))
 					&& proc == -1))
 				continue ;
 			close(fd[i][j]);
 		}
 	}
-	if (proc != -1)
+	if (proc >= 0)
 	{
 		dup2(fd[proc][0], 0);
 		close(fd[proc][0]);
@@ -123,20 +123,25 @@ static int	**multipipe(int m)
 int	pipex(void)
 {
 	int		**fd;
-	//int		check;
+	int		check;
 	pid_t	*pid;
 
 	fd = multipipe(PIPES + 1);
 	pid = forks(fd);
-	close_fd(PIPES + 1, -1, fd);
-	//check = parentread(fd[0][1], argv[1]);
-//	//else
-//	//	check = parentread(argv[2], fd[0][1], NULL);
+	close_fd(-1, fd);
+	if (inf.pipes[0].in)
+		check = parentread(fd[0][1], inf.pipes[0].in, INPUT(inf.pipes[0].mask));
+	else
+	{
+		dup2(0, fd[0][0]);
+		// close(0);
+	}
 	//if (check == -1)
 	//	exitpid(fd, pid, argc, "parentread");
-	//check = parentwrite(fd[argc - 3 - m][0], argv[argc - 1], m);
-	//if (check == -1)
-	//	exitpid(fd, pid, argc, "parentwrite");
+	check = parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, HD(inf.pipes[PIPES - 1].mask));
+	// close_all(fd);
+	// if (check == -1)
+	// 	exitpid(fd, pid, argc, "parentwrite");
 	waitchildren(pid, fd, PIPES);
 	return (0);
 }

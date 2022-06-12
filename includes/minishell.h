@@ -54,7 +54,11 @@
 # define DOLLAR 13		//	$
 # define WORD 14		//	a..z0..9...	
 
-# define PIPES (inf.mask >> 24)
+# define PIPES (inf.mask >> 16)
+# define OUT(x) (x >> 16)
+# define APP(x) (((x >> 16) & 1) ? (0) : (1))
+# define HD(x) ((x & 1) ? (0) : (1))
+# define INPUT(x) (x & 1)
 
 typedef struct	s_env
 {
@@ -93,5 +97,14 @@ void	print_list(t_list **tok);
 void	free_val(t_list *token);
 void	*free_tokens(t_list **tokens);
 void	*free_pipex_args(char **ar, int pipes);
-int	count_pipes(t_list *token);
+int		count_pipes(t_list *token);
+int		ft_strapp(char **s1, char *s2);
+void	dol_spc_str(t_list *token, t_env *lenv);
+int		dollar(t_list *dlr, t_env *lenv);
+int		dollar_find(t_list *token, t_env *lenv);
+void	streams(t_list *token);
+int		is_separator(char c);
+int		make_token(t_list *token, char *line, int end, int shift, int sep);
+int		token_key(char *line, int end);
+t_pipes	*invalid_args(void);
 #endif

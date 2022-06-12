@@ -24,7 +24,7 @@ ECHO =				$(addprefix ${BINDIR}, ${ECHO_CMD})
 
 NAME =				minishell
 
-SRC =				parser.c exec.c env_list.c pipex.c parents.c fork.c error_managment.c validation.c get_next_line.c\
+SRC =				token_list.c parser.c exec.c env_list.c pipex.c parents.c fork.c error_managment.c validation.c get_next_line.c\
 					get_next_line_utils.c
 
 SRC_PWD =			pwd.c
@@ -131,4 +131,3 @@ fclean:				clean
 					${RM} ${NAME}
 
 re:					fclean all
-
