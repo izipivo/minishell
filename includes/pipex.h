@@ -31,7 +31,7 @@ typedef struct s_pip
 	char	**comands;
 }	t_pip;
 void	cleansplit(char **cmd);
-char	*checkpath(char *tmp, char **envp);
+char	*checkpath(char *tmp, char **envp, int **fd);
 void	close_fd(int proc, int **fd);
 pid_t	*forks(int **fd);
 int		parentread(int fd, char *filename, int hd);
@@ -39,7 +39,7 @@ int		parentwrite(int fd, char *filename, int flag);
 void	waitchildren(pid_t *pid, int **fd, int argc);
 int		validate(int argc, char **argv);
 void	exitmalloc(int **fd);
-void	exitpid(int **fd, pid_t *pid, char *desc);
-//void	exitcmd(int **fd, pid_t *pid);
+void	*exitpipex(int **fd, char *desc);
 int		pipex(void);
+void	*free_fd(int **fd);
 #endif

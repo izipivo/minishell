@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/get_next_line.h"
+#include "../includes/minishell.h"
 
 size_t	ft_strlen(const char *str)
 {

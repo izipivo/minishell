@@ -83,11 +83,12 @@ typedef	struct		s_mshell
 	t_env			*lenv;
 	t_list			**tokens;
 	t_pipes			*pipes;
-	pid_t			pipex_child;
+	pid_t			*pids;
 }					t_mshell;
 
 t_mshell	inf;
 
+void	*free_pipes(t_pipes *pipes);
 void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
 int		ft_arrlen(char **arr);

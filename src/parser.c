@@ -12,8 +12,6 @@
 
 #include "../includes/minishell.h"
 
-
-
 int	first_occ(t_list *token, char c, t_env *lenv)
 {
 	t_list	*cpy;
@@ -154,7 +152,6 @@ void	copy_in(t_pipes *new, char *val, char key)
 
 void	copy_word(t_pipes *new, int j, char *val)
 {
-	// printf("new cmd %d\n", j);
 	new->cmd[j] = ft_strdup(val);
 	if (!new->cmd[j])
 	{
@@ -162,7 +159,6 @@ void	copy_word(t_pipes *new, int j, char *val)
 		exit(1);					//!!!!
 	}
 }
-
 
 t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 {
@@ -202,9 +198,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 			copy_word(&new[i], ++j, old->val);
 		old = old->next;
 	}
-	// printf("3\n");
 	cap(new, i, ++j);
-	//new[i].next = NULL;
 	if (i == -1)
 	{
 		free(new);
@@ -213,7 +207,6 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	else
 		new[i].next = NULL;
 	free_tokens(&cp);
-	// printf("4\n");
 	return (new);
 }
 

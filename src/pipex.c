@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/minishell.h"
 
 void	cleansplit(char **cmd)
 {
@@ -34,10 +34,11 @@ char	*check_buildin(char *pwd, char *tmp)
 		free(buf);
 	if (access(buf2, F_OK) == 0)
 		return (buf2);
+	free(buf2);
 	return (NULL);
 }
 
-char	*checkpath(char *tmp, char **envp)
+char	*checkpath(char *tmp, char **envp, int **fd)
 {
 	char	**paths;
 	char	*path;
@@ -51,7 +52,10 @@ char	*checkpath(char *tmp, char **envp)
 		;
 	path = check_buildin(&envp[i][4], tmp);
 	if (path)
+	{
+		free(tmp);
 		return (path);
+	}
 	i = -1;
 	while (ft_strnstr(envp[++i], "PATH", 4) == 0)
 		;
@@ -65,11 +69,14 @@ char	*checkpath(char *tmp, char **envp)
 		if (access(path, F_OK) == 0)
 		{
 			cleansplit(paths);
+			free(tmp);
 			return (path);
 		}
 		free(path);
 	}
 	cleansplit(paths);
+	exitpipex(fd, tmp);
+	// free(tmp);
 	return (NULL);
 }
 

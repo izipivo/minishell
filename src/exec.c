@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-t_mshell	inf;
+// extern t_mshell	inf;
 
 void	*free_pipes(t_pipes *pipes)
 {
@@ -12,7 +12,10 @@ void	*free_pipes(t_pipes *pipes)
 	{
 		i = -1;
 		while (pipes->cmd[++i])
+		// {
+		// 	ft_putnbr_fd(i, 2);
 			free(pipes->cmd[i]);
+		// }
 		free(pipes->cmd);
 		if (pipes->in)
 			free(pipes->in);
@@ -209,37 +212,42 @@ void	*free_pipex_args(char **ar, int pipes)
 	return (NULL);
 }
 
-void	exit_ms(int sig)
+void	sig_hand(int sig)
 {
-	if (inf.pipex_child)
+	exit_ms();
+	ft_putendl_fd("\nbye", 1);
+	exit(sig);
+}
+
+void	sig_quit(int sig)
+{
+	int	i;
+
+	i = -1;
+	(void)sig;
+	if (inf.pids)
 	{
-		kill(inf.pipex_child, SIGKILL);
-		inf.pipex_child = 0;
+		while (++i < PIPES)
+		{
+			if (inf.pids[i])
+			{
+				kill(inf.pids[i], SIGKILL);
+				printf("\nquited process with ID: %d\n", inf.pids[i]);
+				inf.pids[i] = 0;
+			}
+		}
 	}
+}
+
+void	exit_ms(void)
+{
+	sig_quit(0);
 	if (inf.tokens)
 		inf.tokens = free_tokens(inf.tokens);
 	if (inf.lenv)
 		inf.lenv = free_lenv(inf.lenv);
 	if (inf.pipes)
 		inf.pipes = free_pipes(inf.pipes);
-	exit(sig);
-}
-
-void	sig_hand(int sig)
-{
-	ft_putendl_fd("\nbye", 1);
-	exit_ms(sig);
-}
-
-void	sig_quit(int sig)
-{
-	(void)sig;
-	if (inf.pipex_child)
-	{
-		kill(inf.pipex_child, SIGKILL);
-		printf("\nquited process with ID: %d\n", inf.pipex_child);
-		inf.pipex_child = 0;
-	}
 }
 
 int     main(int argc, char **argv, char **envp)
@@ -264,12 +272,9 @@ int     main(int argc, char **argv, char **envp)
 				add_history(line);
                 inf.pipes = parse(line, inf.lenv);
                 free(line);
-                // print_pipes(inf.pipes);
-				//printf("%x\n", inf.mask);
-				//inf.pipex_args = get_one_string(*inf.tokens, inf.mask);
 				exec();
 				inf.pipes = free_pipes(inf.pipes);
+				inf.mask = 0;
         }
-
 }
 

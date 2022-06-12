@@ -10,55 +10,43 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/minishell.h"
+
+void *free_fd(int **fd)
+{
+	int	i;
+
+	i = -1;
+	// if (fd)
+	// {
+	while (++i <= PIPES)
+		free(fd[i]);
+	free(fd);
+	fd = NULL;
+	// }
+	return (NULL);
+}
 
 void	exitmalloc(int **fd)
 {
-	int	i;
-	int	quantity;
-
-	i = -1;
-	quantity = PIPES;
-	perror("pipes\n");
-	if (fd)
-	{
-		while (++i < quantity)
-			free(fd[i]);
-		free(fd);
-		fd = NULL;
-	}
+	perror("malloc rip");
+	fd = free_fd(fd);
 	ft_putendl_fd("pipex gone mad", 2);
 	exit(43);
 }
 
-void	exitpid(int **fd, pid_t *pid, char *desc)
+void	*exitpipex(int **fd, char *desc)
 {
 	int	i;
 
 	i = -1;
+	// if (cmd)
+	// 	cleansplit(cmd);
 	perror(desc);
-	while (++i < PIPES + 1)
-		free(fd[i]);
-	free(fd);
-	fd = NULL;
-	free(pid);
-	pid = NULL;
+	fd = free_fd(fd);
+	free(inf.pids);
+	inf.pids = NULL;
+	free_pipes(inf.pipes);
 	exit(22);
-}
-
-void	exitcmd(int **fd, pid_t *pid, char *cmd)
-{
-	char	**spl;
-	int		quantity;
-
-	quantity = PIPES;
-	spl = ft_split(cmd, ' ');
-	while (--quantity)
-		free(fd[quantity]);
-	free(fd);
-	free(pid);
-	ft_putstr_fd(spl[0], 2);
-	ft_putstr_fd(": command not found\n", 2);
-	cleansplit(spl);
-	exit(11);
+	return (NULL);
 }

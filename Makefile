@@ -2,7 +2,7 @@ CFLAGS =			-fsanitize=address
 #-Wall -Wextra -Werror
 LIBS =				-L./libft -lft -L /usr/include -lreadline
 
-HDRS =				minishell.h
+HDRS =				minishell.h pipex.h get_next_line.h
 
 HDRS_DIR =			includes/
 
@@ -85,9 +85,9 @@ all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PWD} ${CD} ${ECHO} ${NAME}
 ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
 
-${NAME}:			${OBJS} ${HEADERS}
-					${CC} ${CFLAGS} ${LIBS} ${OBJS} -o $@				#MacOS
-					#${CC} ${CFLAGS} obj/* -o $@ ${LIBS}				#Linux
+${NAME}:			${OBJS} ${HEADERS} 
+					#${CC} ${CFLAGS} ${LIBS} ${OBJS} -o $@				#MacOS
+					${CC} ${CFLAGS} ${OBJS} -o $@ ${LIBS}				#Linux
 
 ${BUILDIR}:
 					mkdir -p ${BUILDIR}
@@ -95,15 +95,15 @@ ${BUILDIR}:
 ${BINDIR}:
 					mkdir -p ${BINDIR}
 
-${PWD}:				${OBJS_PWD} ${HEADERS}
+${PWD}:				${OBJS_PWD} ${HEADERS} 
 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_PWD} -o $@
 					${CC} ${CFLAGS} ${OBJS_PWD} -o $@ ${LIBS}
 
-${CD}:				${OBJS_CD} ${HEADERS}
+${CD}:				${OBJS_CD} ${HEADERS} 
 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_CD} -o $@
 					${CC} ${CFLAGS} ${OBJS_CD} -o $@ ${LIBS}
 
-${ECHO}:			${OBJS_ECHO} ${HEADERS}
+${ECHO}:			${OBJS_ECHO} ${HEADERS} 
 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_ECHO} -o $@
 					${CC} ${CFLAGS} ${OBJS_ECHO} -o $@ ${LIBS}
 

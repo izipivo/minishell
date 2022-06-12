@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/minishell.h"
 
 static int	open_outfile(char *filename)
 {
@@ -94,7 +94,7 @@ void	waitchildren(pid_t *pid, int **fd, int argc)
 	while (++m < argc)
 	{
 		if (waitpid(pid[m], NULL, 0) == -1)
-			exitpid(fd, pid, "waitpid()");
+			exitpipex(fd, "waitpid()");
 		free(fd[m]);
 	}
 	free(fd[m]);

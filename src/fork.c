@@ -10,24 +10,25 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/minishell.h"
 
 extern t_mshell inf;
 
-static char	**cmdparse(char **new, char **envp)
+static char	**cmdparse(char **new, char **envp, int **fd)
 {
 	char	*tmp;
 
 	tmp = new[0];
-	new[0] = checkpath(tmp, envp);
-	free(tmp);
-	tmp = NULL;
+	new[0] = checkpath(tmp, envp, fd);
+	// free(tmp);
+	// tmp = NULL;
 	return (new);
 }
 
 static void	killchild(char **cmd, int **fd)
 {
-	cleansplit(cmd);
+	// cleansplit(cmd);
+	free_pipes(inf.pipes);
 	close(0);
 	close(1);
 	exit(EXIT_SUCCESS);
@@ -36,11 +37,15 @@ static void	killchild(char **cmd, int **fd)
 static pid_t	*createpids(int **fd)
 {
 	pid_t	*pid;
+	int		i;
 
-	// printf("__createpids__ %d pipe(s)\n", PIPES);
+	i = -1;
 	pid = (pid_t *)malloc(sizeof(pid_t) * PIPES);
 	if (!pid)
 		exitmalloc(fd);
+	while (++i < PIPES)
+		pid[i] = 0;
+	inf.pids = pid;
 	return (pid);
 }
 
@@ -73,8 +78,7 @@ void	child_in(t_pipes *pipe, int index, int **fd)
 	if (fd[index][0] < 0)
 	{
 		ft_putendl_fd("not valid infile", 2);
-		exit(228);
-		//exit_pipex();
+		exitpipex(fd, pipe->in);
 	}
 }
 
@@ -84,18 +88,14 @@ void	child_out(t_pipes *pipe, int index, int **fd, int app)
 	if (!app && access(pipe->out, F_OK) == 0)
 	{
 		if (unlink(pipe->out) == -1)
-			exit(1488);
+			exitpipex(fd, pipe->out);
 	}
 	if (!app)
 		fd[index + 1][1] = open(pipe->out, O_RDONLY);
 	else
 		fd[index + 1][1] = open(pipe->out, O_APPEND | O_CREAT | O_WRONLY, 0664);
 	if (fd[index + 1][1] < 0)
-	{
-		ft_putendl_fd("not valid outfile", 2);
-		exit(322);
-		//exit_pipex();
-	}
+		exitpipex(fd, pipe->out);
 }
 
 void	child_fd(int index, int **fd)
@@ -119,11 +119,11 @@ int	child(int **fd, pid_t *pid, t_pipes *pipes, int index)
 
 	child_fd(index, fd);
 	close_fd(index, fd);
-	cmd = cmdparse(pipes->cmd, inf.env);
+	cmd = cmdparse(pipes->cmd, inf.env, fd);
 	if (!cmd[0])
-		exitcmd(fd, pid, cmd);
+		exitpipex(fd, "bin not found");
 	if (execve(cmd[0], cmd, inf.env) == -1)
-		exitpid(fd, pid, "execve rip");
+		exitpipex(fd, cmd[0]);
 	killchild(cmd, fd);
 	return (1);
 }
@@ -141,7 +141,7 @@ pid_t	*forks(int **fd)
 	{
 		pid[++m] = fork();
 		if (pid[m] < 0)
-			exitpid(fd, pid, "fork");
+			exitpipex(fd, "fork");
 		if (!pid[m])
 			child(fd, pid, pipes, m);
 		pipes = pipes->next;
