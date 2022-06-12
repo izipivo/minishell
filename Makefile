@@ -55,9 +55,9 @@ BUILDIR =			./obj/
 
 BINDIR =			./bin/
 
-PIPEX =				$(addprefix ${BUILDIR}, pipex/src/*)
+# PIPEX =				$(addprefix ${BUILDIR}, pipex/src/*)
 
-PIPEXDIR =			./pipex/
+# PIPEXDIR =			./pipex/
 
 OBJS =				$(addprefix ${BUILDIR}, ${SRC:.c=.o})
 
@@ -79,8 +79,8 @@ LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 
 all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PWD} ${CD} ${ECHO} ${NAME}
 
-${PIPEX}:
-					${MAKE} -C ${PIPEXDIR}
+# ${PIPEX}:
+# 					${MAKE} -C ${PIPEXDIR}
 
 ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
@@ -121,12 +121,10 @@ ${BUILDIR}%.o:		${ECHO_DIR}%.c ${HEADERS} Makefile
 
 clean:
 					${MAKE} clean -C ${LIBFTDIR}
-					${MAKE} clean -C ${PIPEXDIR}
 					${RM} ${BUILDIR}
 
 fclean:				clean
 					${MAKE} fclean -C ${LIBFTDIR}
-					${MAKE} fclean -C ${PIPEXDIR}
 					${RM} ${BINDIR}
 					${RM} ${NAME}
 
