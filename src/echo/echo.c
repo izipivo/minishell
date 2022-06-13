@@ -16,26 +16,25 @@
  *		!!! echo $... !!!
  */
 
-void	echo(char *string, int n)
+void	echo(char **string, int n)
 {
-	if (n)
-		ft_putstr_fd(string, 1);
-	else
-		ft_putendl_fd(string, 1);
+	while (*string)
+	{
+		ft_putstr_fd(*string, 1);
+		if (*(++string))
+			ft_putchar_fd(' ', 1);
+	}
+	if (!n)
+		ft_putchar_fd('\n', 1);
 }
 
 int main(int argc, char **argv)
 {
 	if (argc == 1)
-	{
-		ft_putstr_fd(PERROR": too few arguments!\n", 2);
-		return (1);
-	}
-	if (argc == 2)
-		echo(argv[1], 0);
-	else if (ft_strncmp("-n", argv[1], 3) == 0)
-		echo(argv[2], 1);
+		ft_putchar_fd('\n', 2);
+	else if (ft_strncmp("-n", argv[1], 2) == 0)
+		echo(argv + 2, 1);
 	else
-		echo(argv[2], 0);
+		echo(argv + 1, 0);
 	return (0);
 }

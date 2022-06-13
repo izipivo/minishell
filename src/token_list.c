@@ -1,5 +1,7 @@
 #include "../includes/minishell.h"
 
+extern t_mshell	inf;
+
 t_pipes	*invalid_args(void)
 {
 	ft_putstr_fd("tak nel'zya\n", 2);
@@ -96,7 +98,7 @@ int	dollar_find(t_list *token, t_env *lenv)
 {
 	int	len;
 
-	token->key = WORD;
+	token->key = COMMAND;
 	len = ft_strlen(token->val);
 	if (!ft_strncmp(token->val, "$", len))
 	{
@@ -131,7 +133,7 @@ int	dollar(t_list *dlr, t_env *lenv)
 		dlr->val = ft_strdup("$");
 		if (!dlr->val)
 			exit(1);
-		dlr->key = WORD;
+		dlr->key = COMMAND;
 		return (0);
 	}
 	dlr->val[0] = 0;
@@ -172,7 +174,10 @@ int	ft_strapp(char **s1, char *s2)
 	char	*tmp;
 
 	tmp = *s1;
-	*s1 = ft_strjoin(tmp, s2);
+	if (!tmp)
+		*s1 = ft_strdup(s2);
+	else
+		*s1 = ft_strjoin(tmp, s2);
 	if (tmp)
 	{
 		free(tmp);

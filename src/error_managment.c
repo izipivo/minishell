@@ -12,6 +12,8 @@
 
 #include "../includes/minishell.h"
 
+extern t_mshell	inf;
+
 void *free_fd(int **fd)
 {
 	int	i;

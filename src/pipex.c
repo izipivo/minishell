@@ -12,6 +12,8 @@
 
 #include "../includes/minishell.h"
 
+extern t_mshell	inf;
+
 void	cleansplit(char **cmd)
 {
 	int	i;

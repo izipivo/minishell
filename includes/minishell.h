@@ -52,7 +52,6 @@
 # define PARENT_O 11	//	(
 # define PARENT_C 12	//	)
 # define DOLLAR 13		//	$
-# define WORD 14		//	a..z0..9...	
 
 # define PIPES (inf.mask >> 16)
 # define OUT(x) (x >> 16)
@@ -86,7 +85,7 @@ typedef	struct		s_mshell
 	pid_t			*pids;
 }					t_mshell;
 
-t_mshell	inf;
+//t_mshell	inf;
 
 void	*free_pipes(t_pipes *pipes);
 void	*free_lenv(t_env *lenv);

@@ -12,16 +12,28 @@
 
 #include "../includes/minishell.h"
 
+extern t_mshell	inf;
+
 int	first_occ(t_list *token, char c, t_env *lenv)
 {
 	t_list	*cpy;
 	char	*buf;
+	char	f;
 
 	buf = NULL;
 	cpy = token;
 	token = token->next;
-	while (token && token->key != c)
+	f = 0;
+	while (token)
 	{
+		if (token->key == c && !f)
+		{
+			f = 1;
+			token = token->next;
+			continue ;
+		}
+		else if (f && token->key != COMMAND)
+			break ;
 		if (c == DQUOTES && token->key == DOLLAR)
 			dollar(token, lenv);
 		//printf("dolare: %s\n", token->val);
@@ -31,18 +43,28 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 		token = token->next;
 		//printf("buf: %s\n", buf);
 	}
-	if (!token)			//		not closed " or '
+	if (!f)			//		not closed " or '
 	{
 		if (buf)
 			free(buf);
 		return (1);
 	}
-	cpy->key = WORD;
+	cpy->key = COMMAND;
 	free_val(cpy);
 	cpy->val = buf;
 	//printf("cpy: %s\n", cpy->val);
-	cpy->next = token->next;
+	// cpy->next = token->next;
+	cpy->next = token;
 	free_val(token);
+	if (cpy->prev && cpy->prev->key == COMMAND)
+	{
+		buf = cpy->prev->val;
+		cpy->prev->val = ft_strjoin(buf, cpy->val);
+		if (buf)
+			free(buf);
+		cpy->prev->next = cpy->next;
+		free_val(cpy);
+	}
 	return (0);
 }
 
@@ -111,7 +133,7 @@ int	q_args(t_list *token)
 		token = token->next;
 	while (token && token->key != PIPE)
 	{
-		if (token->key == WORD || token->key == COMMAND)
+		if (token->key == COMMAND)
 			count++;
 		token = token->next;
 	}
@@ -194,7 +216,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 			copy_in(&new[i], old->val, old->key);
 		else if (old->key > 4 && old->key < 7)
 			copy_out(&new[i], old->val, old->key);
-		else if (old->key == WORD || old->key == COMMAND)
+		else if (old->key == COMMAND && old->val)
 			copy_word(&new[i], ++j, old->val);
 		old = old->next;
 	}
@@ -217,7 +239,7 @@ t_pipes	*remalloc(t_list *old)
 	int		i;
 
 	i = -1;
-	//print_list(&old);
+	print_list(&old);
 	//printf("\n\n");
 	cp = old;
 	inf.mask = count_pipes(old) << 16;
@@ -276,7 +298,10 @@ t_pipes	*parse(char *line, t_env *lenv)
 				return (invalid_args());
 			}
 			if (n > 0)
+			{
 				tokens[n - 1].next = &tokens[n];
+				tokens[n].prev = &tokens[n - 1];
+			}
 			j = 0;
 			sep = tmp;
 			//printf("dkdkdkdkd %d\n", sep);
@@ -285,7 +310,7 @@ t_pipes	*parse(char *line, t_env *lenv)
 			j++;
 	}
 	tokens[n].next = NULL;
-	//print_list(tokens);
+	tokens[0].prev = NULL;
 	return (cleaning(tokens, lenv));
 }
 

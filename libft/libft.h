@@ -20,7 +20,7 @@ typedef struct s_list
 {
 	char			key;
 	char			*val;
-	char			in_q;
+	struct s_list	*prev;
 	struct s_list	*next;
 }	t_list;
 

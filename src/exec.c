@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-// extern t_mshell	inf;
+t_mshell	inf;
 
 void	*free_pipes(t_pipes *pipes)
 {
@@ -91,12 +91,13 @@ int	count_pipes(t_list *token)
 {
 	int	count;
 
-	//count = 5;
-	count = 1;
+	count = 0;
 	while (token)
 	{
-		if (token->key == PIPE)
-			count++;
+		if (token->key == COMMAND && token->val && !count)
+			++count;
+		else if (count && token->key == PIPE)
+			++count;
 		token = token->next;
 	}
 	return (count);
@@ -145,7 +146,7 @@ char	**get_one_string(t_list *token, int pipes)
 			string[++i] = buf;
 			buf = NULL;
 		}
-		else if (token->key == WORD || token->key == COMMAND)
+		else if (token->key == COMMAND)
 		{
 			buf = ft_strjoin_withspace(buf, token->val);
 			//ft_putendl_fd(buf, 1);
@@ -156,7 +157,7 @@ char	**get_one_string(t_list *token, int pipes)
 	}
 	if (token->key == PIPE)
 		ft_putendl_fd("wtf?", 1);
-	if (token->key == WORD || token->key == COMMAND)
+	if (token->key == COMMAND)
 	{
 		buf = ft_strjoin_withspace(buf, token->val);
 		if (!buf)
@@ -272,7 +273,12 @@ int     main(int argc, char **argv, char **envp)
 				add_history(line);
                 inf.pipes = parse(line, inf.lenv);
                 free(line);
-				exec();
+				print_pipes(inf.pipes);
+				if (PIPES)
+				{
+					// ft_putnbr_fd(PIPES, 1);
+					exec();
+				}
 				inf.pipes = free_pipes(inf.pipes);
 				inf.mask = 0;
         }
