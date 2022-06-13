@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-t_list	*ft_lstnew(char key, char *val, char in_q)
+t_list	*ft_lstnew(char key, char *val)
 {
 	t_list	*elem;
 
@@ -22,6 +22,5 @@ t_list	*ft_lstnew(char key, char *val, char in_q)
 	elem->next = NULL;
 	elem->key = key;
 	elem->val = val;
-	elem->in_q = in_q;
 	return (elem);
 }
