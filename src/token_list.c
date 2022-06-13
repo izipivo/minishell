@@ -61,7 +61,7 @@ int	make_token(t_list *token, char *line, int end, int shift, int sep)
 		return (1);
 	token->val = (char *)malloc(sizeof(char) * (shift + 2));
 	if (!token->val)
-		exit(1);
+		sig_hand(1);
 	ft_strlcpy(token->val, line + end - shift, sizeof(char) * (shift + 2));
 	if ((sep == OUTFILE || sep == INFILE || sep == PIPE) && shift == 1)
 		sep += 1;

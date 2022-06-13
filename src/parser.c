@@ -275,18 +275,15 @@ t_pipes	*parse(char *line, t_env *lenv)
 	int		j;
 	int		n;
 
-	if (!line || !line[0])
-		return (NULL);
 	tokens = (t_list *)malloc(sizeof(t_list ) * ft_strlen(line));
 	if (!tokens)
-		exit(1);
+		sig_hand(1);
 	i = -1;
 	j = 0;
 	n = -1;
 	sep = token_key(line, 0);
 	while (line[++i])
 	{
-		//printf("sep: %d, tk: %d\n", sep, token_key(line, i+1));
 		if (line[i + 1])
 			tmp = token_key(line, i + 1);
 		if (!line[i + 1] || sep != tmp || tmp == SQUOTES || tmp == DQUOTES
@@ -304,7 +301,6 @@ t_pipes	*parse(char *line, t_env *lenv)
 			}
 			j = 0;
 			sep = tmp;
-			//printf("dkdkdkdkd %d\n", sep);
 		}
 		else
 			j++;
@@ -329,27 +325,3 @@ void	free_list(t_list *list)
 	free(cp);
 	cp = NULL;
 }
-
-//int	main(int argc, char **argv, char **envp)
-//{
-//	char		*line;
-//	//int			i;
-//	t_mshell	inf;
-//	(void)argc;
-//	(void)argv;
-//	//execve("/bin/echo", &argv[0], envp);
-//	inf.env = envp;
-//	inf.lenv = make_env_list(envp);
-//	//int m=0;
-//	while (3)
-//	{
-//		line = readline(PROMPT);
-//		inf.tokens = parse(line, inf.lenv);
-//		free(line);
-//		if (!inf.tokens)
-//			continue ;
-//		print_list(inf.tokens);
-//		free_tokens(inf.tokens);
-//	}
-//	free_lenv(inf.lenv);
-//}

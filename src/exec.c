@@ -256,7 +256,8 @@ int     main(int argc, char **argv, char **envp)
         char		*line;
 		t_list		*tokens;
         (void)argc;
-        //(void)argv;
+        (void)argv;
+		ft_memset(&inf, 0, sizeof(t_mshell));
         inf.env = envp;
         inf.lenv = make_env_list(envp);
 		signal(SIGQUIT, sig_quit);

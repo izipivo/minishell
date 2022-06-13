@@ -107,4 +107,5 @@ int		is_separator(char c);
 int		make_token(t_list *token, char *line, int end, int shift, int sep);
 int		token_key(char *line, int end);
 t_pipes	*invalid_args(void);
+void	sig_hand(int sig);
 #endif
