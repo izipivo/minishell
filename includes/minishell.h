@@ -108,4 +108,8 @@ int		make_token(t_list *token, char *line, int end, int shift, int sep);
 int		token_key(char *line, int end);
 t_pipes	*invalid_args(void);
 void	sig_hand(int sig);
+
+
+// void export_main(void);
+// t_env	*add_variable(t_env	*lenv, int ac, char **av);
 #endif

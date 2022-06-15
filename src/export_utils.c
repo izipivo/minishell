@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../includes/minishell.h"
 
 int ft_strlen_env(char *en)
 {
@@ -72,7 +72,7 @@ char *parse_inf_val(char *s)
 	res = (char *)malloc((j - i) + 1);
 	res[j - i] = 0;
 	j = 0;
-	while (s[j])
+	while (s[i])
 	{
 		res[j] = s[i];
 		i ++;

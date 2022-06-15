@@ -139,11 +139,26 @@ pid_t	*forks(int **fd)
 	pid = createpids(fd);
 	while (pipes)
 	{
-		pid[++m] = fork();
-		if (pid[m] < 0)
-			exitpipex(fd, "fork");
-		if (!pid[m])
-			child(fd, pid, pipes, m);
+		if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
+		{
+			export_main();
+			// // pid[m] = -228;
+			// if (pid[m] < 0)
+			// 	printf("%d\n", sizeof(pid[m]));
+		}
+		else
+		{
+			pid[++m] = fork();
+			if (pid[m] < 0)
+				exitpipex(fd, "fork");
+			if (!pid[m])
+				child(fd, pid, pipes, m);
+		}
+		// pid[++m] = fork();
+		// if (pid[m] < 0)
+		// 	exitpipex(fd, "fork");
+		// if (!pid[m])
+		// 	child(fd, pid, pipes, m);
 		pipes = pipes->next;
 	}
 	return (pid);

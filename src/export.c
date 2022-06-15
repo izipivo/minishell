@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../includes/minishell.h"
 
 int ft_strlen_env(char *en); //del; -->minishell.h
 t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
@@ -86,18 +86,24 @@ void	sort_env(t_mshell	*inf)
     //ликов нет!
 }
 
-int main(int argc, char *argv[], char *envp[])
+extern t_mshell inf;
+
+void export_main(void)
 {
 	char **exp;
-	(void)argv;
-	t_mshell	inf;
+	// t_mshell	inf;
+	int i;
+	
 
-	inf.lenv = make_env_list(envp);
-	if (argc > 2)
-		inf.lenv = add_variable(inf.lenv, argc, argv);
+	i = 0;
+	while (inf.pipes[0].cmd[i])
+		i ++;
+	// inf.lenv = make_env_list(envp);
+	// if (argc > 2)
+	inf.lenv = add_variable(inf.lenv, i, inf.pipes->cmd);
 	sort_env(&inf);
-	free_lenv(inf.lenv);
-	return (0);
+	// free_lenv(inf.lenv);
+	return ;
 }
 
 
