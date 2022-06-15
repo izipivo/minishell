@@ -1,5 +1,12 @@
 #include "../../includes/minishell.h"
 
+int ft_strlen_env(char *en); //del; -->minishell.h
+t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
+char *parse_inf_key(char *s); //del; -->minishell.h
+char *parse_inf_val(char *s); //del -->minishell.h
+void	print_exp(char **exp); // //del -->minishell.h
+void free_exp(char **exp); // //del -->minishell.h
+
 char **join_env(t_mshell	*inf, char **result, int i)
 {
 	char *tmp_del;
@@ -87,7 +94,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	inf.lenv = make_env_list(envp);
 	if (argc > 2)
-		inf.lenv = add_variable(&inf, argc, argv);
+		inf.lenv = add_variable(inf.lenv, argc, argv);
 	sort_env(&inf);
 	free_lenv(inf.lenv);
 	return (0);

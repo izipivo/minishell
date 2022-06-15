@@ -1,28 +1,52 @@
 #include "../../includes/minishell.h"
 
-t_env	*ft_update_env(t_mshell	*inf, t_env	*lenv_tmp, size_t size)
+typedef struct s_lol
+{
+	int		ac_c;
+	int		i;
+	char	*key;
+	char	*val;
+}				t_lol;
+
+char *parse_inf_key(char *s); //del; -->minishell.h
+char *parse_inf_val(char *s); //del -->minishell.h
+
+int ft_len_list(t_env *list)
+{
+    void *tmp;
+    int i;
+
+    i = 0;
+    tmp = list;
+    while (list)
+    {
+        i ++;
+        list = list->next;
+    }
+    list = tmp;
+    return (i);
+}
+
+t_env	*ft_update_env(t_env *lenv, t_env	*lenv_tmp, size_t size)
 {
     int i;
     void *tmp;
 
     i = 0;
-    free_lenv(inf->lenv);
-    inf->lenv = (t_env *)malloc(sizeof(t_env) * (size + 1));
-    tmp = lenv_tmp;
+    free_lenv(lenv);
+    lenv = (t_env *)malloc(sizeof(t_env) * (size));
     while (lenv_tmp)
     {
-        inf->lenv[i].key = ft_strdup(lenv_tmp->key);
-        inf->lenv[i].val = ft_strdup(lenv_tmp->val);
+        lenv[i].key = ft_strdup(lenv_tmp->key);
+        lenv[i].val = ft_strdup(lenv_tmp->val);
         if (i > 0)
-            inf->lenv[i - 1].next = &inf->lenv[i];
+            lenv[i - 1].next = &lenv[i];
         lenv_tmp = lenv_tmp->next;
         i ++;
     }
     if (i > 0)
-		inf->lenv[i - 1].next = NULL;
-    lenv_tmp = tmp;
-    free_lenv(lenv_tmp);
-    return (inf->lenv);
+		lenv[i - 1].next = NULL;
+    return (lenv);
 }
 
 t_env	*add_new(t_env *lenv_tmp, t_lol *lol, int num, char **av)
@@ -33,6 +57,11 @@ t_env	*add_new(t_env *lenv_tmp, t_lol *lol, int num, char **av)
 		lenv_tmp[lol->i].key = ft_strdup(lol->key);
 		free(lol->key);
 		lol->val = parse_inf_val(av[lol->ac_c - 1]);
+		if (!lol->val)
+		{
+			lol->val = malloc(sizeof(char));
+			lol->val = 0;
+		}
 		lenv_tmp[lol->i].val = ft_strdup(lol->val);
 		free(lol->val);
 		if (lol->i > 0)
@@ -44,38 +73,35 @@ t_env	*add_new(t_env *lenv_tmp, t_lol *lol, int num, char **av)
     return (lenv_tmp);
 }
 
-t_env	*add_variable(t_mshell	*inf, int ac, char **av)
+t_env	*add_variable(t_env	*lenv, int ac, char **av)
 {
 	int	num;
 	void *tmp;
 	t_lol	lol;
 	t_env	*lenv_tmp;
 	
-	lol.i = 0;
 	num = ac - 2;
-	tmp = inf->lenv;
+	tmp = lenv;
     lol.ac_c = ac;
-	while (inf->lenv)
-	{
-		inf->lenv = inf->lenv->next;
-		lol.i ++;
-	}
-	inf->lenv = tmp;
-	lenv_tmp = (t_env *)malloc(sizeof(t_env) * ((lol.i + num)) + 1);
+	lol.i = ft_len_list(lenv);
+	lenv_tmp = (t_env *)malloc(sizeof(t_env) * ((lol.i + num)));
 	lol.i = 0;
-	while (inf->lenv)
+	while (lenv)
 	{
-		lenv_tmp[lol.i].key = ft_strdup(inf->lenv->key);
-		lenv_tmp[lol.i].val = ft_strdup(inf->lenv->val);
+		lenv_tmp[lol.i].key = ft_strdup(lenv->key);
+		lenv_tmp[lol.i].val = ft_strdup(lenv->val);
 		if (lol.i > 0)
 			lenv_tmp[lol.i - 1].next = &lenv_tmp[lol.i];
-		inf->lenv = inf->lenv->next;
+		lenv = lenv->next;
 		lol.i ++;
 	}
-	lol.i --;
     lenv_tmp = add_new(lenv_tmp, &lol, num, av);
     if (lol.i > 0)
 		lenv_tmp[lol.i - 1].next = NULL;
-	inf->lenv = tmp;
-	return (ft_update_env(inf, lenv_tmp, lol.i));
+	lenv = tmp;
+	tmp = lenv_tmp;
+	lenv = ft_update_env(lenv, lenv_tmp, lol.i);
+	lenv_tmp = tmp;
+	free_lenv(lenv_tmp);
+	return (lenv);
 }

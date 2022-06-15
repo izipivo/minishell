@@ -63,6 +63,8 @@ char *parse_inf_val(char *s)
 	i = 0;
 	while (s[i] != 61)
 		i ++;
+	if (s[i] == 61 && !s[i + 1])
+		return (NULL);
 	i ++;
 	j = i;
 	while (s[j])
