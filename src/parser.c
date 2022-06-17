@@ -14,36 +14,50 @@
 
 extern t_mshell	inf;
 
+int	join_commands(t_list *token)
+{
+	char	buf;
+
+	// buf = NULL;
+	if (token->next && token->next->key == COMMAND)
+	{
+		buf = ft_strjoin(token->val, token->next->val);
+		if (!buf)
+			exit(1488);
+		free(token->val);
+		token->val = buf;
+		token->next = token->next->next;
+	}
+	if (token->prev && token->prev->key == COMMAND)
+	{
+		buf = ft_strjoin(token->prev->val, token->val);
+		if (!buf)
+			exit(1488);
+		free(token->prev->val);
+		token->prev->val = buf;
+		token->prev->next = token->next;
+	}
+	return (0);
+}
+
 int	first_occ(t_list *token, char c, t_env *lenv)
 {
 	t_list	*cpy;
 	char	*buf;
-	char	f;
 
 	buf = NULL;
 	cpy = token;
 	token = token->next;
-	f = 0;
-	while (token)
+	while (token && token->key != c)
 	{
-		if (token->key == c && !f)
-		{
-			f = 1;
-			token = token->next;
-			continue ;
-		}
-		else if (f && token->key != COMMAND)
-			break ;
 		if (c == DQUOTES && token->key == DOLLAR)
 			dollar(token, lenv);
-		//printf("dolare: %s\n", token->val);
 		if (ft_strapp(&buf, token->val))
 			return (1);
 		free_val(token);
 		token = token->next;
-		//printf("buf: %s\n", buf);
 	}
-	if (!f)			//		not closed " or '
+	if (!token)			//		not closed " or '
 	{
 		if (buf)
 			free(buf);
@@ -52,21 +66,56 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->key = COMMAND;
 	free_val(cpy);
 	cpy->val = buf;
-	//printf("cpy: %s\n", cpy->val);
-	// cpy->next = token->next;
-	cpy->next = token;
+	cpy->next = token->next;
 	free_val(token);
-	if (cpy->prev && cpy->prev->key == COMMAND)
-	{
-		buf = cpy->prev->val;
-		cpy->prev->val = ft_strjoin(buf, cpy->val);
-		if (buf)
-			free(buf);
-		cpy->prev->next = cpy->next;
-		free_val(cpy);
-	}
-	return (0);
+	return (join_commands(cpy));
 }
+
+// int	first_occ(t_list *token, char c, t_env *lenv)
+// {
+// 	t_list	*cpy;
+// 	char	*buf;
+// 	char	f;
+
+// 	buf = NULL;
+// 	cpy = token;
+// 	token = token->next;
+// 	f = 0;
+// 	while (token && token->key != c)
+// 	{
+// 		if (c == DQUOTES && token->key == DOLLAR)
+// 			dollar(token, lenv);
+// 		//printf("dolare: %s\n", token->val);
+// 		if (ft_strapp(&buf, token->val))
+// 			return (1);
+// 		// free_val(token);
+// 		token = token->next;
+// 		//printf("buf: %s\n", buf);
+// 	}
+// 	if (!f)			//		not closed " or '
+// 	{
+// 		if (buf)
+// 			free(buf);
+// 		return (1);
+// 	}
+// 	cpy->key = COMMAND;
+// 	free_val(cpy);
+// 	cpy->val = buf;
+// 	//printf("cpy: %s\n", cpy->val);
+// 	// cpy->next = token->next;
+// 	cpy->next = token;
+// 	free_val(token);
+// 	if (cpy->prev && cpy->prev->key == COMMAND)
+// 	{
+// 		buf = cpy->prev->val;
+// 		cpy->prev->val = ft_strjoin(buf, cpy->val);
+// 		if (buf)
+// 			free(buf);
+// 		cpy->prev->next = cpy->next;
+// 		free_val(cpy);
+// 	}
+// 	return (0);
+// }
 
 int	concat(t_list *token, t_env *lenv)
 {

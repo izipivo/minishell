@@ -274,7 +274,7 @@ int     main(int argc, char **argv, char **envp)
 				add_history(line);
                 inf.pipes = parse(line, inf.lenv);
                 free(line);
-				print_pipes(inf.pipes);
+				// print_pipes(inf.pipes);
 				if (PIPES)
 				{
 					// ft_putnbr_fd(PIPES, 1);
