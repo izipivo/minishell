@@ -93,7 +93,7 @@ t_env	*make_env_list(char **envp);
 int		ft_arrlen(char **arr);
 void	free_list(t_list *list);
 t_pipes	*parse(char *line, t_env *lenv);
-void	print_list(t_list **tok);
+void	print_list(t_list *tok);
 void	free_val(t_list *token);
 void	*free_tokens(t_list **tokens);
 void	*free_pipex_args(char **ar, int pipes);
@@ -108,6 +108,7 @@ int		make_token(t_list *token, char *line, int end, int shift, int sep);
 int		token_key(char *line, int end);
 t_pipes	*invalid_args(void);
 void	sig_hand(int sig);
+void	exit_ms(void);
 
 
 // void export_main(void);

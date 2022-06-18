@@ -17,11 +17,11 @@ void	free_val(t_list *token)
 	}
 }
 
-void	print_list(t_list **tok)
+void	print_list(t_list *tokens)
 {
-	t_list	*tokens=*tok;
 	while (tokens)
 	{
+		// ft_putstr_fd("hh\n", 1);
 		printf("key: %d, val: %s\n", tokens->key, tokens->val);
 		tokens = tokens->next;
 	}
@@ -108,13 +108,14 @@ int	dollar_find(t_list *token, t_env *lenv)
 			exit(1);
 		return (1);
 	}
+	ft_putstr_fd("")
 	while (lenv)
 	{
 		if (!ft_strncmp(lenv->key, token->val, len))
 		{
 			free_val(token);
 			token->val = ft_strdup(lenv->val);
-			//printf("vot on: %s\n", token->val);
+			printf("vot on: %s\n", token->val);
 			if (!token->val)
 				exit(1);
 			return (1);

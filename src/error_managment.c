@@ -19,13 +19,16 @@ void *free_fd(int **fd)
 	int	i;
 
 	i = -1;
-	// if (fd)
-	// {
-	while (++i <= PIPES)
-		free(fd[i]);
-	free(fd);
-	fd = NULL;
-	// }
+	if (fd)
+	{
+		while (++i <= PIPES)
+		{
+			if (fd[i])
+				free(fd[i]);
+		}
+		free(fd);
+		fd = NULL;
+	}
 	return (NULL);
 }
 

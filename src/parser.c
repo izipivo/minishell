@@ -16,10 +16,9 @@ extern t_mshell	inf;
 
 int	join_commands(t_list *token)
 {
-	char	buf;
+	char	*buf;
 
-	// buf = NULL;
-	if (token->next && token->next->key == COMMAND)
+	if (token->next && token->next->key == COMMAND && token->next->val != NULL)
 	{
 		buf = ft_strjoin(token->val, token->next->val);
 		if (!buf)
@@ -27,14 +26,18 @@ int	join_commands(t_list *token)
 		free(token->val);
 		token->val = buf;
 		token->next = token->next->next;
+		if (token->next)
+			token->next->prev = token;
 	}
-	if (token->prev && token->prev->key == COMMAND)
+	if (token->prev && token->prev->key == COMMAND && token->prev->val != NULL)
 	{
 		buf = ft_strjoin(token->prev->val, token->val);
 		if (!buf)
 			exit(1488);
 		free(token->prev->val);
 		token->prev->val = buf;
+		if (token->next)
+			token->next->prev = token->prev;
 		token->prev->next = token->next;
 	}
 	return (0);
@@ -51,7 +54,10 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	while (token && token->key != c)
 	{
 		if (c == DQUOTES && token->key == DOLLAR)
+		{
+			ft_putstr_fd("dol\n", 1);
 			dollar(token, lenv);
+		}
 		if (ft_strapp(&buf, token->val))
 			return (1);
 		free_val(token);
@@ -68,54 +74,10 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->val = buf;
 	cpy->next = token->next;
 	free_val(token);
+	if (!cpy->val)
+		return (0);
 	return (join_commands(cpy));
 }
-
-// int	first_occ(t_list *token, char c, t_env *lenv)
-// {
-// 	t_list	*cpy;
-// 	char	*buf;
-// 	char	f;
-
-// 	buf = NULL;
-// 	cpy = token;
-// 	token = token->next;
-// 	f = 0;
-// 	while (token && token->key != c)
-// 	{
-// 		if (c == DQUOTES && token->key == DOLLAR)
-// 			dollar(token, lenv);
-// 		//printf("dolare: %s\n", token->val);
-// 		if (ft_strapp(&buf, token->val))
-// 			return (1);
-// 		// free_val(token);
-// 		token = token->next;
-// 		//printf("buf: %s\n", buf);
-// 	}
-// 	if (!f)			//		not closed " or '
-// 	{
-// 		if (buf)
-// 			free(buf);
-// 		return (1);
-// 	}
-// 	cpy->key = COMMAND;
-// 	free_val(cpy);
-// 	cpy->val = buf;
-// 	//printf("cpy: %s\n", cpy->val);
-// 	// cpy->next = token->next;
-// 	cpy->next = token;
-// 	free_val(token);
-// 	if (cpy->prev && cpy->prev->key == COMMAND)
-// 	{
-// 		buf = cpy->prev->val;
-// 		cpy->prev->val = ft_strjoin(buf, cpy->val);
-// 		if (buf)
-// 			free(buf);
-// 		cpy->prev->next = cpy->next;
-// 		free_val(cpy);
-// 	}
-// 	return (0);
-// }
 
 int	concat(t_list *token, t_env *lenv)
 {
@@ -238,7 +200,6 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	int		i;
 	int		j;
 
-	// printf("1\n");
 	j = -1;
 	i = 0;
 	if (old->key == PIPE)
@@ -248,7 +209,6 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	}
 	while (old)
 	{
-		//printf("2\n");
 		if (old->key == PIPE)
 		{
 			cap(new, i, ++j);
@@ -288,7 +248,7 @@ t_pipes	*remalloc(t_list *old)
 	int		i;
 
 	i = -1;
-	print_list(&old);
+	print_list(old);
 	//printf("\n\n");
 	cp = old;
 	inf.mask = count_pipes(old) << 16;

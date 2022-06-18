@@ -30,11 +30,16 @@ void	echo(char **string, int n)
 
 int main(int argc, char **argv)
 {
+	int	f;
+
+	f = 0;
 	if (argc == 1)
+	{
 		ft_putchar_fd('\n', 2);
-	else if (ft_strncmp("-n", argv[1], 2) == 0)
-		echo(argv + 2, 1);
-	else
-		echo(argv + 1, 0);
+		return (0);
+	}
+	while (!ft_strncmp(*(++argv), "-n", 2))
+		f = 1;
+	echo(argv, f);
 	return (0);
 }
