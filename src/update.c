@@ -57,12 +57,6 @@ t_env	*add_new(t_env *lenv_tmp, t_lol *lol, int num, char **av)
 		lenv_tmp[lol->i].key = ft_strdup(lol->key);
 		free(lol->key);
 		lol->val = parse_inf_val(av[lol->ac_c - 1]);
-		printf("%s\n", lol->val);
-		// if (!lol->val)
-		// {
-		// 	lol->val = malloc(sizeof(char));
-		// 	lol->val = 0;
-		// }
 		lenv_tmp[lol->i].val = ft_strdup(lol->val);
 		free(lol->val);
 		if (lol->i > 0)

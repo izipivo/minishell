@@ -14,7 +14,7 @@ PWD_CMD =			pwd
 
 CD_CMD =			cd
 
-ECHO_CMD =			echo
+# ECHO_CMD =			echo
 
 # EXPORT_CMD = 		export
 
@@ -22,20 +22,20 @@ PWD =				$(addprefix ${BINDIR}, ${PWD_CMD})
 
 CD =				$(addprefix ${BINDIR}, ${CD_CMD})
 
-ECHO =				$(addprefix ${BINDIR}, ${ECHO_CMD})
+# ECHO =				$(addprefix ${BINDIR}, ${ECHO_CMD})
 
 # EXPORT = 			$(addprefix ${BINDIR}, ${EXPORT_CMD})
 
 NAME =				minishell
 
 SRC =				token_list.c parser.c exec.c env_list.c pipex.c parents.c fork.c error_managment.c validation.c get_next_line.c\
-					get_next_line_utils.c export.c export_utils.c update.c
+					get_next_line_utils.c export.c export_utils.c update.c unset.c unset_utils.c echo.c
 
 SRC_PWD =			pwd.c
 
 SRC_CD =			cd.c
 
-SRC_ECHO =			echo.c
+# SRC_ECHO =			echo.c
 
 # SRC_EXPORT =		export.c export_utils.c update.c
 
@@ -45,7 +45,7 @@ PWD_DIR =			./src/pwd/
 
 CD_DIR =			./src/cd/
 
-ECHO_DIR =			./src/echo/
+# ECHO_DIR =			./src/echo/
 
 # EXPORT_DIR =		./src/export/
 
@@ -57,7 +57,7 @@ SOURCES_PWD =		$(addprefix ${PWD_DIR}, ${SRC_PWD})
 
 SOURCES_CD =		$(addprefix ${CD_DIR}, ${SRC_CD})
 
-SOURCES_ECHO =		$(addprefix ${ECHO_DIR}, ${SRC_ECHO})
+# SOURCES_ECHO =		$(addprefix ${ECHO_DIR}, ${SRC_ECHO})
 
 # SOURCES_EXPORT =	$(addprefix ${EXPORT_DIR}, ${SRC_EXPORT})
 
@@ -75,7 +75,7 @@ OBJS_PWD =			$(addprefix ${BUILDIR}, ${SRC_PWD:.c=.o})
 
 OBJS_CD =			$(addprefix ${BUILDIR}, ${SRC_CD:.c=.o})
 
-OBJS_ECHO =			$(addprefix ${BUILDIR}, ${SRC_ECHO:.c=.o})
+# OBJS_ECHO =			$(addprefix ${BUILDIR}, ${SRC_ECHO:.c=.o})
 
 # OBJS_EXPORT =		$(addprefix ${BUILDIR}, ${SRC_EXPORT:.c=.o})
 
@@ -89,7 +89,7 @@ LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 
 .PHONY:				clean all fclean re
 
-all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PWD} ${CD} ${ECHO} ${NAME}
+all:				${BUILDIR} ${LIBFT} ${BINDIR} ${PWD} ${CD} ${NAME}
 
 # ${PIPEX}:
 # 					${MAKE} -C ${PIPEXDIR}
@@ -115,9 +115,9 @@ ${CD}:				${OBJS_CD} ${HEADERS}
 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_CD} -o $@
 					${CC} ${CFLAGS} ${OBJS_CD} -o $@ ${LIBS}
 
-${ECHO}:			${OBJS_ECHO} ${HEADERS} 
-					#${CC} ${CFLAGS} ${LIBS} ${OBJS_ECHO} -o $@
-					${CC} ${CFLAGS} ${OBJS_ECHO} -o $@ ${LIBS}
+# ${ECHO}:			${OBJS_ECHO} ${HEADERS} 
+# 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_ECHO} -o $@
+# 					${CC} ${CFLAGS} ${OBJS_ECHO} -o $@ ${LIBS}
 
 # ${ECHO}:			${OBJS_EXPORT} ${HEADERS} 
 # 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_EXPORT} -o $@
@@ -132,8 +132,8 @@ ${BUILDIR}%.o:		${PWD_DIR}%.c ${HEADERS} Makefile
 ${BUILDIR}%.o:		${CD_DIR}%.c ${HEADERS} Makefile
 					${CC} -c ${CFLAGS} $< -o $@
 
-${BUILDIR}%.o:		${ECHO_DIR}%.c ${HEADERS} Makefile
-					${CC} -c ${CFLAGS} $< -o $@
+# ${BUILDIR}%.o:		${ECHO_DIR}%.c ${HEADERS} Makefile
+# 					${CC} -c ${CFLAGS} $< -o $@
 
 # ${BUILDIR}%.o:		${EXPORT_DIR}%.c ${HEADERS} Makefile
 # 					${CC} -c ${CFLAGS} $< -o $@

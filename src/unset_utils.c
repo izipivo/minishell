@@ -1,4 +1,4 @@
-#include "../../includes/minishell.h"
+#include "../includes/minishell.h"
 
 void    ft_strdup_env(t_env *lenv, t_env *lenv_tmp, int j)
 {
@@ -8,7 +8,7 @@ void    ft_strdup_env(t_env *lenv, t_env *lenv_tmp, int j)
 	    lenv_tmp[j - 1].next = &lenv_tmp[j];
 }
 
-t_env	*delete_env(t_env *lenv, t_env *lenv_tmp, int num, char **del)
+t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del)
 {
     int i;
     int j;
@@ -18,7 +18,7 @@ t_env	*delete_env(t_env *lenv, t_env *lenv_tmp, int num, char **del)
     tmp = lenv;
     while (lenv)
     {
-        i = 2;                                              //изменить потом, не учитывая ./a.out
+        i = 1;                                              //изменить потом, не учитывая ./a.out
         while (del[i])
         {
             if (ft_strncmp(lenv->key, del[i], ft_strlen(del[i])))
@@ -36,5 +36,10 @@ t_env	*delete_env(t_env *lenv, t_env *lenv_tmp, int num, char **del)
     if (j > 0)
 		lenv_tmp[j - 1].next = NULL;
     lenv = tmp;
+	// while (lenv_tmp)
+    // {
+    //     printf("%s\n", lenv_tmp->key);
+    //     lenv_tmp = lenv_tmp->next;
+    // }
     return (lenv_tmp);
 }

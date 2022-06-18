@@ -15,6 +15,13 @@ char **join_env(t_mshell	*inf, char **result, int i)
 	{
 		result[i] = ft_strdup(inf->lenv->key);
 		tmp_del = result[i];
+		if (inf->lenv->val[0] == '\0')
+		{
+			// free(tmp_del);
+			i --;
+			inf->lenv = inf->lenv->next;
+			continue ;
+		}
 		result[i] = ft_strjoin(result[i], "=");
 		free(tmp_del);
 		tmp_del = result[i];
@@ -83,7 +90,6 @@ void	sort_env(t_mshell	*inf)
 	}
 	print_exp(exp);
 	free_exp(exp);
-    //ликов нет!
 }
 
 extern t_mshell inf;
@@ -91,18 +97,17 @@ extern t_mshell inf;
 void export_main(void)
 {
 	char **exp;
-	// t_mshell	inf;
 	int i;
 	
-
 	i = 0;
 	while (inf.pipes[0].cmd[i])
 		i ++;
-	// inf.lenv = make_env_list(envp);
-	// if (argc > 2)
-	inf.lenv = add_variable(inf.lenv, i, inf.pipes->cmd);
+	if (i > 1)
+	{
+		inf.lenv = add_variable(inf.lenv, i, inf.pipes->cmd);
+		return ;
+	}
 	sort_env(&inf);
-	// free_lenv(inf.lenv);
 	return ;
 }
 

@@ -42,12 +42,18 @@ char *parse_inf_key(char *s)
 
 	i = 0;
 	while (s[i] != 61)
+	{
+		if (s[i] == '\0')
+			break ;
 		i ++;
+	}
 	res = (char *)malloc(i + 1);
 	res[i] = 0;
 	i = 0;
 	while (s[i] != '=')
 	{
+		if (s[i] == '\0')
+			break ;
 		res[i] = s[i];
 		i ++;
 	}
@@ -62,7 +68,16 @@ char *parse_inf_val(char *s)
 
 	i = 0;
 	while (s[i] != 61)
+	{
+		if (s[i] == '\0')
+		{
+			res = malloc(sizeof(char));
+			res[0] = '\0';
+			return (res);
+		}
 		i ++;
+	}
+		// i ++;
 	if (s[i] == 61 && !s[i + 1])
 		return (NULL);
 	i ++;
