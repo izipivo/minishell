@@ -96,7 +96,8 @@ void	streams(t_list *token)
 
 int	dollar_find(t_list *token, t_env *lenv)
 {
-	int	len;
+	char	*buf;
+	int		len;
 
 	token->key = COMMAND;
 	len = ft_strlen(token->val);
@@ -108,13 +109,13 @@ int	dollar_find(t_list *token, t_env *lenv)
 			exit(1);
 		return (1);
 	}
-	// ft_putstr_fd("")
 	while (lenv)
 	{
-		if (!ft_strncmp(lenv->key, token->val, len))
+		if (!ft_strncmp(lenv->key, token->val, ft_strlen(lenv->key)))
 		{
+			buf = ft_strjoin(lenv->val, token->val + ft_strlen(lenv->key));
 			free_val(token);
-			token->val = ft_strdup(lenv->val);
+			token->val = buf;
 			// printf("vot on: %s\n", token->val);
 			if (!token->val)
 				exit(1);

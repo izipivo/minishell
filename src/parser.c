@@ -17,30 +17,69 @@ extern t_mshell	inf;
 int	join_commands(t_list *token)
 {
 	char	*buf;
-
-	if (token->next && token->next->key == COMMAND && token->next->val != NULL)
+	char	*cc;
+	t_list	*cpy;
+	int		f;
+	
+	f = 0;
+	while(token)
 	{
-		buf = ft_strjoin(token->val, token->next->val);
-		if (!buf)
-			exit(1488);
-		free(token->val);
-		token->val = buf;
-		token->next = token->next->next;
-		if (token->next)
-			token->next->prev = token;
-	}
-	if (token->prev && token->prev->key == COMMAND && token->prev->val != NULL)
-	{
-		buf = ft_strjoin(token->prev->val, token->val);
-		if (!buf)
-			exit(1488);
-		free(token->prev->val);
-		token->prev->val = buf;
-		if (token->next)
-			token->next->prev = token->prev;
-		token->prev->next = token->next;
+		if (token->key == COMMAND && token->val)
+		{
+			buf = token->val;
+			cpy = token->next;
+			while (cpy && cpy->key == COMMAND && cpy->val)
+			{
+				cc = buf;
+				buf = ft_strjoin(buf, cpy->val);
+				// ft_putendl_fd(buf, 1);
+				// if (buf == 0);
+				// {
+				// 	ft_putstr_fd("while\n", 1);
+				// 	exit(100);					
+				// }
+				free(cc);
+				cpy = cpy->next;
+				f = 1;
+			}
+			if (f)
+			{
+				token->val = buf;
+				token->next = cpy;
+				f = 0;
+			}
+		}
+		token = token->next;
 	}
 	return (0);
+
+
+
+	// char	*buf;
+
+	// if (token->next && token->next->key == COMMAND && token->next->val != NULL)
+	// {
+	// 	buf = ft_strjoin(token->val, token->next->val);
+	// 	if (!buf)
+	// 		exit(1488);
+	// 	free(token->val);
+	// 	token->val = buf;
+	// 	token->next = token->next->next;
+	// 	if (token->next)
+	// 		token->next->prev = token;
+	// }
+	// if (token->prev && token->prev->key == COMMAND && token->prev->val != NULL)
+	// {
+	// 	buf = ft_strjoin(token->prev->val, token->val);
+	// 	if (!buf)
+	// 		exit(1488);
+	// 	free(token->prev->val);
+	// 	token->prev->val = buf;
+	// 	if (token->next)
+	// 		token->next->prev = token->prev;
+	// 	token->prev->next = token->next;
+	// }
+	// return (0);
 }
 
 int	first_occ(t_list *token, char c, t_env *lenv)
@@ -55,7 +94,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	{
 		if (c == DQUOTES && token->key == DOLLAR)
 		{
-			ft_putstr_fd("dol\n", 1);
+			// ft_putstr_fd("dol\n", 1);
 			dollar(token, lenv);
 		}
 		if (ft_strapp(&buf, token->val))
@@ -74,9 +113,9 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->val = buf;
 	cpy->next = token->next;
 	free_val(token);
-	if (!cpy->val)
-		return (0);
-	return (join_commands(cpy));
+	// if (!cpy->val)
+	return (0);
+	// return (;
 }
 
 int	concat(t_list *token, t_env *lenv)
@@ -183,9 +222,14 @@ void	copy_in(t_pipes *new, char *val, char key)
 	new->mask |= key % 2;
 }
 
-void	copy_word(t_pipes *new, int j, char *val)
+void	copy_word(t_pipes *new, int j, t_list *old)
 {
-	new->cmd[j] = ft_strdup(val);
+	if (!old->val && old->prev && old->prev->key == SPC)
+		new->cmd[j] = ft_strdup(" ");
+	else if (old->val)
+		new->cmd[j] = ft_strdup(old->val);
+	else
+		return ;
 	if (!new->cmd[j])
 	{
 		ft_putendl_fd("new cmd", 2);
@@ -225,8 +269,8 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 			copy_in(&new[i], old->val, old->key);
 		else if (old->key > 4 && old->key < 7)
 			copy_out(&new[i], old->val, old->key);
-		else if (old->key == COMMAND && old->val)
-			copy_word(&new[i], ++j, old->val);
+		else if (old->key == COMMAND)
+			copy_word(&new[i], ++j, old);
 		old = old->next;
 	}
 	cap(new, i, ++j);
@@ -272,6 +316,7 @@ t_pipes	*cleaning(t_list *tokens, t_env *lenv)
 		exit(1);
 	}
 	dol_spc_str(tokens, lenv);
+	join_commands(tokens);
 	return (remalloc(tokens));
 }
 
