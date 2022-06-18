@@ -108,14 +108,14 @@ int	dollar_find(t_list *token, t_env *lenv)
 			exit(1);
 		return (1);
 	}
-	ft_putstr_fd("")
+	// ft_putstr_fd("")
 	while (lenv)
 	{
 		if (!ft_strncmp(lenv->key, token->val, len))
 		{
 			free_val(token);
 			token->val = ft_strdup(lenv->val);
-			printf("vot on: %s\n", token->val);
+			// printf("vot on: %s\n", token->val);
 			if (!token->val)
 				exit(1);
 			return (1);
