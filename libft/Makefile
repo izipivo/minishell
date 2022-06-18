@@ -24,7 +24,7 @@ CC = cc
 
 RM = rm -rf
 
-BUILDIR = ../obj/
+BUILDIR = ../obj/libft/
 
 NAME = libft.a 
 
