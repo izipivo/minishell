@@ -128,17 +128,17 @@ int	child(int **fd, pid_t *pid, t_pipes *pipes, int index)
 	return (1);
 }
 
-void check_func(t_pipes *pipes)
+int	check_func(t_pipes *pipes)
 {
 	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
 		export_main();
 	else if (!(ft_strncmp(pipes->cmd[0], "unset", 7)))
 		unset_main();
-	else if (!(ft_strncmp(pipes->cmd[0], "echo", 5)))
-		echo_main();
+	// else if (!(ft_strncmp(pipes->cmd[0], "echo", 5)))
+	// 	echo_main();
 	else
-		return ;
-	
+		return (0);
+	return (1);
 }
 
 pid_t	*forks(int **fd)
@@ -152,7 +152,11 @@ pid_t	*forks(int **fd)
 	pid = createpids(fd);
 	while (pipes)
 	{
-		check_func(pipes);
+		if (check_func(pipes))
+		{
+			++m;
+			continue ;
+		}
 		pid[++m] = fork();
 		if (pid[m] < 0)
 			exitpipex(fd, "fork");

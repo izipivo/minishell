@@ -10,46 +10,38 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 /*
  *		!!! echo $... !!!
  */
 
-void	ft_echo(char **string, int n)
+void	echo(char **string, int n)
 {
-	int num;
-
-	num = 1;
-	while (string[num])
+	while (*string)
 	{
-		ft_putstr_fd(string[num], 1);
-		if (string[++ num])
+		if (ft_strncmp(" ", *string, 1) != 0)
+			ft_putstr_fd(*string, 1);
+		// *(++string);
+		if (*(++string))// && ft_strncmp(" ", *(string), 1) && ft_strncmp(" ", *(string - 1), 1))
 			ft_putchar_fd(' ', 1);
 	}
 	if (!n)
 		ft_putchar_fd('\n', 1);
 }
 
-extern t_mshell inf;
-
-void echo_main(void)
+int main(int argc, char **argv)
 {
 	int	f;
-	int	i;
 
-	i = 0;
 	f = 0;
-	while (inf.pipes[0].cmd[i])
-		i ++;
-	if (i == 1)
+	if (argc == 1)
 	{
 		ft_putchar_fd('\n', 2);
-		return ;
+		return (0);
 	}
-	i = -1;
-	while (!ft_strncmp(inf.pipes[0].cmd[++ i], "-n", 2))
+	while (!ft_strncmp(*(++argv), "-n", 2))
 		f = 1;
-	ft_echo(inf.pipes[0].cmd, f);
-	return ;
+	echo(argv, f);
+	return (0);
 }

@@ -40,7 +40,7 @@ void	exitmalloc(int **fd)
 	exit(43);
 }
 
-void	*exitpipex(int **fd, char *desc)
+void	exitpipex(int **fd, char *desc)
 {
 	int	i;
 
@@ -53,5 +53,4 @@ void	*exitpipex(int **fd, char *desc)
 	inf.pids = NULL;
 	free_pipes(inf.pipes);
 	exit(22);
-	return (NULL);
 }

@@ -116,7 +116,4 @@ void	exit_ms(void);
 void unset_main(void);
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
 
-
-void echo_main(void);
-
 #endif

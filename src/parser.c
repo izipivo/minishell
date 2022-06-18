@@ -24,11 +24,11 @@ int	join_commands(t_list *token)
 	f = 0;
 	while(token)
 	{
-		if (token->key == COMMAND && token->val)
+		if (token->key == COMMAND)
 		{
 			buf = token->val;
 			cpy = token->next;
-			while (cpy && cpy->key == COMMAND && cpy->val)
+			while (cpy && cpy->key == COMMAND)
 			{
 				cc = buf;
 				buf = ft_strjoin(buf, cpy->val);
@@ -187,7 +187,6 @@ int	q_args(t_list *token)
 			count++;
 		token = token->next;
 	}
-	// printf("quant of cmds = %d\n", count);
 	return (count);
 }
 
@@ -196,11 +195,9 @@ void	cap(t_pipes *new, int i, int j)
 	new[i].cmd[j] = NULL;
 	if (i)
 	{
-		// printf("i\n");
 		new[i - 1].next = &new[i];
 	}
 }
-
 
 void	copy_out(t_pipes *new, char *val, char key)
 {
@@ -222,19 +219,20 @@ void	copy_in(t_pipes *new, char *val, char key)
 	new->mask |= key % 2;
 }
 
-void	copy_word(t_pipes *new, int j, t_list *old)
+int	copy_word(t_pipes *new, int j, t_list *old)
 {
-	if (!old->val && old->prev && old->prev->key == SPC)
-		new->cmd[j] = ft_strdup(" ");
+	if (!old->val)// && old->prev && old->prev->key == SPC && old->prev->prev && old->prev->prev->prev)
+		new->cmd[++j] = ft_strdup(" ");
 	else if (old->val)
-		new->cmd[j] = ft_strdup(old->val);
+		new->cmd[++j] = ft_strdup(old->val);
 	else
-		return ;
+		return (0);
 	if (!new->cmd[j])
 	{
 		ft_putendl_fd("new cmd", 2);
 		exit(1);					//!!!!
 	}
+	return (1);
 }
 
 t_pipes	*copy_pipes(t_pipes *new, t_list *old)
@@ -270,7 +268,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 		else if (old->key > 4 && old->key < 7)
 			copy_out(&new[i], old->val, old->key);
 		else if (old->key == COMMAND)
-			copy_word(&new[i], ++j, old);
+			j += copy_word(&new[i], j, old);
 		old = old->next;
 	}
 	cap(new, i, ++j);
@@ -292,12 +290,9 @@ t_pipes	*remalloc(t_list *old)
 	int		i;
 
 	i = -1;
-	print_list(old);
-	//printf("\n\n");
+	// print_list(old);
 	cp = old;
 	inf.mask = count_pipes(old) << 16;
-	//printf("2: %x - %d\n", inf.mask, inf.mask);
-	// printf("2: %x - %d\n", PIPES, PIPES);
 	new = (t_pipes *) malloc(sizeof(t_pipes) * (PIPES + 1));
 	if (!new)
 		exit(1);					//		!!!!

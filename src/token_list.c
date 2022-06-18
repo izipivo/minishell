@@ -94,14 +94,32 @@ void	streams(t_list *token)
 	}
 }
 
+int	leng(char *s)
+{
+	int	i;
+	int	f;
+
+	i = -1;
+	if (ft_isdigit(s[0]))
+		return (1);
+	// f = ft_isdigit(s[0]);
+	while (s[++i])
+	{
+		if (s[i] == '$' || s[i] == '/' || s[i] == '=')
+			return (i);
+	}
+	return (ft_strlen(s));
+}
+
 int	dollar_find(t_list *token, t_env *lenv)
 {
 	char	*buf;
 	int		len;
 
 	token->key = COMMAND;
-	len = ft_strlen(token->val);
-	if (!ft_strncmp(token->val, "$", len))
+	len = leng(token->val);		//$/=
+	// printf("len: %d\n", len);
+	if (!ft_strncmp(token->val, "$", 2))
 	{
 		free_val(token);
 		token->val = ft_strdup("1488");
@@ -111,7 +129,8 @@ int	dollar_find(t_list *token, t_env *lenv)
 	}
 	while (lenv)
 	{
-		if (!ft_strncmp(lenv->key, token->val, ft_strlen(lenv->key)))
+		// if (!ft_strncmp(lenv->key, token->val, ft_strlen(lenv->key)))
+		if (!ft_strncmp(lenv->key, token->val, len))
 		{
 			buf = ft_strjoin(lenv->val, token->val + ft_strlen(lenv->key));
 			free_val(token);
@@ -123,7 +142,22 @@ int	dollar_find(t_list *token, t_env *lenv)
 		}
 		lenv = lenv->next;
 	}
+	if (ft_strlen(token->val) != len)
+	{
+		buf = token->val;
+		token->val = ft_strdup(token->val + len);
+		if (!token->val)
+			exit(3432423);
+		free(buf);
+		// printf("token->val: %s\n", token->val);
+		return (1);
+	}
 	token->val[0] = 0;
+	if (token->prev)
+	{
+		// printf("dollar find: %s\n", "ff");
+		token->prev->next = token->next;
+	}
 	return (1);
 }
 

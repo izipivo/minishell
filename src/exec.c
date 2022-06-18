@@ -11,11 +11,12 @@ void	*free_pipes(t_pipes *pipes)
 	while (pipes)
 	{
 		i = -1;
+		// ft_putstr_fd(pipes[0].cmd[0], 1);
 		while (pipes->cmd[++i])
-		// {
-		// 	ft_putnbr_fd(i, 2);
+		{
+			// printf("free_pipes: %s\n", pipes->cmd[i]);
 			free(pipes->cmd[i]);
-		// }
+		}
 		free(pipes->cmd);
 		if (pipes->in)
 			free(pipes->in);
@@ -43,9 +44,8 @@ void	print_pipes(t_pipes *pipe)
 {
 	while (pipe)
 	{
-		// printf("%d cmd:\n", cnt);
 		print_string(pipe->cmd);
-		// printf("\n%d in: %s\nout: %s\nmask: %x\n\n", cnt++, pipe->in, pipe->out, pipe->mask);
+		ft_putstr_fd("_______________________\n", 1);
 		pipe = pipe->next;
 	}
 	cnt = 1;
@@ -132,7 +132,6 @@ char	**get_one_string(t_list *token, int pipes)
 	char	*buf;
 	int		i;
 
-	//print_list(token);
 	i = 1;
 	buf = NULL;
 	string = (char **)malloc(sizeof(char *) * pipes);
@@ -165,8 +164,6 @@ char	**get_one_string(t_list *token, int pipes)
 	}
 	if (buf)
 		string[++i] = buf;
-	//ft_putendl_fd("before pipex", 1);
-	//print_string(string, pipes);
 	return (string);
 }
 
@@ -251,6 +248,11 @@ void	exit_ms(void)
 		inf.pipes = free_pipes(inf.pipes);
 }
 
+/*
+//		main 
+*/
+
+
 int     main(int argc, char **argv, char **envp)
 {
 	char		*line;
@@ -277,7 +279,6 @@ int     main(int argc, char **argv, char **envp)
 		add_history(line);
 		inf.pipes = parse(line, inf.lenv);
 		free(line);
-		printf("ss\n");
 		print_pipes(inf.pipes);
 		if (PIPES)
 		{
@@ -289,3 +290,35 @@ int     main(int argc, char **argv, char **envp)
 	}
 }
 
+/*
+//		main для тестера
+*/
+
+// int     main(int argc, char **argv, char **envp)
+// {
+// 	char		*line;
+// 	t_list		*tokens;
+// 	(void)argc;
+// 	(void)argv;
+// 	ft_memset(&inf, 0, sizeof(t_mshell));
+// 	inf.env = envp;
+// 	inf.lenv = make_env_list(envp);
+// 	signal(SIGQUIT, sig_quit);
+// 	signal(SIGINT, sig_hand);
+// 	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
+//   	{
+// 		line = argv[2];
+// 		if (!ft_strlen(line))
+// 		{
+// 			exit(0);
+// 		}
+// 		inf.pipes = parse(line, inf.lenv);
+// 		if (PIPES)
+// 		{
+// 			// ft_putnbr_fd(PIPES, 1);
+// 			exec();
+// 		}
+// 		inf.pipes = free_pipes(inf.pipes);
+// 		inf.mask = 0;
+// 	}
+// }

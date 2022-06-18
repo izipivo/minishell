@@ -39,7 +39,7 @@ int		parentwrite(int fd, char *filename, int flag);
 void	waitchildren(pid_t *pid, int **fd, int argc);
 int		validate(int argc, char **argv);
 void	exitmalloc(int **fd);
-void	*exitpipex(int **fd, char *desc);
+void	exitpipex(int **fd, char *desc);
 int		pipex(void);
 void	*free_fd(int **fd);
 

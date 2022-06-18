@@ -17,14 +17,16 @@ char	*ft_strjoin(char const *s1, char const	*s2)
 	char	*joined;
 	int		i;
 
-	if (!s1 || !s2)
+	i = -1;
+	if (!s1 && !s2)
 	{
 		// ft_putstr_fd("ft_strjoin: no input strings\n", 2);
 		return (0);
 	}
-	i = -1;
-	if (!s1)
+	else if (!s1)
 		joined = (char *) malloc(ft_strlen(s2) + 1);
+	else if (!s2)
+		joined = (char *) malloc(ft_strlen(s1) + 1);
 	else
 		joined = (char *) malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
 	if (!joined)
