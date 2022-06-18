@@ -52,34 +52,6 @@ int	join_commands(t_list *token)
 		token = token->next;
 	}
 	return (0);
-
-
-
-	// char	*buf;
-
-	// if (token->next && token->next->key == COMMAND && token->next->val != NULL)
-	// {
-	// 	buf = ft_strjoin(token->val, token->next->val);
-	// 	if (!buf)
-	// 		exit(1488);
-	// 	free(token->val);
-	// 	token->val = buf;
-	// 	token->next = token->next->next;
-	// 	if (token->next)
-	// 		token->next->prev = token;
-	// }
-	// if (token->prev && token->prev->key == COMMAND && token->prev->val != NULL)
-	// {
-	// 	buf = ft_strjoin(token->prev->val, token->val);
-	// 	if (!buf)
-	// 		exit(1488);
-	// 	free(token->prev->val);
-	// 	token->prev->val = buf;
-	// 	if (token->next)
-	// 		token->next->prev = token->prev;
-	// 	token->prev->next = token->next;
-	// }
-	// return (0);
 }
 
 int	first_occ(t_list *token, char c, t_env *lenv)
@@ -113,9 +85,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	cpy->val = buf;
 	cpy->next = token->next;
 	free_val(token);
-	// if (!cpy->val)
 	return (0);
-	// return (;
 }
 
 int	concat(t_list *token, t_env *lenv)
