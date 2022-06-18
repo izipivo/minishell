@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 int ft_strlen_env(char *en); //del; -->minishell.h
 t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h

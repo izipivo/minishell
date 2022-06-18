@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 void    ft_strdup_env(t_env *lenv, t_env *lenv_tmp, int j)
 {

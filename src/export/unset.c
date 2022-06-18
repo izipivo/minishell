@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 t_env	*ft_update_env_unset(t_env *lenv, t_env *lenv_tmp, size_t size)
 {

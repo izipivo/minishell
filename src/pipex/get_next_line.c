@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 #if BUFFER_SIZE <= 0
 # undef BUFFER_SIZE
