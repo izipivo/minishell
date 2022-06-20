@@ -2,6 +2,31 @@
 
 extern t_mshell inf;
 
+char  **new_key(char **cmd)
+{
+    int i;
+    char **str;
+
+    i = 0;
+    while (cmd[i])
+        i ++;
+    str = (char **)malloc(sizeof(char *) * (i + 1));
+    str[i] = 0;
+    i = 0;
+    while (cmd[i])
+    {
+        str[i] = ft_strdup(cmd[i]);
+        i ++;
+    }
+    i = 0;
+    while (str[i])
+    {
+        printf("%s\n", str[i]);
+        i ++;
+    }
+    return (str);
+}
+
 int same_key(void)
 {
     int i;

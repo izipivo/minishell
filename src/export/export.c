@@ -1,4 +1,4 @@
-#include "minishell.h"
+include "minishell.h"
 
 int ft_strlen_env(char *en); //del; -->minishell.h
 t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
@@ -16,8 +16,7 @@ char **join_env(t_mshell	*inf, char **result, int i)
 {
 	char *tmp_del;
 
-	while ((unsigned long)i != (unsigned long) -1)
-	// while ((unsigned long)i != 18446744073709551615)
+	while (i != (unsigned long) -1)
 	{
 		result[i] = ft_strdup(inf->lenv->key);
 		tmp_del = result[i];
@@ -58,7 +57,7 @@ char	**ft_exp(t_mshell	*inf)
 	int i;
 	char **result;
 	void *tmp;
-	// char *tmp_del;
+	char *tmp_del;
 
 	i = 0;
 	tmp = inf->lenv;
@@ -140,14 +139,55 @@ int	check_pipes_cmd(char *str)
 	return (-1);
 }
 
+char **back_cmd(char **cmd, char **tmp)
+{
+	int i;
+
+	i = 0;
+	while (tmp[i])
+	{
+		free(cmd[i]);
+		cmd[i] = ft_strdup(tmp[i]);
+		i ++;
+	}
+	i = 0;
+	while (tmp[i])
+	{
+		free(tmp[i]);
+		i ++;
+	}
+		free(tmp[i]);
+	free(tmp);
+	return (cmd);
+}
+
+char **tmp_cmd(char **cmd, char **tmp)
+{
+	int i;
+
+	i = 0;
+	while(cmd[i])
+	{
+		free(cmd[i]);
+		cmd[i] = parse_inf_key(tmp[i]);
+		i ++;
+	}
+	return (cmd);
+}
+
 void export_main(void)
 {
-	// char **exp;
+	char **tmp;
 	int i;
 	
 	i = 0;
 	if (same_key() == -1)
+	{
+		tmp = new_key(inf.pipes[0].cmd);
+		inf.pipes[0].cmd = tmp_cmd(inf.pipes[0].cmd, tmp);
 		unset_main();
+		inf.pipes[0].cmd = back_cmd(inf.pipes[0].cmd, tmp);
+	}
 	while (inf.pipes[0].cmd[i])
 	{
 		if (check_pipes_cmd(inf.pipes[0].cmd[i]) == 1)
