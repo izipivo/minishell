@@ -156,18 +156,14 @@ pid_t	*forks(int **fd)
 	{
 		if (check_func(pipes))
 		{
-			pid[++ m] = fork();
-			if (pid[m] < 0)
-				exitpipex(fd, "fork");
-			// if (!pid[m])
-			// 	child(fd, pid, pipes, m);
+			pid[++ m] = -228;
 			pipes = pipes->next;
-			continue;
+			continue ;
 		}
 		pid[++ m] = fork();
 		if (pid[m] < 0)
 			exitpipex(fd, "fork");
-		if (!pid[m])
+		else if (!pid[m])
 			child(fd, pid, pipes, m);
 		pipes = pipes->next;
 	}
