@@ -36,10 +36,5 @@ t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del)
     if (j > 0)
 		lenv_tmp[j - 1].next = NULL;
     lenv = tmp;
-	// while (lenv_tmp)
-    // {
-    //     printf("%s\n", lenv_tmp->key);
-    //     lenv_tmp = lenv_tmp->next;
-    // }
     return (lenv_tmp);
 }

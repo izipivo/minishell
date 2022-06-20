@@ -114,5 +114,6 @@ void	exec(void);
 void	print_pipes(t_pipes *pipe);
 void	unset_main(void);
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
+void env_main(void);
 
 #endif

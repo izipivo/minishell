@@ -10,6 +10,8 @@ void free_exp(char **exp); // //del -->minishell.h
 int	check_key(char c); //del -->minishell.h
 int same_key(void); //del -->minishell.h
 
+extern t_mshell inf;
+
 char **join_env(t_mshell	*inf, char **result, int i)
 {
 	char *tmp_del;
@@ -23,6 +25,15 @@ char **join_env(t_mshell	*inf, char **result, int i)
 			i --;
 			inf->lenv = inf->lenv->next;
 			continue ;
+		}
+		if (inf->lenv->val[0] == '=' && inf->lenv->val[1] == '\0')
+		{
+			result[i] = ft_strjoin(result[i], "=");
+			free(tmp_del);
+			i --;
+			inf->lenv = inf->lenv->next;
+			continue ;
+
 		}
 		result[i] = ft_strjoin(result[i], "=");
 		free(tmp_del);
@@ -94,30 +105,52 @@ void	sort_env(t_mshell	*inf)
 	free_exp(exp);
 }
 
-extern t_mshell inf;
+void error_print(char *str, int i)
+{
+	if (str[i] == 33)
+	{
+		while (str[i])
+		{
+			write(2, &str[i], 1);
+			i ++;
+		}
+		printf(": %s\n", "event not found");
+	}
+	else
+		printf("«%s»: %s\n",str , "это недопустимый идентификатор");
+}
+
+int	check_pipes_cmd(char *str)
+{
+	int i;
+
+	i = 0;
+	if (str[i] >= '0' && str[i] <= '9')
+		return (1);
+	while (str[i])
+	{
+		if ((check_key(str[i])) == 1)
+		{
+			error_print(str, i);  //потом изменить!
+			return (1);
+		}
+		i ++;
+	}
+	return (-1);
+}
 
 void export_main(void)
 {
 	char **exp;
 	int i;
-	int j;
 	
 	i = 0;
-	j = 0;
 	if (same_key() == -1)
 		unset_main();
 	while (inf.pipes[0].cmd[i])
 	{
-		j = 0;
-		while (inf.pipes[0].cmd[i][j])
-		{
-			if (check_key(inf.pipes[0].cmd[i][j]) == 1)
-			{
-				printf("%s\n", "error"); //потом изменить!
-				return ;
-			}
-			j ++;
-		}
+		if (check_pipes_cmd(inf.pipes[0].cmd[i]) == 1)
+			return ;
 		i ++;
 	}
 	if (i > 1)

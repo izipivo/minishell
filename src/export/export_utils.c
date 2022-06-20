@@ -39,34 +39,74 @@ int	check_key(char c)
 {
 	if (c == '\0')
 		return (0);
-	if ((c >= 33 && c <= 47) || (c == 64) || (c >= 91 && c <= 96))
+	if ((c >= 33 && c <= 45) || (c >= 46 && c <= 47) || (c == 64) || (c == 91) || (c >= 93 && c <= 94) || (c == 96))
 		return (1);
 	return (-1);
+}
+
+char *parse_while(char *res, char *s)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (s[i] != 61)
+	{
+		if (check_key(s[i]) == 0)
+			break ;
+		if (s[i] == 92)
+		{
+			i ++;
+			continue;
+		}
+		res[j] = s[i];
+		i ++;
+		j ++;
+	}
+	return (res);
 }
 
 char *parse_inf_key(char *s)
 {
 	int i;
+	int	j;
 	char *res;
 
 	i = 0;
+	j = 0;
 	while (s[i] != 61)
 	{
 		if (check_key(s[i]) == 0)
 			break ;
+		if (s[i] == 92)
+		{
+			i ++;
+			continue;
+		}
 		i ++;
+		j ++;
 	}
-	res = (char *)malloc(i + 1);
-	res[i] = 0;
-	i = 0;
-	while (s[i] != '=')
+	res = (char *)malloc(j + 1);
+	res[j] = 0;
+	return (parse_while(res, s));
+}
+
+char *one_c(char *c, int flag)
+{
+	if (flag == 1)
 	{
-		if (s[i] == '\0')
-			break ;
-		res[i] = s[i];
-		i ++;
+		c = malloc(sizeof(char));
+		c[0] = '\0';
+		return (c);
 	}
-	return (res);
+	else
+	{
+		c = malloc(sizeof(char) + 1);
+		c[0] = '=';
+		c[1] = '\0';
+		return (c);
+	}
 }
 
 char *parse_inf_val(char *s)
@@ -79,15 +119,11 @@ char *parse_inf_val(char *s)
 	while (s[i] != 61)
 	{
 		if (s[i] == '\0')
-		{
-			res = malloc(sizeof(char));
-			res[0] = '\0';
-			return (res);
-		}
+			return (one_c(res, 1));
 		i ++;
 	}
 	if (s[i] == 61 && !s[i + 1])
-		return (NULL);
+		return (one_c(res, 2));
 	i ++;
 	j = i;
 	while (s[j])

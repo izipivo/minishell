@@ -13,7 +13,7 @@ int same_key(void)
         i = 1;
         while (inf.pipes[0].cmd[i])
         {
-            if (!(ft_strncmp(inf.pipes[0].cmd[i], inf.lenv->key, ft_strlen(inf.lenv->key))))
+            if (!(ft_strncmp(inf.lenv->key, inf.pipes[0].cmd[i], ft_strlen(inf.lenv->key))))
             {
                 inf.lenv = tmp;
                 return (-1);

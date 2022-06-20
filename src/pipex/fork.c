@@ -136,6 +136,8 @@ int	check_func(t_pipes *pipes)
 		unset_main();
 	// else if (!(ft_strncmp(pipes->cmd[0], "echo", 5)))
 	// 	echo_main();
+	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
+		env_main();
 	else
 		return (0);
 	return (1);
@@ -154,12 +156,11 @@ pid_t	*forks(int **fd)
 	{
 		if (check_func(pipes))
 		{
-			++ m;
-			pid[m] = fork();
+			pid[++ m] = fork();
 			if (pid[m] < 0)
 				exitpipex(fd, "fork");
-			if (!pid[m])
-				child(fd, pid, pipes, m);
+			// if (!pid[m])
+			// 	child(fd, pid, pipes, m);
 			pipes = pipes->next;
 			continue;
 		}

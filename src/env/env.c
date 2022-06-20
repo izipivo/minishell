@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-void print_env(char **env)
+extern t_mshell inf;
+
+void print_env(t_env *lenv)
 {
-    t_mshell	inf;
     void *tmp;
 
-    inf.lenv = make_env_list(env);
     tmp = inf.lenv;
     while (inf.lenv)
 	{
@@ -14,16 +14,10 @@ void print_env(char **env)
 		inf.lenv = inf.lenv->next;
 	}
     inf.lenv = tmp;
-    free_lenv(inf.lenv);
 }
 
-int main(int argc, char *argv[], char *envp[])
+void env_main(void)
 {
-    (void)argc;
-	(void)argv;
-
-    print_env(envp);
-    return (0);
+    print_env(inf.lenv);
+    return ;
 }
-
-//gcc env.c ../../includes/minishell.h ../../libft/ft_strjoin.c ../../libft/ft_strlen.c ../../libft/ft_strchr.c ../../libft/ft_strdup.c ../env_list.c ../../libft/ft_strncmp.c
