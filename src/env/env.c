@@ -2,7 +2,7 @@
 
 extern t_mshell inf;
 
-void print_env(t_env *lenv)
+void print_env(void)
 {
     void *tmp;
 
@@ -18,6 +18,6 @@ void print_env(t_env *lenv)
 
 void env_main(void)
 {
-    print_env(inf.lenv);
+    print_env();
     return ;
 }

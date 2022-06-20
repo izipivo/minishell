@@ -16,7 +16,8 @@ char **join_env(t_mshell	*inf, char **result, int i)
 {
 	char *tmp_del;
 
-	while (i != (unsigned long) -1)
+	while ((unsigned long)i != (unsigned long) -1)
+	// while ((unsigned long)i != 18446744073709551615)
 	{
 		result[i] = ft_strdup(inf->lenv->key);
 		tmp_del = result[i];
@@ -57,7 +58,7 @@ char	**ft_exp(t_mshell	*inf)
 	int i;
 	char **result;
 	void *tmp;
-	char *tmp_del;
+	// char *tmp_del;
 
 	i = 0;
 	tmp = inf->lenv;
@@ -141,7 +142,7 @@ int	check_pipes_cmd(char *str)
 
 void export_main(void)
 {
-	char **exp;
+	// char **exp;
 	int i;
 	
 	i = 0;

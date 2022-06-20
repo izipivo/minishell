@@ -42,9 +42,9 @@ void	exitmalloc(int **fd)
 
 void	exitpipex(int **fd, char *desc)
 {
-	int	i;
+	// int	i;
 
-	i = -1;
+	// i = -1;
 	// if (cmd)
 	// 	cleansplit(cmd);
 	perror(desc);

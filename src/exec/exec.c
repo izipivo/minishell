@@ -212,7 +212,13 @@ void	*free_pipex_args(char **ar, int pipes)
 
 void	sig_hand(int sig)
 {
-	exit_ms();
+	sig_quit(0);
+	if (inf.tokens)
+		inf.tokens = free_tokens(inf.tokens);
+	if (inf.lenv)
+		inf.lenv = free_lenv(inf.lenv);
+	if (inf.pipes)
+		inf.pipes = free_pipes(inf.pipes);
 	ft_putendl_fd("\nbye", 1);
 	exit(sig);
 }
@@ -237,8 +243,9 @@ void	sig_quit(int sig)
 	}
 }
 
-void	exit_ms(void)
+void	exit_ms(char *err)
 {
+	ft_putendl_fd(err, 2);
 	sig_quit(0);
 	if (inf.tokens)
 		inf.tokens = free_tokens(inf.tokens);
@@ -246,4 +253,6 @@ void	exit_ms(void)
 		inf.lenv = free_lenv(inf.lenv);
 	if (inf.pipes)
 		inf.pipes = free_pipes(inf.pipes);
+	// if (err)
+	exit(1);
 }

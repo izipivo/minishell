@@ -54,8 +54,8 @@
 # define DOLLAR 13		//	$
 
 # define PIPES (inf.mask >> 16)
-# define OUT(x) (x >> 16)
-# define APP(x) (((x >> 16) & 1) ? (0) : (1))
+# define OUT(x) ((x >> 1) & 1)
+# define APP(x) (((x >> 1) & 1) ? (0) : (1))
 # define HD(x) ((x & 1) ? (0) : (1))
 # define INPUT(x) (x & 1)
 
@@ -80,7 +80,7 @@ typedef	struct		s_mshell
 	char			**env;
 	int				mask;					//	1 бит наличие here_doc, первые 8 бит кол-во пайпов
 	t_env			*lenv;
-	t_list			**tokens;
+	t_list			*tokens;
 	t_pipes			*pipes;
 	pid_t			*pids;
 }					t_mshell;
@@ -92,23 +92,23 @@ void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
 int		ft_arrlen(char **arr);
 void	free_list(t_list *list);
-t_pipes	*parse(char *line, t_env *lenv);
+t_pipes	*parse(char *line);
 void	print_list(t_list *tok);
 void	free_val(t_list *token);
-void	*free_tokens(t_list **tokens);
+void	*free_tokens(t_list *tokens);
 void	*free_pipex_args(char **ar, int pipes);
 int		count_pipes(t_list *token);
 int		ft_strapp(char **s1, char *s2);
-void	dol_spc_str(t_list *token, t_env *lenv);
-int		dollar(t_list *dlr, t_env *lenv);
-int		dollar_find(t_list *token, t_env *lenv);
+void	dol_spc_str(void);
+int		dollar(t_list *dlr);
+int		dollar_find(t_list *token);
 void	streams(t_list *token);
 int		is_separator(char c);
 int		make_token(t_list *token, char *line, int end, int shift, int sep);
-int		token_key(char *line, int end);
+int		token_key(char line);
 t_pipes	*invalid_args(void);
 void	sig_hand(int sig);
-void	exit_ms(void);
+void	exit_ms(char *err);
 void	sig_quit(int sig);
 void	exec(void);
 void	print_pipes(t_pipes *pipe);

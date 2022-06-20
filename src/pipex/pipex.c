@@ -132,14 +132,15 @@ static int	**multipipe(int m)
 int	pipex(void)
 {
 	int		**fd;
-	int		check;
+	// int		check;
 	pid_t	*pid;
 
 	fd = multipipe(PIPES + 1);
 	pid = forks(fd);
 	close_fd(-1, fd);
 	if (inf.pipes[0].in)
-		check = parentread(fd[0][1], inf.pipes[0].in, INPUT(inf.pipes[0].mask));
+		// check = 
+		parentread(fd[0][1], inf.pipes[0].in, HD(inf.pipes[0].mask));
 	else
 	{
 		dup2(0, fd[0][0]);
@@ -147,7 +148,8 @@ int	pipex(void)
 	}
 	//if (check == -1)
 	//	exitpid(fd, pid, argc, "parentread");
-	check = parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, HD(inf.pipes[PIPES - 1].mask));
+	// check = 
+	parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
 	// close_all(fd);
 	// if (check == -1)
 	// 	exitpid(fd, pid, argc, "parentwrite");

@@ -54,7 +54,7 @@ int	join_commands(t_list *token)
 	return (0);
 }
 
-int	first_occ(t_list *token, char c, t_env *lenv)
+int	first_occ(t_list *token, char c)
 {
 	t_list	*cpy;
 	char	*buf;
@@ -67,7 +67,7 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 		if (c == DQUOTES && token->key == DOLLAR)
 		{
 			// ft_putstr_fd("dol\n", 1);
-			dollar(token, lenv);
+			dollar(token);
 		}
 		if (ft_strapp(&buf, token->val))
 			return (1);
@@ -88,13 +88,16 @@ int	first_occ(t_list *token, char c, t_env *lenv)
 	return (0);
 }
 
-int	concat(t_list *token, t_env *lenv)
+int	concat()
 {
+	t_list	*token;
+
+	token = inf.tokens;
 	while (token)
 	{
 		if (token->key == SQUOTES || token->key == DQUOTES)
 		{
-			if (first_occ(token, token->key, lenv))
+			if (first_occ(token, token->key))
 				return (1);
 		}
 		token = token->next;
@@ -116,13 +119,13 @@ int	list_size(t_list *list)
 	return (i);
 }
 
-void	*free_tokens(t_list **tokens)
+void	*free_tokens(t_list *token)
 {
-	t_list	*token;
+	t_list	*cpy;
 	int		i;
 
 	i = -1;
-	token = *tokens;
+	cpy = token;
 	while (1)
 	{
 		if (token[++i].val != NULL)
@@ -130,8 +133,8 @@ void	*free_tokens(t_list **tokens)
 		if (token[i].next == NULL)
 			break ;
 	}
-	free(*tokens);
-	tokens = NULL;
+	free(cpy);
+	cpy = NULL;
 	return (NULL);
 }
 
@@ -208,7 +211,7 @@ int	copy_word(t_pipes *new, int j, t_list *old)
 t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 {
 	t_list	*cp=old;
-	char	*buf;
+	// char	*buf;
 	int		i;
 	int		j;
 
@@ -249,19 +252,21 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	}
 	else
 		new[i].next = NULL;
-	free_tokens(&cp);
+	inf.tokens = free_tokens(cp);
 	return (new);
 }
 
-t_pipes	*remalloc(t_list *old)
+t_pipes	*remalloc(void)
 {
-	t_list	*cp;
+	// t_list	*cp;
+	t_list	*old;
 	t_pipes	*new;
-	int		i;
+	// int		i;
 
-	i = -1;
-	// print_list(old);
-	cp = old;
+	// i = -1;
+	old = inf.tokens;
+	print_list(old);
+	// cp = old;
 	inf.mask = count_pipes(old) << 16;
 	new = (t_pipes *) malloc(sizeof(t_pipes) * (PIPES + 1));
 	if (!new)
@@ -273,60 +278,117 @@ t_pipes	*remalloc(t_list *old)
 	return (copy_pipes(new, old));
 }
 
-t_pipes	*cleaning(t_list *tokens, t_env *lenv)
+void	check_redirs(void)
 {
-	if (concat(tokens, lenv))
+	t_list	*token;
+
+	token = inf.tokens;
+	while(token)
+	{
+		if (token->key == OUTFILE && ft_strlen(token->val) == 2)
+			token->key = APPEND;
+		else if (token->key == INFILE && ft_strlen(token->val) == 2)
+			token->key = HEREDOC;
+		if ((token->key == OUTFILE || token->key == INFILE) && ft_strlen(token->val) > 2)
+			exit_ms("parser error near '>'");
+		token = token->next;
+	}
+}
+
+t_pipes	*cleaning(void)
+{
+	check_redirs();
+	if (concat())
 	{
 		ft_putstr_fd("ne zakril\n", 2);
 		exit(1);
 	}
-	dol_spc_str(tokens, lenv);
-	join_commands(tokens);
-	return (remalloc(tokens));
+	dol_spc_str();
+	join_commands(inf.tokens);
+	return (remalloc());
 }
 
-t_pipes	*parse(char *line, t_env *lenv)
+int	tok_quant(char *line)
 {
-	t_list	*tokens;
+	char	key;
+	int		count;
 	int		i;
-	int		sep;
-	int		tmp;
-	int		j;
-	int		n;
 
-	tokens = (t_list *)malloc(sizeof(t_list ) * ft_strlen(line));
-	if (!tokens)
-		sig_hand(1);
+	count = 2;
 	i = -1;
-	j = 0;
-	n = -1;
-	sep = token_key(line, 0);
+	key = token_key(line[0]);
 	while (line[++i])
 	{
-		if (line[i + 1])
-			tmp = token_key(line, i + 1);
-		if (!line[i + 1] || sep != tmp || tmp == SQUOTES || tmp == DQUOTES
-				|| tmp == DOLLAR)
-		{
-			if (make_token(&tokens[++n], line, i, j, sep))
-			{
-				free(tokens);						//		!!!!!!!
-				return (invalid_args());
-			}
-			if (n > 0)
-			{
-				tokens[n - 1].next = &tokens[n];
-				tokens[n].prev = &tokens[n - 1];
-			}
-			j = 0;
-			sep = tmp;
-		}
-		else
-			j++;
+		if (key == token_key(line[i]))
+			continue ;
+		++count;
+		key = token_key(line[i]);
 	}
-	tokens[n].next = NULL;
-	tokens[0].prev = NULL;
-	return (cleaning(tokens, lenv));
+	printf("tok_quant: %d\n", count);
+	return (count);
+}
+
+int	same_token(char old, char new)
+{
+	char	key;
+
+	key = token_key(new);
+	if (old == key)
+		return (1);
+	if (old == DOLLAR && key == COMMAND && new != '=' && new != '/')
+		return (1);
+	return (0);
+}
+
+int	fill_token(char old, char new, int *token_index, int *val_index)
+{
+	char	key;
+
+	key = token_key(new);
+	if (same_token(old, new))
+	{
+		++(*val_index);
+		return (*token_index);
+	}
+	inf.tokens[*token_index].val[*val_index + 1] = 0;									//			null-terminated
+	inf.tokens[*token_index].next = &inf.tokens[*token_index + 1];
+	++(*token_index);
+	inf.tokens[*token_index].prev = &inf.tokens[*token_index - 1];
+	inf.tokens[*token_index].val = (char *)malloc(sizeof(char) * 1000);					//			!!!!
+	if (!inf.tokens[*token_index].val)
+		exit_ms("malloc");
+	inf.tokens[*token_index].key = key;
+	*val_index = 0;
+	return (*token_index);
+}
+
+t_pipes	*parse(char *line)
+{
+	int		j;
+	int		i;
+	int		n;
+	char	key;
+
+	i = -1;
+	j = -1;
+	n = 0;
+	inf.tokens = (t_list *)malloc(sizeof(t_list ) * tok_quant(line));
+	if (!inf.tokens)
+		exit_ms("malloc error");
+	key = token_key(line[0]);
+	inf.tokens[0].val = (char *)malloc(sizeof(char) * 100);					//			!!!!
+	inf.tokens[0].key = key;
+	if (!inf.tokens[0].val)
+		exit_ms("malloc");
+	while (line[++i])
+	{
+		inf.tokens[fill_token(key, line[i], &n, &j)].val[j] = line[i];
+		key = token_key(line[i]);
+	}
+	inf.tokens[n].val[++j] = 0;
+	inf.tokens[n].next = NULL;
+	inf.tokens[0].prev = NULL;
+	return (cleaning());
 }
 
 void	free_list(t_list *list)

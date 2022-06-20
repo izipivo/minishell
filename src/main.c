@@ -9,7 +9,7 @@ extern t_mshell	inf;
 int     main(int argc, char **argv, char **envp)
 {
 	char		*line;
-	t_list		*tokens;
+	// t_list		*tokens;
 	(void)argc;
 	(void)argv;
 	ft_memset(&inf, 0, sizeof(t_mshell));
@@ -29,8 +29,8 @@ int     main(int argc, char **argv, char **envp)
 			continue ;
 			// exit(0);
 		}
+		inf.pipes = parse(line);
 		add_history(line);
-		inf.pipes = parse(line, inf.lenv);
 		free(line);
 		print_pipes(inf.pipes);
 		if (PIPES)
@@ -65,7 +65,7 @@ int     main(int argc, char **argv, char **envp)
 //  		{
 //  			exit(0);
 //  		}
-//  		inf.pipes = parse(line, inf.lenv);
+//  		inf.pipes = parse(line);
 //  		if (PIPES)
 //  		{
 //  			// ft_putnbr_fd(PIPES, 1);

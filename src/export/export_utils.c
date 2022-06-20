@@ -113,7 +113,7 @@ char *parse_inf_val(char *s)
 {
 	int i;
 	int j;
-	char *res;
+	char *res=0;
 
 	i = 0;
 	while (s[i] != 61)

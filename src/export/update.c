@@ -30,7 +30,7 @@ int ft_len_list(t_env *list)
 t_env	*ft_update_env(t_env *lenv, t_env	*lenv_tmp, size_t size)
 {
     int i;
-    void *tmp;
+    // void *tmp;
 
     i = 0;
     free_lenv(lenv);

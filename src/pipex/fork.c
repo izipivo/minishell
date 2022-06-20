@@ -28,6 +28,8 @@ static char	**cmdparse(char **new, char **envp, int **fd)
 static void	killchild(char **cmd, int **fd)
 {
 	// cleansplit(cmd);
+	(void)cmd;
+	(void)fd;
 	free_pipes(inf.pipes);
 	close(0);
 	close(1);
@@ -71,7 +73,7 @@ void	child_hd(t_pipes *pipe, int index, int **fd)
 
 void	child_in(t_pipes *pipe, int index, int **fd)
 {
-	int		file;
+	// int		file;
 
 	printf("est' infile\n");
 	fd[index][0] = open(pipe->in, O_RDONLY);
@@ -101,8 +103,8 @@ void	child_out(t_pipes *pipe, int index, int **fd, int app)
 void	child_fd(int index, int **fd)
 {
 	t_pipes	*pipe;
-	char	*buf;
-	int		file;
+	// char	*buf;
+	// int		file;
 
 	pipe = &inf.pipes[index];
 	if (index && INPUT(pipe->mask) && pipe->in)
@@ -113,7 +115,7 @@ void	child_fd(int index, int **fd)
 		child_out(pipe, index, fd, APP(pipe->mask));
 }
 
-int	child(int **fd, pid_t *pid, t_pipes *pipes, int index)
+int	child(int **fd, t_pipes *pipes, int index)
 {
 	char	**cmd;
 
@@ -156,15 +158,15 @@ pid_t	*forks(int **fd)
 	{
 		if (check_func(pipes))
 		{
-			pid[++ m] = -228;
+			pid[++m] = -228;
 			pipes = pipes->next;
 			continue ;
 		}
-		pid[++ m] = fork();
+		pid[++m] = fork();
 		if (pid[m] < 0)
 			exitpipex(fd, "fork");
 		else if (!pid[m])
-			child(fd, pid, pipes, m);
+			child(fd, pipes, m);
 		pipes = pipes->next;
 	}
 	return (pid);

@@ -12,26 +12,21 @@
 
 #include "minishell.h"
 
-static int	open_outfile(char *filename)
+extern t_mshell	inf;
+
+int	open_outfile(char *filename, int app)
 {
-	if (!filename)
+	printf("pipe out: %s APP: %d\n", inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
+	if (!inf.pipes[PIPES - 1].out)
 		return (1);
-	if (!ft_strncmp("/", filename, 2))
-		return (1);
-	if (!ft_strncmp("\\/", filename, 2))
-		return (open(filename + 2, O_APPEND | O_CREAT | O_WRONLY, 0664));
+	if (app)
+		return (open(filename, O_APPEND | O_CREAT | O_WRONLY, 0664));
 	if (access(filename, F_OK) == 0)
 	{
 		if (unlink(filename) == -1)
 			return (-1);
 	}
 	return (open(filename, O_WRONLY | O_CREAT, 0664));
-}
-int	ifheredoc(char *filename)
-{
-	if (!ft_strncmp("//", filename, 2))
-		return (2);
-	return (0);
 }
 
 int	parentread(int fd, char *filename, int hd)
@@ -40,7 +35,7 @@ int	parentread(int fd, char *filename, int hd)
 	int		file;
 
 	file = 0;
-	if (hd)
+	if (!hd)
 		file = open(filename, O_RDONLY);
 	if (file == -1)
 		return (-1);
@@ -63,13 +58,13 @@ int	parentread(int fd, char *filename, int hd)
 	return (0);
 }
 
-int	parentwrite(int fd, char *filename, int flag)
+int	parentwrite(int fd, char *filename, int app)
 {
 	char	*buf;
 	int		file;
 
 	file = 1;
-    file = open_outfile(filename);
+    file = open_outfile(filename, app);
 	if (file == -1)
 		return (-1);
 	while (1)
