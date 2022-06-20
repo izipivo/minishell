@@ -35,6 +35,15 @@ void free_exp(char **exp)
 	free(exp);
 }
 
+int	check_key(char c)
+{
+	if (c == '\0')
+		return (0);
+	if ((c >= 33 && c <= 47) || (c == 64) || (c >= 91 && c <= 96))
+		return (1);
+	return (-1);
+}
+
 char *parse_inf_key(char *s)
 {
 	int i;
@@ -43,7 +52,7 @@ char *parse_inf_key(char *s)
 	i = 0;
 	while (s[i] != 61)
 	{
-		if (s[i] == '\0')
+		if (check_key(s[i]) == 0)
 			break ;
 		i ++;
 	}
@@ -77,7 +86,6 @@ char *parse_inf_val(char *s)
 		}
 		i ++;
 	}
-		// i ++;
 	if (s[i] == 61 && !s[i + 1])
 		return (NULL);
 	i ++;

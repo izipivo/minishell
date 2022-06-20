@@ -7,6 +7,9 @@ char *parse_inf_val(char *s); //del -->minishell.h
 void	print_exp(char **exp); // //del -->minishell.h
 void free_exp(char **exp); // //del -->minishell.h
 
+int	check_key(char c); //del -->minishell.h
+int same_key(void); //del -->minishell.h
+
 char **join_env(t_mshell	*inf, char **result, int i)
 {
 	char *tmp_del;
@@ -17,7 +20,6 @@ char **join_env(t_mshell	*inf, char **result, int i)
 		tmp_del = result[i];
 		if (inf->lenv->val[0] == '\0')
 		{
-			// free(tmp_del);
 			i --;
 			inf->lenv = inf->lenv->next;
 			continue ;
@@ -98,10 +100,26 @@ void export_main(void)
 {
 	char **exp;
 	int i;
+	int j;
 	
 	i = 0;
+	j = 0;
+	if (same_key() == -1)
+		unset_main();
 	while (inf.pipes[0].cmd[i])
+	{
+		j = 0;
+		while (inf.pipes[0].cmd[i][j])
+		{
+			if (check_key(inf.pipes[0].cmd[i][j]) == 1)
+			{
+				printf("%s\n", "error"); //потом изменить!
+				return ;
+			}
+			j ++;
+		}
 		i ++;
+	}
 	if (i > 1)
 	{
 		inf.lenv = add_variable(inf.lenv, i, inf.pipes->cmd);
@@ -110,6 +128,3 @@ void export_main(void)
 	sort_env(&inf);
 	return ;
 }
-
-
-//gcc export.c ../../includes/minishell.h ../../libft/ft_strjoin.c ../../libft/ft_strlen.c ../../libft/ft_strchr.c ../../libft/ft_strdup.c ../env_list.c export_utils.c ../../libft/ft_strncmp.c update.c 
