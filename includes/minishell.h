@@ -85,7 +85,7 @@ typedef	struct		s_mshell
 	pid_t			*pids;
 }					t_mshell;
 
-//t_mshell	inf;
+// t_mshell	inf;
 
 void	*free_pipes(t_pipes *pipes);
 void	*free_lenv(t_env *lenv);
@@ -114,6 +114,16 @@ void	exec(void);
 void	print_pipes(t_pipes *pipe);
 void	unset_main(void);
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
-void env_main(void);
+void 	env_main(void);
+
+int 	ft_strlen_env(char *en); //del; -->minishell.h
+t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
+char	 *parse_inf_key(char *s); //del; -->minishell.h
+char 	*parse_inf_val(char *s); //del -->minishell.h
+void	print_exp(char **exp); // //del -->minishell.h
+void 	free_exp(char **exp); // //del -->minishell.h
+int		check_key(char c); //del -->minishell.h
+int 	same_key(void); //del -->minishell.h
+char	**new_key(char **cmd);
 
 #endif

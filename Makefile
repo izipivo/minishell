@@ -1,4 +1,5 @@
 CFLAGS =			-fsanitize=address -Wall -Wextra -Werror
+
 LIBS =				-L./libft -lft -L /usr/include -lreadline
 
 HDRS =				minishell.h pipex.h get_next_line.h

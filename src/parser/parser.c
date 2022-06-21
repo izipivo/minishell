@@ -265,7 +265,7 @@ t_pipes	*remalloc(void)
 
 	// i = -1;
 	old = inf.tokens;
-	print_list(old);
+	// print_list(old);
 	// cp = old;
 	inf.mask = count_pipes(old) << 16;
 	new = (t_pipes *) malloc(sizeof(t_pipes) * (PIPES + 1));
@@ -298,6 +298,7 @@ void	check_redirs(void)
 t_pipes	*cleaning(void)
 {
 	check_redirs();
+	print_list(inf.tokens);
 	if (concat())
 	{
 		ft_putstr_fd("ne zakril\n", 2);
@@ -333,20 +334,35 @@ int	same_token(char old, char new)
 	char	key;
 
 	key = token_key(new);
-	if (old == key)
+	if ((old == DQUOTES && key == DQUOTES) || (old == SQUOTES && key == SQUOTES))
+	{
+		return (-1);
+	}
+	if (old == key || old == DQUOTES || old == SQUOTES)
 		return (1);
-	if (old == DOLLAR && key == COMMAND && new != '=' && new != '/')
+	if (old == DOLLAR && key == COMMAND && new != 61 && new != 47)
+	{
+		printf("old: %c\n", new);
 		return (1);
+	}
 	return (0);
 }
 
 int	fill_token(char old, char new, int *token_index, int *val_index)
 {
 	char	key;
+	char	st;
 
 	key = token_key(new);
-	if (same_token(old, new))
+	st = same_token(old, new);
+	if (st == 1)
 	{
+		++(*val_index);
+		return (*token_index);
+	}
+	else if (st == -1)
+	{
+		inf.tokens[*token_index].key = COMMAND;
 		++(*val_index);
 		return (*token_index);
 	}
@@ -383,7 +399,8 @@ t_pipes	*parse(char *line)
 	while (line[++i])
 	{
 		inf.tokens[fill_token(key, line[i], &n, &j)].val[j] = line[i];
-		key = token_key(line[i]);
+		if (!same_token(key, line[i]))
+			key = token_key(line[i]);
 	}
 	inf.tokens[n].val[++j] = 0;
 	inf.tokens[n].next = NULL;

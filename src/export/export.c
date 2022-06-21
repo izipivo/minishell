@@ -1,14 +1,4 @@
-include "minishell.h"
-
-int ft_strlen_env(char *en); //del; -->minishell.h
-t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
-char *parse_inf_key(char *s); //del; -->minishell.h
-char *parse_inf_val(char *s); //del -->minishell.h
-void	print_exp(char **exp); // //del -->minishell.h
-void free_exp(char **exp); // //del -->minishell.h
-
-int	check_key(char c); //del -->minishell.h
-int same_key(void); //del -->minishell.h
+#include "minishell.h"
 
 extern t_mshell inf;
 
@@ -16,7 +6,7 @@ char **join_env(t_mshell	*inf, char **result, int i)
 {
 	char *tmp_del;
 
-	while (i != (unsigned long) -1)
+	while ((unsigned long) i != (unsigned long) -1)
 	{
 		result[i] = ft_strdup(inf->lenv->key);
 		tmp_del = result[i];
@@ -57,7 +47,7 @@ char	**ft_exp(t_mshell	*inf)
 	int i;
 	char **result;
 	void *tmp;
-	char *tmp_del;
+	// char *tmp_del;
 
 	i = 0;
 	tmp = inf->lenv;

@@ -16,7 +16,7 @@ extern t_mshell	inf;
 
 int	open_outfile(char *filename, int app)
 {
-	printf("pipe out: %s APP: %d\n", inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
+	// printf("pipe out: %s APP: %d\n", inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
 	if (!inf.pipes[PIPES - 1].out)
 		return (1);
 	if (app)
