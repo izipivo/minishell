@@ -58,6 +58,8 @@
 # define APP(x) (((x >> 1) & 1) ? (0) : (1))
 # define HD(x) ((x & 1) ? (0) : (1))
 # define INPUT(x) (x & 1)
+# define DLR(x) (x & 1)
+# define QUOTS(x) ((x >> 1) & 1)
 
 typedef struct	s_env
 {
@@ -78,7 +80,7 @@ typedef struct		s_pipes
 typedef	struct		s_mshell
 {
 	char			**env;
-	int				mask;					//	1 бит наличие here_doc, первые 8 бит кол-во пайпов
+	int				mask;					//	первые 8 бит кол-во пайпов, последний бит 1 если надо поменять доллар
 	t_env			*lenv;
 	t_list			*tokens;
 	t_pipes			*pipes;
