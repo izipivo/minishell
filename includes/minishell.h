@@ -29,11 +29,12 @@
 # define PURPLE "\e[00;35m"
 # define BRIGHT_BLUE "\e[01;34m"
 # define ORANGE "\e[38;5;202m"
-# define PROMPT RED "MI"ORANGE"NI"LYELLOW"GA"GREEN"YS"BRIGHT_BLUE"HE"SINIY"LL"\
-	PURPLE "$> "RESET
+/* # define PROMPT RED "MI"ORANGE"NI"LYELLOW"GA"GREEN"YS"BRIGHT_BLUE"HE"SINIY"LL"\
+	//PURPLE "$> "RESET*/
 # define PERROR YELLOW "mini" RED "error" RESET
-# define RL_PROMT_START_IGNORE '\001'
-# define RL_PROMT_END_IGNORE '\002'
+# define PROMPT "gay?> "
+// # define RL_PROMT_START_IGNORE '\001'
+// # define RL_PROMT_END_IGNORE '\002'
 
 /*
 //		token's keys

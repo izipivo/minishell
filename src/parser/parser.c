@@ -134,7 +134,6 @@ void	*free_tokens(t_list *token)
 			break ;
 	}
 	free(cpy);
-	cpy = NULL;
 	return (NULL);
 }
 
@@ -331,7 +330,7 @@ void	check_dlr(t_list *token)
 	
 	i = -1;
 	buf = NULL;
-	printf("1:check_dlr: %s\n", token->val);
+	// printf("1:check_dlr: %s\n", token->val);
 	while (token->val[++i] && token->val[i] == '$')
 	{
 		if (!token->val[i + 1])
@@ -347,7 +346,7 @@ void	check_dlr(t_list *token)
 	strapp(&buf, find_env(&token->val[i]), 2);
 	free(token->val);
 	token->val = buf;
-	printf("2:check_dlr: %s\n", token->val);
+	// printf("2:check_dlr: %s\n", token->val);
 }
 
 void	check_redirs(void)
@@ -381,9 +380,9 @@ void	remove_quotes(t_list *token)
 		{
 			if (ft_strlen(token->val) == 2)
 			{
-				// free(token->val);
-				// token->val = NULL;
-				printf("lol\n");
+				free(token->val);
+				token->val = NULL;
+				// printf("lol\n");
 				if (token->prev)
 					token->prev->next = token->next;
 				token = token->next;
@@ -400,17 +399,17 @@ void	remove_quotes(t_list *token)
 
 t_pipes	*cleaning(void)
 {
-	print_list(inf.tokens);
-	ft_putstr_fd("_______________________\n",1);
+	// print_list(inf.tokens);
+	// ft_putstr_fd("_______________________\n",1);
 	if (QUOTS(inf.mask))
 	{
 		remove_quotes(inf.tokens);
-		print_list(inf.tokens);
-		ft_putstr_fd("_______________________\n",1);
+		// print_list(inf.tokens);
+		// ft_putstr_fd("_______________________\n",1);
 	}
 	check_redirs();
-	print_list(inf.tokens);
-	ft_putstr_fd("_______________________\n",1);
+	// print_list(inf.tokens);
+	// ft_putstr_fd("_______________________\n",1);
 	join_commands(inf.tokens);
 	return (remalloc());
 }
@@ -451,7 +450,7 @@ int	tok_quant(char *line)
 	int		i;
 
 	count = 1;
-	i = -1;
+	i = 0 ;
 	key = token_key(line[0]);
 	while (line[++i])
 	{
@@ -465,7 +464,7 @@ int	tok_quant(char *line)
 		++count;
 		key = token_key(line[i]);
 	}
-	printf("tok_quant: %d\n", count);
+	// printf("tok_quant: %d\n", count);
 	return (count);
 }
 
@@ -485,22 +484,25 @@ int	fill_token(char old, char new, int *token_index, int *val_index)
 	{
 		inf.tokens[*token_index].val[*val_index + 1] = new;
 		inf.tokens[*token_index].val[*val_index + 2] = 0;
+		// printf("fill_token st==-1: %c, %s\n", new, inf.tokens[*token_index].val);
 		*val_index = -1;
 		return (*token_index);
 	}
+	if (old != 88 && old != 64)
+		inf.tokens[*token_index].val[*val_index + 1] = 0;
 	if (old != 64)
 	{
-		inf.tokens[*token_index].val[*val_index + 1] = 0;
 		inf.tokens[*token_index].next = &inf.tokens[*token_index + 1];
 		inf.tokens[*token_index + 1].prev = &inf.tokens[*token_index];
 	}
 	*val_index = 0;
 	++(*token_index);
-	printf("dfddf\n");
+	// printf("dfddf\n");
 	inf.tokens[*token_index].key = key;
-	printf("dfddf\n");
+	// printf("dfddf\n");
+	// if (!inf.tokens[*token_index].val)
 	inf.tokens[*token_index].val = (char *)malloc(sizeof(char) * 1000);					//			!!!!
-	printf("dfddf\n");
+	// printf("dfddf\n");
 	if (!inf.tokens[*token_index].val)
 		exit_ms("malloc");
 	return (*token_index);
@@ -518,9 +520,6 @@ t_pipes	*parse(char *line)
 	inf.tokens = (t_list *)malloc(sizeof(t_list ) * tok_quant(line));
 	if (!inf.tokens)
 		exit_ms("malloc error");
-	// key = token_key(line[0]);
-	// inf.tokens[0].val = (char *)malloc(sizeof(char) * 100);					//			!!!!
-	// inf.tokens[0].key = key;
 	key = 64;
 	if (!inf.tokens[0].val)
 		exit_ms("malloc");
@@ -534,15 +533,15 @@ t_pipes	*parse(char *line)
 		}
 		if (!same_token(key, line[i]))
 			key = token_key(line[i]);
-		printf("key: %d, n: %d, c:  %c\n", key, n, line[i]);
+		// printf("key: %d, n: %d, c:  %c\n", key, n, line[i]);
 		inf.tokens[n].val[j] = line[i];
 	}
 	if (j != -1)
 		inf.tokens[n].val[++j] = 0;
-	// else
-	// 	exit_ms("not closed quote");
 	inf.tokens[n].next = NULL;
 	inf.tokens[0].prev = NULL;
+	if ((inf.tokens[n].key == SQUOTES || inf.tokens[n].key == DQUOTES) && j != -1)
+		exit_ms("not closed quote");
 	return (cleaning());
 }
 

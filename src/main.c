@@ -50,7 +50,6 @@ int     main(int argc, char **argv, char **envp)
 //  int     main(int argc, char **argv, char **envp)
 //  {
 //  	char		*line;
-//  	t_list		*tokens;
 //  	(void)argc;
 //  	(void)argv;
 //  	ft_memset(&inf, 0, sizeof(t_mshell));
