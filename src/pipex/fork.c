@@ -136,8 +136,8 @@ int	check_func(t_pipes *pipes)
 		export_main();
 	else if (!(ft_strncmp(pipes->cmd[0], "unset", 7)))
 		unset_main();
-	// else if (!(ft_strncmp(pipes->cmd[0], "echo", 5)))
-	// 	echo_main();
+	else if (!(ft_strncmp(pipes->cmd[0], "exit", 5)))
+		exit_main();
 	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
 		env_main();
 	else

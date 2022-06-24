@@ -35,6 +35,8 @@ t_env	*ft_update_env(t_env *lenv, t_env	*lenv_tmp, size_t size)
     i = 0;
     free_lenv(lenv);
     lenv = (t_env *)malloc(sizeof(t_env) * (size));
+	if (!lenv)
+		exit_ms("error malloc", -1);
     while (lenv_tmp)
     {
         lenv[i].key = ft_strdup(lenv_tmp->key);
@@ -80,6 +82,8 @@ t_env	*add_variable(t_env	*lenv, int ac, char **av)
     lol.ac_c = ac;
 	lol.i = ft_len_list(lenv);
 	lenv_tmp = (t_env *)malloc(sizeof(t_env) * ((lol.i + num)));
+	if (!lenv_tmp)
+		exit_ms("error malloc", -1);
 	lol.i = 0;
 	while (lenv)
 	{

@@ -297,7 +297,7 @@ void	strapp(char **s1, char *s2, int f)
 	if (f == 2)
 		free(s2);
 	if (!(*s1))
-		exit_ms("malloc");
+		exit_ms("malloc", 1);
 }
 
 char	*find_env(char *find)
@@ -315,7 +315,7 @@ char	*find_env(char *find)
 		{
 			found = ft_strdup(lenv->val);
 			if (!found)
-				exit_ms(NULL);
+				exit_ms(NULL, 1);
 			return (found);
 		}		
 		lenv = lenv->next;
@@ -363,7 +363,7 @@ void	check_redirs(void)
 		else if (token->key == INFILE && ft_strlen(token->val) == 2)
 			token->key = HEREDOC;
 		if ((token->key == OUTFILE || token->key == INFILE) && ft_strlen(token->val) > 2)
-			exit_ms("parser error near '>'");
+			exit_ms("parser error near '>'", 1);
 		else if (token->key == DOLLAR || token->key == SQUOTES || token->key == DQUOTES)
 			token->key = COMMAND;
 		token = token->next;
@@ -504,7 +504,7 @@ int	fill_token(char old, char new, int *token_index, int *val_index)
 	inf.tokens[*token_index].val = (char *)malloc(sizeof(char) * 1000);					//			!!!!
 	// printf("dfddf\n");
 	if (!inf.tokens[*token_index].val)
-		exit_ms("malloc");
+		exit_ms("malloc", 1);
 	return (*token_index);
 }
 
@@ -519,10 +519,10 @@ t_pipes	*parse(char *line)
 	n = -1;
 	inf.tokens = (t_list *)malloc(sizeof(t_list ) * tok_quant(line));
 	if (!inf.tokens)
-		exit_ms("malloc error");
+		exit_ms("malloc error", 1);
 	key = 64;
 	if (!inf.tokens[0].val)
-		exit_ms("malloc");
+		exit_ms("malloc", 1);
 	while (line[++i])
 	{
 		fill_token(key, line[i], &n, &j);
@@ -541,7 +541,7 @@ t_pipes	*parse(char *line)
 	inf.tokens[n].next = NULL;
 	inf.tokens[0].prev = NULL;
 	if ((inf.tokens[n].key == SQUOTES || inf.tokens[n].key == DQUOTES) && j != -1)
-		exit_ms("not closed quote");
+		exit_ms("not closed quote", 1);
 	return (cleaning());
 }
 

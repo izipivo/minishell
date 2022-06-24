@@ -111,13 +111,14 @@ int		make_token(t_list *token, char *line, int end, int shift, int sep);
 int		token_key(char line);
 t_pipes	*invalid_args(void);
 void	sig_hand(int sig);
-void	exit_ms(char *err);
 void	sig_quit(int sig);
 void	exec(void);
 void	print_pipes(t_pipes *pipe);
 void	unset_main(void);
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
 void 	env_main(void);
+
+void	exit_ms(char *err, int status);
 
 int 	ft_strlen_env(char *en); //del; -->minishell.h
 t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
@@ -128,5 +129,7 @@ void 	free_exp(char **exp); // //del -->minishell.h
 int		check_key(char c); //del -->minishell.h
 int 	same_key(void); //del -->minishell.h
 char	**new_key(char **cmd);
+
+void exit_main(void);
 
 #endif

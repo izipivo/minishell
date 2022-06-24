@@ -243,7 +243,7 @@ void	sig_quit(int sig)
 	}
 }
 
-void	exit_ms(char *err)
+void	exit_ms(char *err, int status)
 {
 	ft_putendl_fd(err, 2);
 	sig_quit(0);
@@ -253,6 +253,7 @@ void	exit_ms(char *err)
 		inf.lenv = free_lenv(inf.lenv);
 	if (inf.pipes)
 		inf.pipes = free_pipes(inf.pipes);
-	// if (err)
+	if (status >= 0)
+		exit(status);
 	exit(1);
 }

@@ -17,8 +17,9 @@ void	print_exp(char **exp)
 	i = -1;
 	while (exp[++ i])
 	{
-		printf("%s", "declare -x ");
-		printf("%s\n", exp[i]);
+		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd(exp[i], 1);
+		ft_putstr_fd("\n", 1);
 	}
 }
 
@@ -88,6 +89,8 @@ char *parse_inf_key(char *s)
 		j ++;
 	}
 	res = (char *)malloc(j + 1);
+	if (!res)
+		exit_ms("error malloc", -1);
 	res[j] = 0;
 	return (parse_while(res, s));
 }
@@ -97,45 +100,43 @@ char *one_c(char *c, int flag)
 	if (flag == 1)
 	{
 		c = malloc(sizeof(char));
+		if (!c)
+			exit_ms("error malloc", -1);
 		c[0] = '\0';
 		return (c);
 	}
 	else
 	{
 		c = malloc(sizeof(char) + 1);
+		if (!c)
+			exit_ms("error malloc", -1);
 		c[0] = '=';
 		c[1] = '\0';
 		return (c);
 	}
 }
 
+char *val_malloc(char *s, char *res)
+{
+
+	if (*s == 61 && !(*s + 1))
+		return (one_c(res, 2));
+	s ++;
+	res = ft_strdup(s);
+	return (res);
+}
+
 char *parse_inf_val(char *s)
 {
-	int i;
-	int j;
-	char *res=0;
+	char *res;
 
-	i = 0;
-	while (s[i] != 61)
+	res = 0;
+	while (*s != 61)
 	{
-		if (s[i] == '\0')
+		if (*s == '\0')
 			return (one_c(res, 1));
-		i ++;
+		s ++;
 	}
-	if (s[i] == 61 && !s[i + 1])
-		return (one_c(res, 2));
-	i ++;
-	j = i;
-	while (s[j])
-		j ++;
-	res = (char *)malloc((j - i) + 1);
-	res[j - i] = 0;
-	j = 0;
-	while (s[i])
-	{
-		res[j] = s[i];
-		i ++;
-		j ++;
-	}
+	res = val_malloc(s, res);
 	return (res);
 }

@@ -11,6 +11,8 @@ char  **new_key(char **cmd)
     while (cmd[i])
         i ++;
     str = (char **)malloc(sizeof(char *) * (i + 1));
+    if (!str)
+        exit_ms("error malloc", -1);
     str[i] = 0;
     i = 0;
     while (cmd[i])
@@ -19,11 +21,6 @@ char  **new_key(char **cmd)
         i ++;
     }
     i = 0;
-    while (str[i])
-    {
-        printf("%s\n", str[i]);
-        i ++;
-    }
     return (str);
 }
 

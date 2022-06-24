@@ -47,7 +47,6 @@ char	**ft_exp(t_mshell	*inf)
 	int i;
 	char **result;
 	void *tmp;
-	// char *tmp_del;
 
 	i = 0;
 	tmp = inf->lenv;
@@ -59,7 +58,7 @@ char	**ft_exp(t_mshell	*inf)
 	inf->lenv = tmp;
 	result = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!result)
-		return (NULL);
+		exit_ms("error malloc", -1);
 	result[i] = 0;
 	i --;
 	result = join_env(inf, result, i);
@@ -99,20 +98,58 @@ void error_print(char *str, int i)
 {
 	if (str[i] == 33)
 	{
+		ft_putstr_fd("minishell: ", 2);
 		while (str[i])
 		{
 			write(2, &str[i], 1);
 			i ++;
 		}
-		printf(": %s\n", "event not found");
+		ft_putstr_fd(": event not found\n", 2);
 	}
 	else
-		printf("«%s»: %s\n",str , "это недопустимый идентификатор");
+	{
+		ft_putstr_fd("minishell: export: `", 2);
+		ft_putstr_fd(str, 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
+	}
+}
+
+char *new_pipes_cmd(char *cmd)
+{
+	int i;
+	int j;
+	char *res;
+
+	i = 0;
+	j = 0;
+	while (cmd[i])
+		i ++;
+	res = (char *)malloc(sizeof(char) * i);
+	if (!res)
+		exit_ms("error malloc", -1);
+	i = 0;
+	while (cmd[i])
+	{
+		if (cmd[i] == 43 && cmd[i + 1] == 61)
+		{
+			i ++;
+			continue;
+		}
+		res[j] = cmd[i];
+		// printf("%c", res[i]);
+		i ++;
+		j ++;
+	}
+	res[j] = 0;
+	free(cmd);
+	return(res);
+
 }
 
 int	check_pipes_cmd(char *str)
 {
 	int i;
+	// char *tmp;
 
 	i = 0;
 	if (str[i] >= '0' && str[i] <= '9')
@@ -169,7 +206,9 @@ void export_main(void)
 {
 	char **tmp;
 	int i;
-	
+	int flag;
+
+	flag = 0;
 	i = 0;
 	if (same_key() == -1)
 	{
@@ -180,8 +219,14 @@ void export_main(void)
 	}
 	while (inf.pipes[0].cmd[i])
 	{
-		if (check_pipes_cmd(inf.pipes[0].cmd[i]) == 1)
+		flag = check_pipes_cmd(inf.pipes[0].cmd[i]);
+		if (flag == 1)
 			return ;
+		else if (flag == 2)
+		{
+			i = 0;
+			continue;
+		}
 		i ++;
 	}
 	if (i > 1)
