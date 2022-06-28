@@ -6,6 +6,7 @@
 
 extern t_mshell	inf;
 
+<<<<<<< HEAD
 char	**copy_env(char **env)
 {
 	int i;
@@ -29,6 +30,44 @@ char	**copy_env(char **env)
 	}
 	return (copy);
 }
+=======
+// int     main(int argc, char **argv, char **envp)
+// {
+// 	char		*line;
+// 	// t_list		*tokens;
+// 	(void)argc;
+// 	(void)argv;
+// 	ft_memset(&inf, 0, sizeof(t_mshell));
+// 	inf.env = envp;
+// 	inf.lenv = make_env_list(envp);
+// 	signal(SIGQUIT, sig_quit);
+// 	signal(SIGINT, sig_hand);
+// 	while (3)
+// 	{
+// 	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
+//  	// {
+// 		line = readline(PROMPT);
+// 		// line = argv[2];
+// 		if (!ft_strlen(line))
+// 		{
+// 			free(line);
+// 			continue ;
+// 			// exit(0);
+// 		}
+// 		inf.pipes = parse(line);
+// 		add_history(line);
+// 		free(line);
+// 		// print_pipes(inf.pipes);
+// 		if (PIPES)
+// 		{
+// 			// ft_putnbr_fd(PIPES, 1);
+// 			exec();
+// 		}
+// 		inf.pipes = free_pipes(inf.pipes);
+// 		inf.mask = 0;
+// 	}
+// }
+>>>>>>> 1c8ba6a1f169230cb54717c38675288224bcc840
 
 // int     main(int argc, char **argv, char **envp)
 // {
@@ -79,7 +118,10 @@ char	**copy_env(char **env)
  	(void)argv;
  	ft_memset(&inf, 0, sizeof(t_mshell));
  	inf.env = envp;
+<<<<<<< HEAD
 	inf.env_cpy = copy_env(envp);
+=======
+>>>>>>> 1c8ba6a1f169230cb54717c38675288224bcc840
  	inf.lenv = make_env_list(envp);
  	signal(SIGQUIT, sig_quit);
  	signal(SIGINT, sig_hand);
@@ -117,9 +159,8 @@ char	**copy_env(char **env)
 // 	inf.lenv = make_env_list(envp);
 // 	signal(SIGQUIT, sig_quit);
 // 	signal(SIGINT, sig_hand);
-// 	line = "export | grep SHELL";
+// 	line = "echo $USER $USER9999 $USER8888 $USER7777";
 // 	inf.pipes = parse(line);
-// 	print_pipes(inf.pipes);
 // 	if (PIPES)
 // 	{
 // 		// ft_putnbr_fd(PIPES, 1);

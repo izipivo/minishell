@@ -537,7 +537,7 @@ int	same_token(char old, char new)
 			return (0);
 		}
 	}
-	if (old == DOLLAR && (ft_isalpha(new) || new == '_'))
+	if (old == DOLLAR && (ft_isalnum(new) || new == '_'))
 	{
 		// inf.mask |= 1 << 2;
 		// printf("old: %c\n", new);
@@ -554,9 +554,9 @@ int	tok_quant(char *line)
 	int		count;
 	int		i;
 
-	count = 1;
+	count = 19;
 	i = 0 ;
-	key = token_key(line[0]);
+	key = 64;
 	while (line[++i])
 	{
 		if (same_token(key, line[i]) == 1)
@@ -603,16 +603,11 @@ int	fill_token(int old, char new, int *token_index, int *val_index)
 		*val_index = -1;
 		return (*token_index);
 	}
-	// if (old == DOLLAR)
-	// 	inf.mask &= ~(1 << 2);
-	// if (old == DOLLAR && *token_val > 1)
-	// {
-
-	// }
 	if (old != 88 && old != 64)
 		inf.tokens[*token_index].val[*val_index + 1] = 0;
-	if (old != 88 && old != 64)
+	// if (old != 88 && old != 64)
 		// printf("fill_token: %d\n", inf.tokens[*token_index].key);
+	// printf("ti: %d\n", *token_index);
 	if (old != 64)
 	{
 		inf.tokens[*token_index].next = &inf.tokens[*token_index + 1];
@@ -657,6 +652,7 @@ t_pipes	*parse(char *line)
 	}
 	if (j != -1)
 		inf.tokens[n].val[++j] = 0;
+	// printf("%d %s\n", inf.tokens[n].key, inf.tokens[n].val);
 	inf.tokens[n].next = NULL;
 	inf.tokens[0].prev = NULL;
 	if ((inf.tokens[n].key == SQUOTES || inf.tokens[n].key == DQUOTES) && j != -1)
