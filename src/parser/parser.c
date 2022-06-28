@@ -212,13 +212,15 @@ t_pipes	*del(t_pipes *new)
 	int	i;
 
 	i = -1;
-	while (new[++i].next)
+	while (1)
 	{
-		if (!new[i].cmd[0])
+		if (!new[++i].cmd[0])
 		{
 			if (i)
 				new[i - 1].next = new[i].next;
 		}
+		if (new[i].next == NULL)
+			break ;
 	}
 	return (new);
 }

@@ -200,7 +200,7 @@ char	**rebuild_env_copy(void)
 int	update_env()
 {
 	if (!UPDATELENV(inf.mask))		// int.lenv изменился? если да то пересобираем inf.env_cpy иначе ретерн 0
-		return (0);
+		return (1);
 	else
 	{
 		free_env_copy(inf.env_cpy);
