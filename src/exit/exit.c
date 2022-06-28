@@ -107,6 +107,7 @@ void exit_main(void)
     res = 0;
     while (inf.pipes[0].cmd[++ i])
         ;
+    printf("%s %s %d\n", inf.pipes[0].cmd[0], inf.pipes[0].cmd[1], i);
     if (i > 2)
     {
         if (check_cmd(inf.pipes[0].cmd[1]) == 1)

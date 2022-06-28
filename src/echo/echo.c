@@ -34,15 +34,20 @@ void	echo(char **string, int n)
 int main(int argc, char **argv)
 {
 	int	f;
+	int	i;
 
 	f = 0;
+	i = 0;
 	if (argc == 1)
 	{
 		ft_putchar_fd('\n', 2);
 		return (0);
 	}
-	while (!ft_strncmp("-n", *(++argv), 2))
+	while (!ft_strncmp("-n", argv[++i], 2))
+	{
+		// ft_putendl_fd(argv[i], 1);
 		f = 1;
-	echo(argv, f);
+	}
+	echo(&argv[i], f);
 	return (0);
 }
