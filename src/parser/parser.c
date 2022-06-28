@@ -17,7 +17,7 @@ extern t_mshell	inf;
 int	join_commands(t_list *token)
 {
 	char	*buf;
-	char	*cc;
+	// char	*cc;
 	t_list	*cpy;
 	int		f;
 	
@@ -30,15 +30,15 @@ int	join_commands(t_list *token)
 			cpy = token->next;
 			while (cpy && cpy->key == COMMAND)
 			{
-				cc = buf;
-				buf = ft_strjoin(buf, cpy->val);
+				// cc = buf;
+				strapp(&buf, cpy->val, 2);
 				// ft_putendl_fd(buf, 1);
 				// if (buf == 0);
 				// {
 				// 	ft_putstr_fd("while\n", 1);
 				// 	exit(100);					
 				// }
-				free(cc);
+				// free(cc);
 				cpy = cpy->next;
 				f = 1;
 			}
@@ -292,10 +292,16 @@ void	strapp(char **s1, char *s2, int f)
 	{
 		*s1 = ft_strjoin(str, s2);
 		if (f)
+		{
 			free(str);
+			str = NULL;
+		}
 	}
 	if (f == 2)
+	{
 		free(s2);
+		s2 = NULL;
+	}
 	if (!(*s1))
 		exit_ms("malloc", 1);
 }
@@ -323,15 +329,36 @@ char	*find_env(char *find)
 	return (NULL);
 }
 
+int	get_last_char_of_dlr(char *str, t_list *token)
+{
+	int	i;
+
+	i = -1;
+	if (token->key != DQUOTES)
+		return (ft_strlen(str));
+	while (str[++i] && str[i] != '\'' && str[i] != '=' && str[i] != '/' &&str[i] != ' ')
+		;
+	// printf("glcod: %d\n", i);
+	return (i);
+}
+
 void	check_dlr(t_list *token)
 {
 	char	*buf;
+	char	*remainig;
 	int		i;
+	int		last_char;
 	
 	i = -1;
-	buf = NULL;
+	remainig = NULL;
+	buf = ft_strdup(token->val);
+	if (!buf)
+		exit_ms("malloc rip!", 1);
 	// printf("1:check_dlr: %s\n", token->val);
-	while (token->val[++i] && token->val[i] == '$')
+	while(token->val[++i] && token->val[i] != '$')
+		;
+	buf[i] = 0;
+	while (token->val[i] && token->val[i] == '$')
 	{
 		if (!token->val[i + 1])
 		{
@@ -342,8 +369,21 @@ void	check_dlr(t_list *token)
 			strapp(&buf, "1488", 1);
 			++i;
 		}
+		++i;
 	}
+	// printf("check_dlr: %s\n", &token->val[i]);
+	last_char = get_last_char_of_dlr(&token->val[i], token);
+	if (last_char + i <= (int)ft_strlen(token->val))
+	{
+		remainig = ft_strdup(&token->val[i + last_char]);
+		// printf("check_dlr: %s lc %d, i %d\n", remainig, last_char, i);
+		if (!remainig)
+			exit_ms("malloc rip", 1);
+	}
+	token->val[i + last_char] = 0;
 	strapp(&buf, find_env(&token->val[i]), 2);
+	if (remainig)
+		strapp(&buf, remainig, 2);
 	free(token->val);
 	token->val = buf;
 	// printf("2:check_dlr: %s\n", token->val);
@@ -399,18 +439,20 @@ void	remove_quotes(t_list *token)
 
 t_pipes	*cleaning(void)
 {
-	// print_list(inf.tokens);
-	// ft_putstr_fd("_______________________\n",1);
+	print_list(inf.tokens);
+	ft_putstr_fd("_______________________\n",1);
 	if (QUOTS(inf.mask))
 	{
 		remove_quotes(inf.tokens);
-		// print_list(inf.tokens);
-		// ft_putstr_fd("_______________________\n",1);
+		print_list(inf.tokens);
+		ft_putstr_fd("_______________________\n",1);
 	}
 	check_redirs();
 	// print_list(inf.tokens);
 	// ft_putstr_fd("_______________________\n",1);
 	join_commands(inf.tokens);
+	print_list(inf.tokens);
+	ft_putstr_fd("_______________________\n",1);
 	return (remalloc());
 }
 
@@ -429,17 +471,35 @@ int	same_token(char old, char new)
 		inf.mask |= 1;
 		// printf("mask: %d %c\n", inf.mask, new);
 	}
+	if (new == '$' && old != SQUOTES)
+		return (0);
+	if (old == DOLLAR && ft_isdigit(new))
+	{
+		if (!DIGIT(inf.mask))
+		{
+			inf.mask |= 1 << 2;
+			printf("fff\n");
+			return (1);
+		}
+		else
+			return (0);
+	}
+	// if (old == DOLLAR)
+		
+	// if (old == DOLLAR && key != DOLLAR)
+	// 	inf.mask |= 1 << 2;
 	if ((old == DQUOTES || old == SQUOTES) && old == key)
 	{
 		return (-1);
 	}
-	if (old == key || old == DQUOTES || old == SQUOTES)
-		return (1);
 	if (old == DOLLAR && (ft_isalnum(new) || new == '_'))
 	{
+		inf.mask |= 1 << 2;
 		// printf("old: %c\n", new);
 		return (1);
 	}
+	if (old == key || old == DQUOTES || old == SQUOTES)
+		return (1);
 	return (0);
 }
 
@@ -488,6 +548,8 @@ int	fill_token(char old, char new, int *token_index, int *val_index)
 		*val_index = -1;
 		return (*token_index);
 	}
+	if (old == DOLLAR)
+		inf.mask &= ~(1 << 2);
 	if (old != 88 && old != 64)
 		inf.tokens[*token_index].val[*val_index + 1] = 0;
 	if (old != 64)

@@ -61,6 +61,7 @@
 # define INPUT(x) (x & 1)
 # define DLR(x) (x & 1)
 # define QUOTS(x) ((x >> 1) & 1)
+# define DIGIT(x) ((x >> 2) & 1)
 
 typedef struct	s_env
 {
@@ -81,7 +82,7 @@ typedef struct		s_pipes
 typedef	struct		s_mshell
 {
 	char			**env;
-	int				mask;					//	первые 8 бит кол-во пайпов, последний бит 1 если надо поменять доллар
+	int				mask;					//	первые 8 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара; 3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица
 	t_env			*lenv;
 	t_list			*tokens;
 	t_pipes			*pipes;
@@ -129,6 +130,8 @@ void 	free_exp(char **exp); // //del -->minishell.h
 int		check_key(char c); //del -->minishell.h
 int 	same_key(void); //del -->minishell.h
 char	**new_key(char **cmd);
+void	strapp(char **s1, char *s2, int f);
+void	print_string(char **str);
 
 void exit_main(void);
 
