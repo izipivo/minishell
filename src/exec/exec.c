@@ -240,7 +240,7 @@ void	sig_quit(int sig)
 			if (inf.pids[i])
 			{
 				kill(inf.pids[i], SIGKILL);
-				printf("\nquited process with ID: %d\n", inf.pids[i]);
+				// printf("\nquited process with ID: %d\n", inf.pids[i]);
 				inf.pids[i] = 0;
 			}
 		}

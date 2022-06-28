@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+extern t_mshell inf;
+
 typedef struct s_lol
 {
 	int		ac_c;
@@ -100,6 +102,7 @@ t_env	*add_variable(t_env	*lenv, int ac, char **av)
 	lenv = tmp;
 	tmp = lenv_tmp;
 	lenv = ft_update_env(lenv, lenv_tmp, lol.i);
+	inf.mask |= 1 << 4;
 	lenv_tmp = tmp;
 	free_lenv(lenv_tmp);
 	return (lenv);

@@ -62,6 +62,7 @@
 # define DLR(x) (x & 1)
 # define QUOTS(x) ((x >> 1) & 1)
 # define DIGIT(x) ((x >> 2) & 1)
+# define UPDATELENV(x) ((x >> 4) & 1)
 
 typedef struct	s_env
 {
@@ -82,7 +83,8 @@ typedef struct		s_pipes
 typedef	struct		s_mshell
 {
 	char			**env;
-	int				mask;					//	первые 8 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара; 3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица
+	char 			**env_cpy;
+	int				mask;					//	первые 16 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара; 3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица; 4 bit update_lenv
 	t_env			*lenv;
 	t_list			*tokens;
 	t_pipes			*pipes;
@@ -132,6 +134,6 @@ int 	same_key(void); //del -->minishell.h
 char	**new_key(char **cmd);
 void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
-void	exit_main(void);
+void	exit_main(int index);
 
 #endif
