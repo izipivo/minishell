@@ -108,23 +108,23 @@ int	check_pipes_cmd_unset(char *str)
 	return (-1);
 }
 
-void unset_main(void)
+int unset_main(int index)
 {
 	int i;
 
 	i = 0;
-	while (inf.pipes[0].cmd[i])
+	while (inf.pipes[index].cmd[i])
     {
-        if (check_pipes_cmd_unset(inf.pipes[0].cmd[i]) == 1)
-			return ;
+        if (check_pipes_cmd_unset(inf.pipes[index].cmd[i]) == 1)
+			return (0);
         i ++;
     }
 	if (i == 1)
-        return ;
-    inf.lenv = unset_env_list(inf.lenv, i, inf.pipes->cmd);
+        return (0);
+    inf.lenv = unset_env_list(inf.lenv, i, inf.pipes[index].cmd);
     if (!inf.lenv)
-        return ;
-    return ;
+        return (0);
+    return (0);
 }
 
 //gcc unset.c ../../includes/minishell.h ../../libft/ft_strlen.c ../../libft/ft_strdup.c ../../libft/ft_strncmp.c ../../src/env_list.c ../../libft/ft_strchr.c unset_utils.c

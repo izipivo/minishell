@@ -444,20 +444,20 @@ void	remove_quotes(t_list *token)
 
 t_pipes	*cleaning(void)
 {
-	print_list(inf.tokens);
-	ft_putstr_fd("_______________________\n",1);
+	// print_list(inf.tokens);
+	// ft_putstr_fd("_______________________\n",1);
 	if (QUOTS(inf.mask))
 	{
 		remove_quotes(inf.tokens);
-		print_list(inf.tokens);
-		ft_putstr_fd("_______________________\n",1);
+		// print_list(inf.tokens);
+		// ft_putstr_fd("_______________________\n",1);
 	}
 	check_redirs();
 	// print_list(inf.tokens);
 	// ft_putstr_fd("_______________________\n",1);
 	join_commands(inf.tokens);
-	print_list(inf.tokens);
-	ft_putstr_fd("_______________________\n",1);
+	// print_list(inf.tokens);
+	// ft_putstr_fd("_______________________\n",1);
 	return (remalloc());
 }
 
@@ -612,7 +612,7 @@ int	fill_token(int old, char new, int *token_index, int *val_index)
 	if (old != 88 && old != 64)
 		inf.tokens[*token_index].val[*val_index + 1] = 0;
 	if (old != 88 && old != 64)
-		printf("fill_token: %d\n", inf.tokens[*token_index].key);
+		// printf("fill_token: %d\n", inf.tokens[*token_index].key);
 	if (old != 64)
 	{
 		inf.tokens[*token_index].next = &inf.tokens[*token_index + 1];

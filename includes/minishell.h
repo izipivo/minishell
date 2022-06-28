@@ -115,9 +115,9 @@ void	sig_hand(int sig);
 void	sig_quit(int sig);
 void	exec(void);
 void	print_pipes(t_pipes *pipe);
-void	unset_main(void);
+int		unset_main(int index);
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
-void 	env_main(void);
+int	 	env_main(void);
 
 void	exit_ms(char *err, int status);
 
@@ -132,7 +132,6 @@ int 	same_key(void); //del -->minishell.h
 char	**new_key(char **cmd);
 void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
-
-void exit_main(void);
+void	exit_main(void);
 
 #endif

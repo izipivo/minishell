@@ -9,15 +9,17 @@ void print_env(void)
     tmp = inf.lenv;
     while (inf.lenv)
 	{
-		printf("%s=", inf.lenv->key);
-		printf("%s\n", inf.lenv->val);
+		ft_putstr_fd(inf.lenv->key, 1);
+		ft_putchar_fd('=', 1);
+		ft_putstr_fd(inf.lenv->val, 1);
+		ft_putchar_fd('\n', 1);
 		inf.lenv = inf.lenv->next;
 	}
     inf.lenv = tmp;
 }
 
-void env_main(void)
+int env_main(void)
 {
     print_env();
-    return ;
+    return (0);
 }

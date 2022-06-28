@@ -115,33 +115,57 @@ void	child_fd(int index, int **fd)
 		child_out(pipe, index, fd, APP(pipe->mask));
 }
 
+int	check_func(t_pipes *pipes, int parent, int index)
+{
+	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
+	{
+		if (parent && pipes->cmd[1])
+			return (export_main(index));
+		else if (!parent && !pipes->cmd[1])
+			return (export_main(index));
+		else
+			return (0);
+	}
+	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
+	{
+		if (!parent)
+			return (env_main());
+		else
+			return (0);
+	}
+	else if (!(ft_strncmp(pipes->cmd[0], "unset", 7)))
+	{
+		if (parent)
+			return (unset_main(index));
+		else
+			return (0);
+	}
+	else if (!(ft_strncmp(pipes->cmd[0], "exit", 5)))
+	{
+		if (parent)
+			exit_main();
+		else
+			return (0);
+	}
+	return (-1);
+}
+
 int	child(int **fd, t_pipes *pipes, int index)
 {
 	char	**cmd;
+	int		exit_status;
 
 	child_fd(index, fd);
 	close_fd(index, fd);
+	exit_status = check_func(pipes, 0, index);
+	if (exit_status != -1)
+		exit(exit_status);
 	cmd = cmdparse(pipes->cmd, inf.env, fd);
 	if (!cmd[0])
 		exitpipex(fd, "bin not found");
 	if (execve(cmd[0], cmd, inf.env) == -1)
 		exitpipex(fd, cmd[0]);
 	killchild(cmd, fd);
-	return (1);
-}
-
-int	check_func(t_pipes *pipes)
-{
-	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
-		export_main();
-	else if (!(ft_strncmp(pipes->cmd[0], "unset", 7)))
-		unset_main();
-	else if (!(ft_strncmp(pipes->cmd[0], "exit", 5)))
-		exit_main();
-	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
-		env_main();
-	else
-		return (0);
 	return (1);
 }
 
@@ -156,17 +180,13 @@ pid_t	*forks(int **fd)
 	pid = createpids(fd);
 	while (pipes)
 	{
-		if (check_func(pipes))
-		{
-			pid[++m] = -228;
-			pipes = pipes->next;
-			continue ;
-		}
 		pid[++m] = fork();
 		if (pid[m] < 0)
 			exitpipex(fd, "fork");
 		else if (!pid[m])
 			child(fd, pipes, m);
+		// printf("forks: %p %s\n", pipes->cmd, pipes->cmd[1]);
+		check_func(pipes, 1, m);
 		pipes = pipes->next;
 	}
 	return (pid);

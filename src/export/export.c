@@ -202,7 +202,7 @@ char **tmp_cmd(char **cmd, char **tmp)
 	return (cmd);
 }
 
-void export_main(void)
+int export_main(int index)
 {
 	char **tmp;
 	int i;
@@ -212,16 +212,16 @@ void export_main(void)
 	i = 0;
 	if (same_key() == -1)
 	{
-		tmp = new_key(inf.pipes[0].cmd);
-		inf.pipes[0].cmd = tmp_cmd(inf.pipes[0].cmd, tmp);
-		unset_main();
-		inf.pipes[0].cmd = back_cmd(inf.pipes[0].cmd, tmp);
+		tmp = new_key(inf.pipes[index].cmd);
+		inf.pipes[index].cmd = tmp_cmd(inf.pipes[index].cmd, tmp);
+		unset_main(index);
+		inf.pipes[index].cmd = back_cmd(inf.pipes[index].cmd, tmp);
 	}
-	while (inf.pipes[0].cmd[i])
+	while (inf.pipes[index].cmd[i])
 	{
-		flag = check_pipes_cmd(inf.pipes[0].cmd[i]);
+		flag = check_pipes_cmd(inf.pipes[index].cmd[i]);
 		if (flag == 1)
-			return ;
+			return (0);
 		else if (flag == 2)
 		{
 			i = 0;
@@ -231,9 +231,9 @@ void export_main(void)
 	}
 	if (i > 1)
 	{
-		inf.lenv = add_variable(inf.lenv, i, inf.pipes->cmd);
-		return ;
+		inf.lenv = add_variable(inf.lenv, i, inf.pipes[index].cmd);
+		return (0);
 	}
 	sort_env(&inf);
-	return ;
+	return (0);
 }
