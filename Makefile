@@ -1,4 +1,6 @@
-CFLAGS =			-fsanitize=address -Wall -Wextra -Werror
+CFLAGS =			-Wall -Wextra -Werror -g #-fsanitize=address
+
+ 
 
 LIBS =				-L./libft -lft -L /usr/include -lreadline
 

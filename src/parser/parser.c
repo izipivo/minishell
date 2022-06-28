@@ -31,7 +31,7 @@ int	join_commands(t_list *token)
 			while (cpy && cpy->key == COMMAND)
 			{
 				// cc = buf;
-				strapp(&buf, cpy->val, 2);
+				strapp(&buf, cpy->val, 1);
 				// ft_putendl_fd(buf, 1);
 				// if (buf == 0);
 				// {
@@ -369,6 +369,11 @@ void	check_dlr(t_list *token)
 			strapp(&buf, "1488", 1);
 			++i;
 		}
+		else if (token->val[i + 1] == '?')
+		{
+			strapp(&buf, "228", 1);
+			++i;
+		}
 		++i;
 	}
 	// printf("check_dlr: %s\n", &token->val[i]);
@@ -456,49 +461,89 @@ t_pipes	*cleaning(void)
 	return (remalloc());
 }
 
+// int	same_token(char old, char new)
+// {
+// 	char	key;
+// 
+// 	key = token_key(new);
+	// if (key == DQUOTES || key == SQUOTES)
+	// {
+	// 	inf.mask |= 1 << 1;
+	// 	// printf("dqots: %d\n", inf.mask);
+	// }
+	// if (key == DOLLAR && old != SQUOTES)
+	// {
+	// 	inf.mask |= 1;
+	// 	// printf("mask: %d %c\n", inf.mask, new);
+	// }
+	// if (new == '$' && old != SQUOTES)
+	// 	return (0);
+	// if (old == DOLLAR && ft_isdigit(new))
+	// {
+	// 	if (!DIGIT(inf.mask))
+	// 	{
+	// 		inf.mask |= 1 << 2;
+	// 		// printf("fff\n");
+	// 		return (1);
+	// 	}
+	// 	else
+	// 		return (0);
+	// }
+	// if (old == DOLLAR)
+		
+	// if (old == DOLLAR && key != DOLLAR)
+	// 	inf.mask |= 1 << 2;
+	// if ((old == DQUOTES || old == SQUOTES) && old == key)
+	// {
+	// 	return (-1);
+	// }
+	// if (old == DOLLAR && (ft_isalnum(new) || new == '_'))
+	// {
+	// 	inf.mask |= 1 << 2;
+	// 	// printf("old: %c\n", new);
+	// 	return (1);
+	// }
+	// if (old == key || old == DQUOTES || old == SQUOTES)
+	// 	return (1);
+	// return (0);
+// }
+
 int	same_token(char old, char new)
 {
 	char	key;
 
 	key = token_key(new);
-	if (key == DQUOTES || key == SQUOTES)
-	{
+	// if (new == '$' && old != SQUOTES)
+	// 	return (0);
+	if (key == SQUOTES || key == DQUOTES)
 		inf.mask |= 1 << 1;
-		// printf("dqots: %d\n", inf.mask);
-	}
 	if (key == DOLLAR && old != SQUOTES)
-	{
 		inf.mask |= 1;
-		// printf("mask: %d %c\n", inf.mask, new);
-	}
-	if (new == '$' && old != SQUOTES)
-		return (0);
+	if ((old == DQUOTES || old == SQUOTES) && old == key)
+		return (-1);
+	if (old != key && (old == SQUOTES || old == DQUOTES))
+		return (1);
 	if (old == DOLLAR && ft_isdigit(new))
 	{
 		if (!DIGIT(inf.mask))
 		{
 			inf.mask |= 1 << 2;
-			printf("fff\n");
+			// printf("fff\n");
 			return (1);
 		}
 		else
+		{
+			inf.mask &= ~(1 << 2);
 			return (0);
+		}
 	}
-	// if (old == DOLLAR)
-		
-	// if (old == DOLLAR && key != DOLLAR)
-	// 	inf.mask |= 1 << 2;
-	if ((old == DQUOTES || old == SQUOTES) && old == key)
+	if (old == DOLLAR && (ft_isalpha(new) || new == '_'))
 	{
-		return (-1);
-	}
-	if (old == DOLLAR && (ft_isalnum(new) || new == '_'))
-	{
-		inf.mask |= 1 << 2;
+		// inf.mask |= 1 << 2;
 		// printf("old: %c\n", new);
 		return (1);
 	}
-	if (old == key || old == DQUOTES || old == SQUOTES)
+	if (old == key)
 		return (1);
 	return (0);
 }
@@ -528,10 +573,20 @@ int	tok_quant(char *line)
 	return (count);
 }
 
-int	fill_token(char old, char new, int *token_index, int *val_index)
+void	make_new_token(int *token_index, int *val_index, char key)
 {
-	char	key;
-	char	st;
+	*val_index = 0;
+	++(*token_index);
+	inf.tokens[*token_index].key = key;
+	inf.tokens[*token_index].val = (char *)malloc(sizeof(char) * 1000);					//			!!!!
+	if (!inf.tokens[*token_index].val)
+		exit_ms("malloc", 1);
+}
+
+int	fill_token(int old, char new, int *token_index, int *val_index)
+{
+	int	key;
+	int		st;
 
 	key = token_key(new);
 	st = same_token(old, new);
@@ -548,25 +603,22 @@ int	fill_token(char old, char new, int *token_index, int *val_index)
 		*val_index = -1;
 		return (*token_index);
 	}
-	if (old == DOLLAR)
-		inf.mask &= ~(1 << 2);
+	// if (old == DOLLAR)
+	// 	inf.mask &= ~(1 << 2);
+	// if (old == DOLLAR && *token_val > 1)
+	// {
+
+	// }
 	if (old != 88 && old != 64)
 		inf.tokens[*token_index].val[*val_index + 1] = 0;
+	if (old != 88 && old != 64)
+		printf("fill_token: %d\n", inf.tokens[*token_index].key);
 	if (old != 64)
 	{
 		inf.tokens[*token_index].next = &inf.tokens[*token_index + 1];
 		inf.tokens[*token_index + 1].prev = &inf.tokens[*token_index];
 	}
-	*val_index = 0;
-	++(*token_index);
-	// printf("dfddf\n");
-	inf.tokens[*token_index].key = key;
-	// printf("dfddf\n");
-	// if (!inf.tokens[*token_index].val)
-	inf.tokens[*token_index].val = (char *)malloc(sizeof(char) * 1000);					//			!!!!
-	// printf("dfddf\n");
-	if (!inf.tokens[*token_index].val)
-		exit_ms("malloc", 1);
+	make_new_token(token_index, val_index, key);
 	return (*token_index);
 }
 
@@ -583,10 +635,15 @@ t_pipes	*parse(char *line)
 	if (!inf.tokens)
 		exit_ms("malloc error", 1);
 	key = 64;
-	if (!inf.tokens[0].val)
-		exit_ms("malloc", 1);
+	// if (!inf.tokens[0].val)
+	// 	exit_ms("malloc", 1);
 	while (line[++i])
 	{
+		if (line[i] == line[i + 1] && (line[i] == '\'' || line[i] == '"'))
+		{
+			++i;
+			continue ;
+		}
 		fill_token(key, line[i], &n, &j);
 		if (j == -1)
 		{

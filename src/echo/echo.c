@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 		ft_putchar_fd('\n', 2);
 		return (0);
 	}
-	while (!ft_strncmp(*(++argv), "-n", 2))
+	while (!ft_strncmp("-n", *(++argv), 2))
 		f = 1;
 	echo(argv, f);
 	return (0);
