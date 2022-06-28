@@ -42,8 +42,12 @@ int cnt=1;
 
 void	print_pipes(t_pipes *pipe)
 {
+	int	i = -1;
 	while (pipe)
 	{
+		ft_putstr_fd("pipe #", 1);
+		ft_putnbr_fd(++i, 1);
+		ft_putchar_fd('\n', 1);
 		print_string(pipe->cmd);
 		ft_putstr_fd("_______________________\n", 1);
 		pipe = pipe->next;

@@ -207,6 +207,22 @@ int	copy_word(t_pipes *new, int j, t_list *old)
 	return (1);
 }
 
+t_pipes	*del(t_pipes *new)
+{
+	int	i;
+
+	i = -1;
+	while (new[++i].next)
+	{
+		if (!new[i].cmd[0])
+		{
+			if (i)
+				new[i - 1].next = new[i].next;
+		}
+	}
+	return (new);
+}
+
 t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 {
 	t_list	*cp=old;
@@ -252,7 +268,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	else
 		new[i].next = NULL;
 	inf.tokens = free_tokens(cp);
-	return (new);
+	return (del(new));
 }
 
 t_pipes	*remalloc(void)

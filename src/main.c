@@ -65,6 +65,7 @@ extern t_mshell	inf;
  			exit(0);
  		}
  		inf.pipes = parse(line);
+		// print_pipes(inf.pipes);
  		if (PIPES)
  		{
  			// ft_putnbr_fd(PIPES, 1);
