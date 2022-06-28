@@ -4,18 +4,15 @@ extern t_mshell inf;
 
 void print_env(void)
 {
-    void *tmp;
+	int	i;
 
-    tmp = inf.lenv;
-    while (inf.lenv)
+	i = 0;
+    while (inf.env_cpy[i])
 	{
-		ft_putstr_fd(inf.lenv->key, 1);
-		ft_putchar_fd('=', 1);
-		ft_putstr_fd(inf.lenv->val, 1);
+		ft_putstr_fd(inf.env_cpy[i], 1);
 		ft_putchar_fd('\n', 1);
-		inf.lenv = inf.lenv->next;
+		i ++;
 	}
-    inf.lenv = tmp;
 }
 
 int env_main(void)
