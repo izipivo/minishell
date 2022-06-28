@@ -34,17 +34,11 @@ long long	ft_atoi_exit(const char *str)
 int errors_exit(int signal, int res)
 {
     if (signal == 0)
-    {
-        // ft_putstr_fd("minishell: exit: too many arguments\n", 2);
         exit_ms("minishell: exit: too many arguments\n", 1);
-    }
     if (signal == 1)
         exit_ms(NULL, res % 256);
     if (signal == 2)
-    {
-        // ft_putstr_fd("minishell: exit: numeric argument required\n", 2);
         exit_ms("minishell: exit: numeric argument required\n", 255);
-    }
     if (signal == 255)
         exit_ms(NULL, 255);
     if (signal == -1)
@@ -107,7 +101,6 @@ void exit_main(int index)
     res = 0;
     while (inf.pipes[index].cmd[++ i])
         ;
-    printf("%s %s %d\n", inf.pipes[0].cmd[0], inf.pipes[0].cmd[1], i);
     if (i > 2)
     {
         if (check_cmd(inf.pipes[index].cmd[1]) == 1)
@@ -115,8 +108,6 @@ void exit_main(int index)
         errors_exit(0, res);
     }
     i = 0;
-    // if (check_cmd(inf.pipes[0].cmd[i + 1]))
-    //     errors_exit(2, res);
     parse_exit(inf.pipes[index].cmd[i + 1]);
     res = ft_atoi_exit(inf.pipes[index].cmd[1]);
     if (res > 255 && res <= 2147483647)
@@ -126,9 +117,7 @@ void exit_main(int index)
     if (res < 1)
         errors_exit(-1, res);
     else
+	{
         exit_ms(NULL, res);
+	}
 }
-
-// если аргументов больше двух, то статус выхода = 1
-// если в качестве аргумента была подана строка, то статус выхода = 255
-// если в качестве аргумента было подано число и оно очень большое, то статус выхода = "число" %256
