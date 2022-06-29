@@ -31,7 +31,7 @@ void	echo(char **string, int n)
 		ft_putchar_fd('\n', 1);
 }
 
-int main(int argc, char **argv)
+int echo_main(int argc, char **argv)
 {
 	int	f;
 	int	i;

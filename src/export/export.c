@@ -154,7 +154,7 @@ int	check_pipes_cmd(char *str)
 	i = 0;
 	if (str[i] >= '0' && str[i] <= '9')
 		return (1);
-	while (str[i])
+	while (str[i] && str[i] != 61)
 	{
 		if ((check_key(str[i])) == 1)
 		{

@@ -50,9 +50,7 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	i = -1;
 	if (access(tmp, F_OK) == 0)
 		return (tmp);
-	while (ft_strnstr(envp[++i], "PWD", 4) == 0)
-		;
-	path = check_buildin(&envp[i][4], tmp);
+	path = check_buildin(inf.pwd, tmp);
 	if (path)
 	{
 		free(tmp);

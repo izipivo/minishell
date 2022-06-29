@@ -115,6 +115,16 @@ void	child_fd(int index, int **fd)
 		child_out(pipe, index, fd, APP(pipe->mask));
 }
 
+int	str_len(char **str)
+{
+	int	i;
+
+	i = -1;
+	while (str[++i])
+		;
+	return (i);
+}
+
 int	check_func(t_pipes *pipes, int parent, int index)
 {
 	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
@@ -144,6 +154,20 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	{
 		if (parent)
 			exit_main(index);
+		else
+			return (0);
+	}
+	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
+	{
+		if (parent)
+			cd_main(pipes->cmd, index);
+		else
+			return (0);
+	}
+	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
+	{
+		if (!parent)
+			echo_main(str_len(pipes->cmd), pipes->cmd);
 		else
 			return (0);
 	}
@@ -217,6 +241,7 @@ int	child(int **fd, t_pipes *pipes, int index)
 
 	child_fd(index, fd);
 	close_fd(index, fd);
+
 	exit_status = check_func(pipes, 0, index);
 	if (exit_status != -1)
 		exit(exit_status);
@@ -246,6 +271,7 @@ pid_t	*forks(int **fd)
 		else if (!pid[m])
 			child(fd, pipes, m);
 		// printf("forks: %p %s\n", pipes->cmd, pipes->cmd[1]);
+		waitpid(pid[m], NULL, 0);
 		check_func(pipes, 1, m);
 		pipes = pipes->next;
 	}

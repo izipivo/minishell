@@ -32,7 +32,7 @@
 /* # define PROMPT RED "MI"ORANGE"NI"LYELLOW"GA"GREEN"YS"BRIGHT_BLUE"HE"SINIY"LL"\
 	//PURPLE "$> "RESET*/
 # define PERROR YELLOW "mini" RED "error" RESET
-# define PROMPT "gay?> "
+# define PROMPT "CHECHNYA_KRUTO!> "
 // # define RL_PROMT_START_IGNORE '\001'
 // # define RL_PROMT_END_IGNORE '\002'
 
@@ -84,6 +84,7 @@ typedef	struct		s_mshell
 {
 	char			**env;
 	char 			**env_cpy;
+	char			*pwd;
 	int				mask;					//	первые 16 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара; 3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица; 4 bit update_lenv
 	t_env			*lenv;
 	t_list			*tokens;
@@ -123,17 +124,40 @@ int	 	env_main(void);
 
 void	exit_ms(char *err, int status);
 
-int 	ft_strlen_env(char *en); //del; -->minishell.h
-t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
-char	 *parse_inf_key(char *s); //del; -->minishell.h
-char 	*parse_inf_val(char *s); //del -->minishell.h
-void	print_exp(char **exp); // //del -->minishell.h
-void 	free_exp(char **exp); // //del -->minishell.h
-int		check_key(char c); //del -->minishell.h
-int 	same_key(void); //del -->minishell.h
+int 	ft_strlen_env(char *en);
+t_env	*add_variable(t_env	*lenv, int ac, char **av);
+char	 *parse_inf_key(char *s);
+char 	*parse_inf_val(char *s);
+void	print_exp(char **exp);
+void 	free_exp(char **exp);
+int		check_key(char c);
+int 	same_key(void);
 char	**new_key(char **cmd);
 void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
 void	exit_main(int index);
-
+int		cd_main(char **cmd, int index);
+int		echo_main(int argc, char **argv);
+int		pwd_main(void);
+// parsers
+int		same_token(char old, char new);
+t_pipes	*cleaning(void);
+int		get_last_char_of_dlr(char *str, t_list *token);
+char	*find_env(char *find);
+t_pipes	*remalloc(void);
+t_pipes	*copy_pipes(t_pipes *new, t_list *old);
+void	cap(t_pipes *new, int i, int j);
+void	copy_out(t_pipes *new, char *val, char key);
+void	copy_in(t_pipes *new, char *val, char key);
+int		copy_word(t_pipes *new, int j, t_list *old);
+t_pipes	*del(t_pipes *new);
+int		join_commands(t_list *token, int f);
+int		list_size(t_list *list);
+int		token_cp(t_list *new, t_list *old);
+int		q_args(t_list *token);
+t_pipes	*stop_exec(t_pipes *new);
+t_pipes	*end_pipes(t_pipes *new, int i, int j);
+void	check_dlr(t_list *token);
+int		tok_quant(char *line);
+void	make_new_token(int *token_index, int *val_index, char key);
 #endif
