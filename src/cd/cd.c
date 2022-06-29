@@ -14,10 +14,19 @@
 
 extern t_mshell	inf;
 
+void	free_strs(char **strs)
+{
+	int	i;
+
+	i = -1;
+	while (strs[++i])
+		free(strs[i]);
+	free(strs);
+}
+
 char	**cp_cmd(void)
 {
 	char	**buf;
-	char	*tmp;
 	int		i;
 
 	i = -1;
@@ -31,10 +40,30 @@ char	**cp_cmd(void)
 	buf[1] = ft_strdup("PWD=");
 	if (!buf[1])
 		exit_ms("malloc rip", 1);
-	tmp = (char *)malloc(sizeof(char) * 100);
-	if (!tmp)
+	strapp(&buf[1], getcwd(NULL, 0), 2);
+	if (!buf[1])
 		exit_ms("malloc rip", 1);
-	strapp(&buf[1], getcwd(tmp, 100), 2);
+	buf[2] = NULL;
+	return (buf);
+}
+
+char	**cp_oldpwd(void)
+{
+	char	**buf;
+	int		i;
+
+	i = -1;
+	buf = (char **)malloc(sizeof(char *) * (3));
+	if (!buf)
+		exit_ms("malloc rip", 1);
+	i = -1;
+	buf[0] = ft_strdup("export");
+	if (!buf[0])
+		exit_ms("malloc rip", 1);
+	buf[1] = ft_strdup("OLDPWD=");
+	if (!buf[1])
+		exit_ms("malloc rip", 1);
+	strapp(&buf[1], getcwd(NULL, 0), 2);
 	if (!buf[1])
 		exit_ms("malloc rip", 1);
 	buf[2] = NULL;
@@ -54,14 +83,19 @@ void	cd(char	*path, int index)
 		ft_putendl_fd("not existing directory!", 2);
 		return ;
 	}
+	inf.pipes[index].cmd = cp_oldpwd();
 	error = chdir(path);
 	if (!error)
 	{
+		export_main(index);
+		free_strs(inf.pipes[index].cmd);
 		inf.pipes[index].cmd = cp_cmd();
 		export_main(index);
-		return ;
+		free_strs(inf.pipes[index].cmd);
 	}
-	perror(PERROR);
+	else
+		perror(PERROR);
+	inf.pipes[index].cmd = (char **)cp;
 }
 
 int	cd_main(char **cmd, int index)

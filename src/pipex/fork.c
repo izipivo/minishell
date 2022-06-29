@@ -28,24 +28,11 @@ static void	killchild(char **cmd, int **fd)
 	(void)cmd;
 	(void)fd;
 	free_pipes(inf.pipes);
+	printf("exited\n");
+	close_all(fd);
 	close(0);
 	close(1);
 	exit(EXIT_SUCCESS);
-}
-
-static pid_t	*createpids(int **fd)
-{
-	pid_t	*pid;
-	int		i;
-
-	i = -1;
-	pid = (pid_t *)malloc(sizeof(pid_t) * PIPES);
-	if (!pid)
-		exitmalloc(fd);
-	while (++i < PIPES)
-		pid[i] = 0;
-	inf.pids = pid;
-	return (pid);
 }
 
 void	child_hd(t_pipes *pipe, int index, int **fd)
@@ -99,9 +86,10 @@ void	child_fd(int index, int **fd)
 	t_pipes	*pipe;
 
 	pipe = &inf.pipes[index];
-	if (index && INPUT(pipe->mask) && pipe->in)
+	printf("in: %s\n", pipe->in);
+	if (INPUT(pipe->mask) && pipe->in)
 		child_in(pipe, index, fd);
-	else if (index && HD(pipe->mask) && pipe->in)
+	else if (HD(pipe->mask) && pipe->in)
 		child_hd(pipe, index, fd);
 	if (index + 1 != PIPES && pipe->out)
 		child_out(pipe, index, fd, APP(pipe->mask));
@@ -156,10 +144,13 @@ int	check_func(t_pipes *pipes, int parent, int index)
 		else
 			return (0);
 	}
-	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
+	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 5)))
 	{
 		if (!parent)
-			echo_main(str_len(pipes->cmd), pipes->cmd);
+		{
+			pwd_main();
+			return (1);
+		}
 		else
 			return (0);
 	}
@@ -191,7 +182,7 @@ char	**rebuild_env_copy(void)
 		inf.lenv = inf.lenv->next;
 	}
 	inf.lenv = tmp;
-	env_copy = (char **)malloc(sizeof(char *) * i + 1);
+	env_copy = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!env_copy)
 		exit_ms(NULL, 0);
 	env_copy[i] = 0;
@@ -213,7 +204,9 @@ char	**rebuild_env_copy(void)
 int	update_env(void)
 {
 	if (!UPDATELENV(inf.mask))
+	{
 		return (1);
+	}
 	else
 	{
 		free_env_copy(inf.env_cpy);
@@ -229,40 +222,55 @@ int	child(int **fd, t_pipes *pipes, int index)
 	int		exit_status;
 
 	child_fd(index, fd);
-	close_fd(index, fd);
-
+	// close_fd(index, fd);
+	dup2(fd[index][0], 0);
+	close(fd[index][0]);
+	dup2(fd[index + 1][1], 1);
+	close(fd[index + 1][1]);
 	exit_status = check_func(pipes, 0, index);
 	if (exit_status != -1)
+	{
+		close_all(fd);
 		exit(exit_status);
+	}
 	cmd = cmdparse(pipes->cmd, inf.env, fd);
 	if (!cmd[0])
+	{
+		ft_putstr_fd("lol\n", 2);
 		exitpipex(fd, "bin not found");
+	}
 	if (update_env() && execve(cmd[0], cmd, inf.env_cpy) == -1)
+	{
+		ft_putstr_fd("lodfsdfsdfdsfdsfdsfdfdl\n", 2);
+		ft_putstr_fd("lol\n", 2);
 		exitpipex(fd, cmd[0]);
+	}
+	ft_putstr_fd("lsdfsdfdsfdfdfdfdfol\n", 2);
+	ft_putstr_fd("child\n", 2);
 	killchild(cmd, fd);
 	return (1);
 }
 
-pid_t	*forks(int **fd)
+void	forks(int **fd)
 {
 	int		m;
-	pid_t	*pid;
 	t_pipes	*pipes;
 
 	m = -1;
 	pipes = inf.pipes;
-	pid = createpids(fd);
 	while (pipes)
 	{
-		pid[++m] = fork();
-		if (pid[m] < 0)
+		++m;
+		inf.pid = fork();
+		if (inf.pid < 0)
 			exitpipex(fd, "fork");
-		else if (!pid[m])
+		else if (!inf.pid)
 			child(fd, pipes, m);
 		// printf("forks: %p %s\n", pipes->cmd, pipes->cmd[1]);
-		waitpid(pid[m], NULL, 0);
+		waitpid(inf.pid, &inf.status, 0);
+		printf("dfdfdf\n");
+		inf.pid = -228;
 		check_func(pipes, 1, m);
 		pipes = pipes->next;
 	}
-	return (pid);
 }

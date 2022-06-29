@@ -27,9 +27,14 @@ static void	check_redirs(void)
 			token->key = APPEND;
 		else if (token->key == INFILE && ft_strlen(token->val) == 2)
 			token->key = HEREDOC;
-		if ((token->key == OUTFILE || token->key == INFILE)
-			&& ft_strlen(token->val) > 2)
+		if ((token->key >= 3 && token->key <= 6) && ft_strlen(token->val) > 2)
 			exit_ms("parser error near '>'", 1);
+		else if ((token->key >= 3 && token->key <= 6) && token->next)
+		{
+			free(token->val);
+			token->val = ft_strdup(token->next->val);
+			token->next = token->next->next;
+		}
 		else if (token->key == DOLLAR || token->key == SQUOTES
 			|| token->key == DQUOTES)
 			token->key = COMMAND;
@@ -65,8 +70,8 @@ static void	remove_quotes(t_list *token)
 
 t_pipes	*cleaning(void)
 {
-	// print_list(inf.tokens);
-	// ft_putstr_fd("_______________________\n",1);
+	print_list(inf.tokens);
+	ft_putstr_fd("_______________________\n",1);
 	if (QUOTS(inf.mask))
 	{
 		remove_quotes(inf.tokens);
@@ -74,8 +79,8 @@ t_pipes	*cleaning(void)
 		// ft_putstr_fd("_______________________\n",1);
 	}
 	check_redirs();
-	// print_list(inf.tokens);
-	// ft_putstr_fd("_______________________\n",1);
+	print_list(inf.tokens);
+	ft_putstr_fd("_______________________\n",1);
 	join_commands(inf.tokens, 0);
 	// print_list(inf.tokens);
 	// ft_putstr_fd("_______________________\n",1);

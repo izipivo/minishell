@@ -44,8 +44,7 @@ void	exitpipex(int **fd, char *desc)
 {
 	perror(desc);
 	fd = free_fd(fd);
-	free(inf.pids);
-	inf.pids = NULL;
+	inf.pid = -228;
 	free_pipes(inf.pipes);
 	exit(22);
 }

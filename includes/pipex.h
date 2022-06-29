@@ -33,14 +33,15 @@ typedef struct s_pip
 void	cleansplit(char **cmd);
 char	*checkpath(char *tmp, char **envp, int **fd);
 void	close_fd(int proc, int **fd);
-pid_t	*forks(int **fd);
+void	forks(int **fd);
 int		parentread(int fd, char *filename, int hd);
 int		parentwrite(int fd, char *filename, int flag);
-void	waitchildren(pid_t *pid, int **fd, int argc);
+void	waitchildren(int **fd, int argc);
 int		validate(int argc, char **argv);
 void	exitmalloc(int **fd);
 void	exitpipex(int **fd, char *desc);
 int		pipex(void);
 void	*free_fd(int **fd);
 int		export_main(int index);
+void	close_all(int **fd);
 #endif

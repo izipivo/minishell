@@ -25,21 +25,6 @@ void	cleansplit(char **cmd)
 	cmd = NULL;
 }
 
-char	*check_buildin(char *pwd, char *tmp)
-{
-	char	*buf;
-	char	*buf2;
-
-	buf = ft_strjoin(pwd, "/bin/");
-	buf2 = ft_strjoin(buf, tmp);
-	if (buf)
-		free(buf);
-	if (access(buf2, F_OK) == 0)
-		return (buf2);
-	free(buf2);
-	return (NULL);
-}
-
 char	*checkpath(char *tmp, char **envp, int **fd)
 {
 	char	**paths;
@@ -50,13 +35,6 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	i = -1;
 	if (access(tmp, F_OK) == 0)
 		return (tmp);
-	path = check_buildin(inf.pwd, tmp);
-	if (path)
-	{
-		free(tmp);
-		return (path);
-	}
-	i = -1;
 	while (ft_strnstr(envp[++i], "PATH", 4) == 0)
 		;
 	paths = ft_split(envp[i] + 5, ':');
@@ -126,20 +104,35 @@ static int	**multipipe(int m)
 	return (fd);
 }
 
+void	close_all(int **fd)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	printf("PIPES: %d\n", PIPES);
+	while (++i < PIPES + 1)
+	{
+		j = -1;
+		while (++j < 2)
+			close(fd[i][j]);
+	}
+}
+
 int	pipex(void)
 {
 	int		**fd;
-	pid_t	*pid;
 
 	fd = multipipe(PIPES + 1);
-	pid = forks(fd);
-	close_fd(-1, fd);
-	if (inf.pipes[0].in)
-		parentread(fd[0][1], inf.pipes[0].in, HD(inf.pipes[0].mask));
-	else
-		dup2(0, fd[0][0]);
+	forks(fd);
+	// close_fd(-1, fd);
+	printf("pipex.c: %s\n", inf.pipes[0].in);
+	// if (inf.pipes[0].in)
+	// 	parentread(fd[0][1], inf.pipes[0].in, HD(inf.pipes[0].mask));
+	// else
+	// 	dup2(0, fd[0][0]);
 	parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, \
 		APP(inf.pipes[PIPES - 1].mask));
-	waitchildren(pid, fd, PIPES);
+	waitchildren(fd, PIPES);
 	return (0);
 }

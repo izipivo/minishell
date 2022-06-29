@@ -27,13 +27,9 @@
 # define BRIGHT_BLUE "\e[01;34m"
 # define ORANGE "\e[38;5;202m"
 # define PERROR YELLOW "mini" RED "error" RESET
-<<<<<<< HEAD
 # define PROMPT "CHECHNYA_KRUTO!> "
 // # define RL_PROMT_START_IGNORE '\001'
 // # define RL_PROMT_END_IGNORE '\002'
-=======
-# define PROMPT "gay?> "
->>>>>>> cfc327345c2265950c1ee1efb800d5938ebd1e3f
 
 /*
 //		token's keys
@@ -85,10 +81,11 @@ typedef	struct		s_mshell
 	char 			**env_cpy;
 	char			*pwd;
 	int				mask;					//	первые 16 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара; 3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица; 4 bit update_lenv
+	int				status;
 	t_env			*lenv;
 	t_list			*tokens;
 	t_pipes			*pipes;
-	pid_t			*pids;
+	pid_t			pid;
 }					t_mshell;
 
 void	*free_pipes(t_pipes *pipes);

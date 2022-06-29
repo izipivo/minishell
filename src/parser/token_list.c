@@ -22,22 +22,3 @@ int	is_separator(char c)
 	else
 		return (0);
 }
-
-// int	ft_strapp(char **s1, char *s2)
-// {
-// 	char	*tmp;
-
-// 	tmp = *s1;
-// 	if (!tmp)
-// 		*s1 = ft_strdup(s2);
-// 	else
-// 		*s1 = ft_strjoin(tmp, s2);
-// 	if (tmp)
-// 	{
-// 		free(tmp);
-// 		tmp = NULL;
-// 	}
-// 	if (!*s1)
-// 		return (1);					//		malloc_err
-// 	return (0);
-// }

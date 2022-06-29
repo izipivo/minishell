@@ -56,41 +56,6 @@ void	print_pipes(t_pipes *pipe)
 	cnt = 1;
 }
 
-char	*change_filename(char **str, char *prefix)
-{
-	char	*buf;
-
-	buf = ft_strjoin(prefix, *str);
-	if (!buf)
-		exit(1);
-	free(*str);
-	*str = buf;
-	return (*str);
-}
-
-void	find_redir(t_list *token, char ***files, int pipes)
-{
-	char	**file;
-
-	file = *files;
-	file[0] = "pipex";
-	file[1] = "/";
-	file[pipes - 2] = "/";
-	file[pipes - 1] = NULL;
-	while (token)
-	{
-		if (token->key == INFILE)
-			file[1] = token->val;
-		else if (token->key == OUTFILE)
-			file[pipes - 2] = token->val;
-		else if (token->key == HEREDOC)
-			file[1] = change_filename(&token->val, "//");
-		else if (token->key == APPEND)
-			file[pipes - 2] = change_filename(&token->val, "\\/");
-		token = token->next;
-	}
-}
-
 int	count_pipes(t_list *token)
 {
 	int	count;
@@ -105,69 +70,6 @@ int	count_pipes(t_list *token)
 		token = token->next;
 	}
 	return (count);
-}
-
-static char	*ft_strjoin_withspace(char *s1, char const	*s2)
-{
-	char	*joined;
-	int		i;
-	int		j;
-
-	i = -1;
-	j = 0;
-	joined = (char *) malloc(ft_strlen(s1) + ft_strlen(s2) + 2);
-	if (!joined)
-		return (0);
-	while (s1 && s1[j])
-		joined[++i] = s1[j++];
-	if (i != -1)
-		joined[++i] = ' ';
-	while (s2 && *s2)
-		joined[++i] = *s2++;
-	joined[++i] = '\0';
-	if (j != 0)
-		free(s1);
-	return (joined);
-}
-
-char	**get_one_string(t_list *token, int pipes)
-{
-	char	**string;
-	char	*buf;
-	int		i;
-
-	i = 1;
-	buf = NULL;
-	string = (char **)malloc(sizeof(char *) * pipes);
-	if (!string)
-		exit(1);
-	find_redir(token, &string, pipes);
-	while (token->next)
-	{
-		if (token->key == PIPE)
-		{
-			string[++i] = buf;
-			buf = NULL;
-		}
-		else if (token->key == COMMAND)
-		{
-			buf = ft_strjoin_withspace(buf, token->val);
-			if (!buf)
-				exit(1);
-		}
-		token = token->next;
-	}
-	if (token->key == PIPE)
-		ft_putendl_fd("wtf?", 1);
-	if (token->key == COMMAND)
-	{
-		buf = ft_strjoin_withspace(buf, token->val);
-		if (!buf)
-			exit(1);
-	}
-	if (buf)
-		string[++i] = buf;
-	return (string);
 }
 
 void	exec(void)
@@ -212,16 +114,10 @@ void	sig_quit(int sig)
 
 	i = -1;
 	(void)sig;
-	if (inf.pids)
+	if (inf.pid != -228)
 	{
-		while (++i < PIPES)
-		{
-			if (inf.pids[i])
-			{
-				kill(inf.pids[i], SIGKILL);
-				inf.pids[i] = 0;
-			}
-		}
+		kill(inf.pid, SIGKILL);
+		inf.pid = -228;
 	}
 }
 
