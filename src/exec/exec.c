@@ -11,10 +11,8 @@ void	*free_pipes(t_pipes *pipes)
 	while (pipes)
 	{
 		i = -1;
-		// ft_putstr_fd(pipes[0].cmd[0], 1);
 		while (pipes->cmd[++i])
 		{
-			// printf("free_pipes: %s\n", pipes->cmd[i]);
 			free(pipes->cmd[i]);
 		}
 		free(pipes->cmd);
@@ -30,8 +28,9 @@ void	*free_pipes(t_pipes *pipes)
 
 void	print_string(char **str)
 {
-	int i=-1;
+	int	i;
 
+	i = -1;
 	while (str[++i] && *str[i])
 	{
 		ft_putendl_fd(str[i], 1);
@@ -42,7 +41,9 @@ int cnt=1;
 
 void	print_pipes(t_pipes *pipe)
 {
-	int	i = -1;
+	int	i;
+
+	i = -1;
 	while (pipe)
 	{
 		ft_putstr_fd("pipe #", 1);
@@ -61,7 +62,7 @@ char	*change_filename(char **str, char *prefix)
 
 	buf = ft_strjoin(prefix, *str);
 	if (!buf)
-		exit(1);																//!!!
+		exit(1);
 	free(*str);
 	*str = buf;
 	return (*str);
@@ -74,7 +75,6 @@ void	find_redir(t_list *token, char ***files, int pipes)
 	file = *files;
 	file[0] = "pipex";
 	file[1] = "/";
-	// ft_putendl_fd("hui", 1);
 	file[pipes - 2] = "/";
 	file[pipes - 1] = NULL;
 	while (token)
@@ -86,7 +86,7 @@ void	find_redir(t_list *token, char ***files, int pipes)
 		else if (token->key == HEREDOC)
 			file[1] = change_filename(&token->val, "//");
 		else if (token->key == APPEND)
-			file[pipes - 2] = change_filename(&token->val, "\\/");				//!!!
+			file[pipes - 2] = change_filename(&token->val, "\\/");
 		token = token->next;
 	}
 }
@@ -140,7 +140,7 @@ char	**get_one_string(t_list *token, int pipes)
 	buf = NULL;
 	string = (char **)malloc(sizeof(char *) * pipes);
 	if (!string)
-		exit(1);									//!
+		exit(1);
 	find_redir(token, &string, pipes);
 	while (token->next)
 	{
@@ -152,9 +152,8 @@ char	**get_one_string(t_list *token, int pipes)
 		else if (token->key == COMMAND)
 		{
 			buf = ft_strjoin_withspace(buf, token->val);
-			//ft_putendl_fd(buf, 1);
 			if (!buf)
-				exit(1);							//!
+				exit(1);
 		}
 		token = token->next;
 	}
@@ -164,7 +163,7 @@ char	**get_one_string(t_list *token, int pipes)
 	{
 		buf = ft_strjoin_withspace(buf, token->val);
 		if (!buf)
-			exit(1);                                //!
+			exit(1);
 	}
 	if (buf)
 		string[++i] = buf;
@@ -173,27 +172,7 @@ char	**get_one_string(t_list *token, int pipes)
 
 void	exec(void)
 {
-	//pid_t	child;
-	//int		*a=malloc(sizeof(int));
-
 	pipex();
-
-
-
-
-	//child = fork();
-	//if (child == -1)
-	//	exit(1);								//!
-	//if (!child)
-	//{
-	//	execve("./bin/pipex", inf.pipex_args, inf.env);
-	//}
-	//else
-	//{
-	//	inf.pipex_child = child;
-	//	waitpid(child, NULL, 0);
-	//	inf.pipex_child = 0;
-	//}
 }
 
 void	*free_pipex_args(char **ar, int pipes)
@@ -240,7 +219,6 @@ void	sig_quit(int sig)
 			if (inf.pids[i])
 			{
 				kill(inf.pids[i], SIGKILL);
-				// printf("\nquited process with ID: %d\n", inf.pids[i]);
 				inf.pids[i] = 0;
 			}
 		}

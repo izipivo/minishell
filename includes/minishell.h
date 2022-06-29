@@ -15,9 +15,6 @@
 # include <dirent.h>
 # include "pipex.h"
 
-/*
-//		readline colours
-*/
 # define CYELLOW "\001\e[0;31m\002"
 # define YELLOW "\001\033[1;33m\002"
 # define LYELLOW "\e[38;5;227m"
@@ -29,12 +26,14 @@
 # define PURPLE "\e[00;35m"
 # define BRIGHT_BLUE "\e[01;34m"
 # define ORANGE "\e[38;5;202m"
-/* # define PROMPT RED "MI"ORANGE"NI"LYELLOW"GA"GREEN"YS"BRIGHT_BLUE"HE"SINIY"LL"\
-	//PURPLE "$> "RESET*/
 # define PERROR YELLOW "mini" RED "error" RESET
+<<<<<<< HEAD
 # define PROMPT "CHECHNYA_KRUTO!> "
 // # define RL_PROMT_START_IGNORE '\001'
 // # define RL_PROMT_END_IGNORE '\002'
+=======
+# define PROMPT "gay?> "
+>>>>>>> cfc327345c2265950c1ee1efb800d5938ebd1e3f
 
 /*
 //		token's keys
@@ -92,8 +91,6 @@ typedef	struct		s_mshell
 	pid_t			*pids;
 }					t_mshell;
 
-// t_mshell	inf;
-
 void	*free_pipes(t_pipes *pipes);
 void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
@@ -120,8 +117,8 @@ void	exec(void);
 void	print_pipes(t_pipes *pipe);
 int		unset_main(int index);
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
+int		i_num(t_env	*lenv_tmp);
 int	 	env_main(void);
-
 void	exit_ms(char *err, int status);
 
 int 	ft_strlen_env(char *en);
@@ -133,6 +130,10 @@ void 	free_exp(char **exp);
 int		check_key(char c);
 int 	same_key(void);
 char	**new_key(char **cmd);
+char	*ft_strjoin_exp(char *result, char *tmp_del, t_mshell *inf);
+char	*new_pipes_cmd(char *cmd);
+void	error_print(char *str, int i);
+void	dubl_exp(int index);
 void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
 void	exit_main(int index);

@@ -14,7 +14,7 @@
 
 extern t_mshell	inf;
 
-void *free_fd(int **fd)
+void	*free_fd(int **fd)
 {
 	int	i;
 
@@ -42,11 +42,6 @@ void	exitmalloc(int **fd)
 
 void	exitpipex(int **fd, char *desc)
 {
-	// int	i;
-
-	// i = -1;
-	// if (cmd)
-	// 	cleansplit(cmd);
 	perror(desc);
 	fd = free_fd(fd);
 	free(inf.pids);
