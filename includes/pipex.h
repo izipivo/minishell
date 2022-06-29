@@ -42,6 +42,5 @@ void	exitmalloc(int **fd);
 void	exitpipex(int **fd, char *desc);
 int		pipex(void);
 void	*free_fd(int **fd);
-
 int		export_main(int index);
 #endif

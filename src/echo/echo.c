@@ -12,10 +12,6 @@
 
 #include "minishell.h"
 
-/*
- *		!!! echo $... !!!
- */
-
 void	echo(char **string, int n)
 {
 	while (*string)
@@ -24,14 +20,14 @@ void	echo(char **string, int n)
 		{
 			ft_putstr_fd(*string, 1);
 		}
-		if (*(++string))// && ft_strncmp(" ", *(string), 1) && ft_strncmp(" ", *(string - 1), 1))
+		if (*(++string))
 			ft_putchar_fd(' ', 1);
 	}
 	if (!n)
 		ft_putchar_fd('\n', 1);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	int	f;
 	int	i;
@@ -44,10 +40,7 @@ int main(int argc, char **argv)
 		return (0);
 	}
 	while (!ft_strncmp("-n", argv[++i], 2))
-	{
-		// ft_putendl_fd(argv[i], 1);
 		f = 1;
-	}
 	echo(&argv[i], f);
 	return (0);
 }

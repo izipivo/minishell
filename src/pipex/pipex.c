@@ -78,7 +78,6 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	}
 	cleansplit(paths);
 	exitpipex(fd, tmp);
-	// free(tmp);
 	return (NULL);
 }
 
@@ -116,13 +115,13 @@ static int	**multipipe(int m)
 
 	fd = (int **)malloc(sizeof(int *) * m);
 	if (!fd)
-		exitmalloc( fd);
+		exitmalloc(fd);
 	i = -1;
 	while (++i < m)
 	{
 		fd[i] = (int *)malloc(sizeof(int) * 2);
 		if (!fd[i])
-			exitmalloc( fd);
+			exitmalloc(fd);
 		if (pipe(fd[i]) == -1)
 			exitmalloc(fd);
 	}
@@ -132,27 +131,17 @@ static int	**multipipe(int m)
 int	pipex(void)
 {
 	int		**fd;
-	// int		check;
 	pid_t	*pid;
 
 	fd = multipipe(PIPES + 1);
 	pid = forks(fd);
 	close_fd(-1, fd);
 	if (inf.pipes[0].in)
-		// check = 
 		parentread(fd[0][1], inf.pipes[0].in, HD(inf.pipes[0].mask));
 	else
-	{
 		dup2(0, fd[0][0]);
-		// close(0);
-	}
-	//if (check == -1)
-	//	exitpid(fd, pid, argc, "parentread");
-	// check = 
-	parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
-	// close_all(fd);
-	// if (check == -1)
-	// 	exitpid(fd, pid, argc, "parentwrite");
+	parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, \
+		APP(inf.pipes[PIPES - 1].mask));
 	waitchildren(pid, fd, PIPES);
 	return (0);
 }

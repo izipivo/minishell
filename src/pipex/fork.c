@@ -20,14 +20,11 @@ static char	**cmdparse(char **new, char **envp, int **fd)
 
 	tmp = new[0];
 	new[0] = checkpath(tmp, envp, fd);
-	// free(tmp);
-	// tmp = NULL;
 	return (new);
 }
 
 static void	killchild(char **cmd, int **fd)
 {
-	// cleansplit(cmd);
 	(void)cmd;
 	(void)fd;
 	free_pipes(inf.pipes);
@@ -60,7 +57,6 @@ void	child_hd(t_pipes *pipe, int index, int **fd)
 		buf = get_next_line(0);
 		if (!buf)
 			break ;
-		// printf("b: %s\ni: %s\nbl: %d il: %d\n", buf, pipe->in, ft_strlen(buf), ft_strlen(pipe->in));
 		if (ft_strncmp(buf, pipe->in, ft_strlen(pipe->in)) == 0)
 		{
 			free(buf);
@@ -73,8 +69,6 @@ void	child_hd(t_pipes *pipe, int index, int **fd)
 
 void	child_in(t_pipes *pipe, int index, int **fd)
 {
-	// int		file;
-
 	printf("est' infile\n");
 	fd[index][0] = open(pipe->in, O_RDONLY);
 	if (fd[index][0] < 0)
@@ -103,8 +97,6 @@ void	child_out(t_pipes *pipe, int index, int **fd, int app)
 void	child_fd(int index, int **fd)
 {
 	t_pipes	*pipe;
-	// char	*buf;
-	// int		file;
 
 	pipe = &inf.pipes[index];
 	if (index && INPUT(pipe->mask) && pipe->in)
@@ -150,24 +142,22 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	return (-1);
 }
 
-///////////////////////////////////////////////////////
 void	free_env_copy(char **env)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (env[++ i])
 		free(env[i]);
 	free(env);
 }
-///////////////////////////////////////////////////////
 
 char	**rebuild_env_copy(void)
 {
-	int i;
-	char **env_copy;
-	char *free_copy;
-	void *tmp;
+	int		i;
+	char	**env_copy;
+	char	*free_copy;
+	void	*tmp;
 
 	i = 0;
 	tmp = inf.lenv;
@@ -196,10 +186,9 @@ char	**rebuild_env_copy(void)
 	return (env_copy);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int	update_env()
+int	update_env(void)
 {
-	if (!UPDATELENV(inf.mask))		// int.lenv изменился? если да то пересобираем inf.env_cpy иначе ретерн 0
+	if (!UPDATELENV(inf.mask))
 		return (1);
 	else
 	{
@@ -245,7 +234,6 @@ pid_t	*forks(int **fd)
 			exitpipex(fd, "fork");
 		else if (!pid[m])
 			child(fd, pipes, m);
-		// printf("forks: %p %s\n", pipes->cmd, pipes->cmd[1]);
 		check_func(pipes, 1, m);
 		pipes = pipes->next;
 	}
