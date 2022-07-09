@@ -2,63 +2,52 @@
 
 extern t_mshell inf;
 
-t_env	*ft_update_env_unset(t_env *lenv, t_env *lenv_tmp, size_t size)
+void    del_unset(t_env *prev)
 {
-    int i;
-    void *tmp;
+    t_env *lenv;
 
-    i = 0;
-    free_lenv(lenv);
-    lenv = (t_env *)malloc(sizeof(t_env) * size);
-    if (!lenv)
-        exit_ms("error malloc", -1);
-    tmp = lenv_tmp;
-    while (lenv_tmp)
-    {
-        lenv[i].key = ft_strdup(lenv_tmp->key);
-        lenv[i].val = ft_strdup(lenv_tmp->val);
-        if (i > 0)
-            lenv[i - 1].next = &lenv[i];
-        lenv_tmp = lenv_tmp->next;
-        i ++;
-    }
-    if (i > 0)
-		lenv[i - 1].next = NULL;
-    lenv_tmp = tmp;
-    free_lenv(lenv_tmp);
-    return (lenv);
+    lenv = prev->next;
+    prev->next = lenv->next;
+    free(lenv->key);
+    free(lenv->val);
 }
 
-t_env	*unset_env_list(t_env *lenv, int num, char **del)
+void    unset_env_list(t_env *lenv, char **del)
 {
-    t_env *lenv_tmp;
     int i;
     void *tmp;
-    void *tmp_two;
 
     i = 0;
-    if (num == 1)
-        return (NULL);
-    tmp = lenv;
+    while (del[i])
+    {
+        if (!ft_strncmp(inf.lenv->key, del[i], ft_strlen(inf.lenv->key)))
+        {
+            tmp = inf.lenv->next;
+            free(inf.lenv->key);
+            free(inf.lenv->val);
+            inf.lenv = tmp;
+        }
+        ++i;
+    }
+    tmp = NULL;
     while (lenv)
     {
-        i ++;
-        lenv = lenv->next;
+        i = 0;
+        while (del[i])
+        {
+            if (!ft_strncmp(lenv->key, del[i], ft_strlen(lenv->key)))
+            {
+                lenv = lenv->next;
+                del_unset(tmp);
+            }
+            i ++;
+        }
+        tmp = lenv;
+        if (lenv)
+            lenv = lenv->next;
     }
-    lenv = tmp;
-    lenv_tmp = (t_env *)malloc(sizeof(t_env) * i - (num - 1) + 1);
-    if (!lenv_tmp)
-        exit_ms("error malloc", -1);
-    lenv_tmp = delete_env_unset(lenv, lenv_tmp, num, del);
-    i = 0;
-    tmp_two = lenv_tmp;
-    while (lenv_tmp)
-    {
-        i ++;
-        lenv_tmp = lenv_tmp->next;
-    }
-    lenv_tmp = tmp_two;
-    return (ft_update_env_unset(lenv, lenv_tmp, i));
+    // return (lenv);
+
 }
 
 void error_print_unset(char *str, int i)
@@ -81,12 +70,9 @@ void error_print_unset(char *str, int i)
 			i ++;
 		}
 		ft_putstr_fd(": event not found\n", 2);
-        // exit(127);
 	}
 	else
-	{
         return ;
-	}
 }
 
 int	check_pipes_cmd_unset(char *str)
@@ -121,10 +107,8 @@ int unset_main(int index)
     }
 	if (i == 1)
         return (0);
-    inf.lenv = unset_env_list(inf.lenv, i, inf.pipes[index].cmd);
+    unset_env_list(inf.lenv, inf.pipes[index].cmd);
     if (!inf.lenv)
         return (0);
     return (0);
 }
-
-//gcc unset.c ../../includes/minishell.h ../../libft/ft_strlen.c ../../libft/ft_strdup.c ../../libft/ft_strncmp.c ../../src/env_list.c ../../libft/ft_strchr.c unset_utils.c

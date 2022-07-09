@@ -218,6 +218,9 @@ int export_main(int index)
 	int i;
 	int flag;
 
+
+	// void *tm;
+
 	flag = 0;
 	i = 0;
 	if (same_key() == -1)
@@ -241,9 +244,16 @@ int export_main(int index)
 	}
 	if (i > 1)
 	{
-		inf.lenv = add_variable(inf.lenv, i, inf.pipes[index].cmd);
+		add_variable(inf.lenv, inf.pipes[index].cmd);
 		return (0);
 	}
+	// tm = inf.lenv;
 	sort_env(&inf);
+	// while (inf.lenv)
+	// {
+	// 	printf("%s\n", inf.lenv->key);
+	// 	inf.lenv = inf.lenv->next;
+	// }
+	// inf.lenv = tm;
 	return (0);
 }

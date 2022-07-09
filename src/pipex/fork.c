@@ -20,8 +20,6 @@ static char	**cmdparse(char **new, char **envp, int **fd)
 
 	tmp = new[0];
 	new[0] = checkpath(tmp, envp, fd);
-	// free(tmp);
-	// tmp = NULL;
 	return (new);
 }
 
@@ -180,66 +178,6 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	return (256);
 }
 
-///////////////////////////////////////////////////////
-void	free_env_copy(char **env)
-{
-	int i;
-
-	i = -1;
-	while (env[++ i])
-		free(env[i]);
-	free(env);
-}
-///////////////////////////////////////////////////////
-
-char	**rebuild_env_copy(void)
-{
-	int i;
-	char **env_copy;
-	char *free_copy;
-	void *tmp;
-
-	i = 0;
-	tmp = inf.lenv;
-	while (inf.lenv)
-	{
-		i ++;
-		inf.lenv = inf.lenv->next;
-	}
-	inf.lenv = tmp;
-	env_copy = (char **)malloc(sizeof(char *) * i + 1);
-	if (!env_copy)
-		exit_ms(NULL, 0);
-	env_copy[i] = 0;
-	i = 0;
-	while (inf.lenv)
-	{
-		env_copy[i] = ft_strdup(inf.lenv->key);
-		free_copy = env_copy[i];
-		env_copy[i] = ft_strjoin(env_copy[i], "=");
-		free(free_copy);
-		free_copy = env_copy[i];
-		env_copy[i] = ft_strjoin(env_copy[i], inf.lenv->val);
-		free(free_copy);
-		i ++;
-	}
-	return (env_copy);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int	update_env()
-{
-	if (!UPDATELENV(inf.mask))		// int.lenv изменился? если да то пересобираем inf.env_cpy иначе ретерн 0
-		return (1);
-	else
-	{
-		free_env_copy(inf.env_cpy);
-		inf.env_cpy = rebuild_env_copy();
-	}
-	inf.mask &= ~(1 << 4);
-	return (1);
-}
-
 int	child(int **fd, t_pipes *pipes, int index)
 {
 	char	**cmd;
@@ -252,7 +190,7 @@ int	child(int **fd, t_pipes *pipes, int index)
 	cmd = cmdparse(pipes->cmd, inf.env, fd);
 	if (!cmd[0])
 		exitpipex(fd, "bin not found");
-	if (update_env() && execve(cmd[0], cmd, inf.env_cpy) == -1)
+	if (execve(cmd[0], cmd, inf.env) == -1)
 		exitpipex(fd, cmd[0]);
 	killchild(cmd, fd);
 	return (1);
