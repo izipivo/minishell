@@ -38,7 +38,7 @@ int errors_exit(int signal, int res)
     if (signal == 1)
         exit_ms(NULL, res % 256);
     if (signal == 2)
-        exit_ms("minishell: exit: numeric argument required\n", 255);
+        exit_ms(NULL, 2);         ///for MACOS exit_ms(NULL, 255);
     if (signal == 255)
         exit_ms(NULL, 255);
     if (signal == -1)
@@ -101,6 +101,8 @@ void exit_main(int index)
     res = 0;
     while (inf.pipes[index].cmd[++ i])
         ;
+    if (i == 1)
+        errors_exit(2, res);
     if (i > 2)
     {
         if (check_cmd(inf.pipes[index].cmd[1]) == 1)
@@ -108,7 +110,7 @@ void exit_main(int index)
         errors_exit(0, res);
     }
     i = 0;
-    parse_exit(inf.pipes[index].cmd[i + 1]);
+    parse_exit(inf.pipes[index].cmd[1]);
     res = ft_atoi_exit(inf.pipes[index].cmd[1]);
     if (res > 255 && res <= 2147483647)
         errors_exit(1, res);
@@ -117,7 +119,5 @@ void exit_main(int index)
     if (res < 1)
         errors_exit(-1, res);
     else
-	{
         exit_ms(NULL, res);
-	}
 }
