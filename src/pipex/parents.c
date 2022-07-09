@@ -88,7 +88,7 @@ void	waitchildren(pid_t *pid, int **fd, int argc)
 	m = -1;
 	while (++m < argc)
 	{
-		if (pid[m] != -228 && (waitpid(pid[m], NULL, 0) == -1))
+		if (pid[m] != -228 && (waitpid(pid[m], &inf.code, 0) == -1))
 			exitpipex(fd, "waitpid()");
 		free(fd[m]);
 	}

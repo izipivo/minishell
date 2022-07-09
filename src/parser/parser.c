@@ -30,15 +30,7 @@ int	join_commands(t_list *token)
 			cpy = token->next;
 			while (cpy && cpy->key == COMMAND)
 			{
-				// cc = buf;
 				strapp(&buf, cpy->val, 1);
-				// ft_putendl_fd(buf, 1);
-				// if (buf == 0);
-				// {
-				// 	ft_putstr_fd("while\n", 1);
-				// 	exit(100);					
-				// }
-				// free(cc);
 				cpy = cpy->next;
 				f = 1;
 			}
@@ -53,57 +45,6 @@ int	join_commands(t_list *token)
 	}
 	return (0);
 }
-
-// int	first_occ(t_list *token, char c)
-// {
-// 	t_list	*cpy;
-// 	char	*buf;
-
-// 	buf = NULL;
-// 	cpy = token;
-// 	token = token->next;
-// 	while (token && token->key != c)
-// 	{
-// 		if (c == DQUOTES && token->key == DOLLAR)
-// 		{
-// 			// ft_putstr_fd("dol\n", 1);
-// 			dollar(token);
-// 		}
-// 		if (ft_strapp(&buf, token->val))
-// 			return (1);
-// 		free_val(token);
-// 		token = token->next;
-// 	}
-// 	if (!token)			//		not closed " or '
-// 	{
-// 		if (buf)
-// 			free(buf);
-// 		return (1);
-// 	}
-// 	cpy->key = COMMAND;
-// 	free_val(cpy);
-// 	cpy->val = buf;
-// 	cpy->next = token->next;
-// 	free_val(token);
-// 	return (0);
-// }
-
-// int	concat()
-// {
-// 	t_list	*token;
-
-// 	token = inf.tokens;
-// 	while (token)
-// 	{
-// 		if (token->key == SQUOTES || token->key == DQUOTES)
-// 		{
-// 			if (first_occ(token, token->key))
-// 				return (1);
-// 		}
-// 		token = token->next;
-// 	}
-// 	return (0);
-// }
 
 int	list_size(t_list *list)
 {
@@ -228,7 +169,6 @@ t_pipes	*del(t_pipes *new)
 t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 {
 	t_list	*cp=old;
-	// char	*buf;
 	int		i;
 	int		j;
 
@@ -237,7 +177,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 	if (old->key == PIPE)
 	{
 		ft_putendl_fd("??", 2);
-		exit(1);						///!!!
+		exit_ms("not closed pipe", 1);
 	}
 	while (old)
 	{
@@ -249,7 +189,7 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 			if (!q_args(old) && new->cmd)
 			{
 				ft_putendl_fd("q_args", 2);
-				exit(1);					//!!!!
+				exit_ms("malloc rip", 1);
 			}
 			j = -1;
 		}
@@ -275,23 +215,18 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 
 t_pipes	*remalloc(void)
 {
-	// t_list	*cp;
 	t_list	*old;
 	t_pipes	*new;
-	// int		i;
-
-	// i = -1;
+	
 	old = inf.tokens;
-	// print_list(old);
-	// cp = old;
 	inf.mask = count_pipes(old) << 16;
 	new = (t_pipes *) malloc(sizeof(t_pipes) * (PIPES + 1));
 	if (!new)
-		exit(1);					//		!!!!
+		exit_ms("malloc rip", 1);
 	ft_memset(&new[0], 0, sizeof(t_pipes));
 	new[0].cmd = (char **) malloc(sizeof(char *) * q_args(old));
 	if (!new[0].cmd)
-		exit(1);					//		!!!!
+		exit_ms("malloc rip", 1);
 	return (copy_pipes(new, old));
 }
 
@@ -331,8 +266,8 @@ char	*find_env(char *find)
 
 	lenv = inf.lenv;
 	// printf("find_env: %s\n", find);
-	if (!*find)
-		return (NULL);
+	// if (!*find)
+	// 	return (NULL);
 	while (lenv)
 	{
 		if (!ft_strncmp(lenv->key, find, ft_strlen(find)))
@@ -340,10 +275,12 @@ char	*find_env(char *find)
 			found = ft_strdup(lenv->val);
 			if (!found)
 				exit_ms(NULL, 1);
+			free(find);
 			return (found);
 		}		
 		lenv = lenv->next;
 	}
+	free(find);
 	return (NULL);
 }
 
@@ -419,14 +356,14 @@ void	check_redirs(void)
 	token = inf.tokens;
 	while(token)
 	{
-		if (DLR(inf.mask) && (token->key == DQUOTES || token->key == DOLLAR))
-			check_dlr(token);
+		// if (DLR(inf.mask) && (token->key == DQUOTES || token->key == DOLLAR))
+		// 	check_dlr(token);
+		if ((token->key == OUTFILE || token->key == INFILE) && ft_strlen(token->val) > 2)
+			exit_ms("parser error near '>'", 1);
 		if (token->key == OUTFILE && ft_strlen(token->val) == 2)
 			token->key = APPEND;
 		else if (token->key == INFILE && ft_strlen(token->val) == 2)
 			token->key = HEREDOC;
-		if ((token->key == OUTFILE || token->key == INFILE) && ft_strlen(token->val) > 2)
-			exit_ms("parser error near '>'", 1);
 		else if (token->key == DOLLAR || token->key == SQUOTES || token->key == DQUOTES)
 			token->key = COMMAND;
 		token = token->next;
@@ -441,13 +378,18 @@ void	remove_quotes(t_list *token)
 	{
 		if (token->key == SQUOTES || token->key == DQUOTES)
 		{
+			token->key = COMMAND;
 			if (ft_strlen(token->val) == 2)
 			{
 				free(token->val);
-				token->val = NULL;
-				// printf("lol\n");
-				if (token->prev)
-					token->prev->next = token->next;
+				while (token->next && token->next->key == SPC)
+					token->next = token->next->next;
+				if (token->next->key == COMMAND)
+					token->val = ft_strdup(" ");
+				else
+					token->val = NULL;
+				// if (token->prev)
+				// 	token->prev->next = token->next;
 				token = token->next;
 				continue ;
 			}
@@ -479,88 +421,17 @@ t_pipes	*cleaning(void)
 	return (remalloc());
 }
 
-// int	same_token(char old, char new)
-// {
-// 	char	key;
-// 
-// 	key = token_key(new);
-	// if (key == DQUOTES || key == SQUOTES)
-	// {
-	// 	inf.mask |= 1 << 1;
-	// 	// printf("dqots: %d\n", inf.mask);
-	// }
-	// if (key == DOLLAR && old != SQUOTES)
-	// {
-	// 	inf.mask |= 1;
-	// 	// printf("mask: %d %c\n", inf.mask, new);
-	// }
-	// if (new == '$' && old != SQUOTES)
-	// 	return (0);
-	// if (old == DOLLAR && ft_isdigit(new))
-	// {
-	// 	if (!DIGIT(inf.mask))
-	// 	{
-	// 		inf.mask |= 1 << 2;
-	// 		// printf("fff\n");
-	// 		return (1);
-	// 	}
-	// 	else
-	// 		return (0);
-	// }
-	// if (old == DOLLAR)
-		
-	// if (old == DOLLAR && key != DOLLAR)
-	// 	inf.mask |= 1 << 2;
-	// if ((old == DQUOTES || old == SQUOTES) && old == key)
-	// {
-	// 	return (-1);
-	// }
-	// if (old == DOLLAR && (ft_isalnum(new) || new == '_'))
-	// {
-	// 	inf.mask |= 1 << 2;
-	// 	// printf("old: %c\n", new);
-	// 	return (1);
-	// }
-	// if (old == key || old == DQUOTES || old == SQUOTES)
-	// 	return (1);
-	// return (0);
-// }
-
 int	same_token(char old, char new)
 {
 	char	key;
 
 	key = token_key(new);
-	// if (new == '$' && old != SQUOTES)
-	// 	return (0);
 	if (key == SQUOTES || key == DQUOTES)
 		inf.mask |= 1 << 1;
-	if (key == DOLLAR && old != SQUOTES)
-		inf.mask |= 1;
 	if ((old == DQUOTES || old == SQUOTES) && old == key)
 		return (-1);
 	if (old != key && (old == SQUOTES || old == DQUOTES))
 		return (1);
-	if (old == DOLLAR && ft_isdigit(new))
-	{
-		if (!DIGIT(inf.mask))
-		{
-			inf.mask |= 1 << 2;
-			// printf("fff\n");
-			return (1);
-		}
-		else
-		{
-			inf.mask &= ~(1 << 2);
-			return (0);
-		}
-	}
-	if (old == DOLLAR && (ft_isalnum(new) || new == '_'))
-	{
-		// inf.mask |= 1 << 2;
-		// printf("old: %c\n", new);
-		return (1);
-	}
 	if (old == key)
 		return (1);
 	return (0);
@@ -648,8 +519,6 @@ t_pipes	*parse(char *line)
 	if (!inf.tokens)
 		exit_ms("malloc error", 1);
 	key = 64;
-	// if (!inf.tokens[0].val)
-	// 	exit_ms("malloc", 1);
 	while (line[++i])
 	{
 		if (line[i] == line[i + 1] && (line[i] == '\'' || line[i] == '"'))

@@ -251,6 +251,8 @@ void	exit_ms(char *err, int status)
 {
 	ft_putendl_fd(err, 2);
 	sig_quit(0);
+	if (inf.line)
+		free(inf.line);
 	if (inf.tokens)
 		inf.tokens = free_tokens(inf.tokens);
 	if (inf.lenv)

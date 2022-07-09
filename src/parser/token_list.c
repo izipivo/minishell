@@ -37,8 +37,6 @@ int	token_key(char line)
 		return (DQUOTES);
 	else if (line == 39)
 		return (SQUOTES);
-	else if (line == '$')
-		return (DOLLAR);
 	else if (line == '<')
 		return (INFILE);
 	else if (line == '>')
@@ -83,120 +81,6 @@ void	streams(t_list *token)
 		token->next->key = SPC;
 		if (!token->val)
 			exit(1);				//	!!!
-	}
-}
-
-int	leng(char *s)
-{
-	int	i;
-	// int	f;
-
-	i = -1;
-	if (ft_isdigit(s[0]))
-		return (1);
-	// f = ft_isdigit(s[0]);
-	while (s[++i])
-	{
-		if (s[i] == '$' || s[i] == '/' || s[i] == '=')
-			return (i);
-	}
-	return (ft_strlen(s));
-}
-
-int	dollar_find(t_list *token)
-{
-	char	*buf;
-	int		len;
-	t_env	*lenv;
-
-	lenv = inf.lenv;
-	token->key = COMMAND;
-	len = leng(token->val);		//$/=
-	// printf("len: %d\n", len);
-	if (!ft_strncmp(token->val, "$", 2))
-	{
-		free_val(token);
-		token->val = ft_strdup("1488");
-		if (!token->val)
-			exit(1);
-		return (1);
-	}
-	while (lenv)
-	{
-		// if (!ft_strncmp(lenv->key, token->val, ft_strlen(lenv->key)))
-		if (!ft_strncmp(lenv->key, token->val, len))
-		{
-			buf = ft_strjoin(lenv->val, token->val + ft_strlen(lenv->key));
-			free_val(token);
-			token->val = buf;
-			// printf("vot on: %s\n", token->val);
-			if (!token->val)
-				exit(1);
-			return (1);
-		}
-		lenv = lenv->next;
-	}
-	if ((int)ft_strlen(token->val) != len)
-	{
-		buf = token->val;
-		token->val = ft_strdup(token->val + len);
-		if (!token->val)
-			exit(3432423);
-		free(buf);
-		// printf("token->val: %s\n", token->val);
-		return (1);
-	}
-	token->val[0] = 0;
-	if (token->prev)
-	{
-		// printf("dollar find: %s\n", "ff");
-		token->prev->next = token->next;
-	}
-	return (1);
-}
-
-int	dollar(t_list *dlr)
-{
-	if (!dlr->next || (dlr->next->key != DOLLAR && dlr->next->key != COMMAND))
-	{
-		free_val(dlr);
-		dlr->val = ft_strdup("$");
-		if (!dlr->val)
-			exit(1);
-		dlr->key = COMMAND;
-		return (0);
-	}
-	dlr->val[0] = 0;
-	//dlr->next = dlr->next->next;
-	return (dollar_find(dlr->next));
-}
-
-void	dol_spc_str(void)
-{
-	t_list	*token=inf.tokens;
-	t_list	*bl=token;
-
-	while (token)
-	{
-		if (token->key == DOLLAR)
-		{
-			if (dollar(token))
-				token = token->next;
-		}
-		else if (token->key > 2 && token->key < 7)
-		{
-			if (!token->next || (token->next && (token->next->key > 2
-												 && token->next->key < 7)))
-			{
-				ft_putstr_fd("joj near '<'\n", 2);
-				free_list(bl);
-				free_lenv(inf.lenv);
-				exit(1);
-			}
-			streams(token);
-		}
-		if (token)
-			token = token->next;
 	}
 }
 

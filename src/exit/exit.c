@@ -108,7 +108,7 @@ void exit_main(int index)
         errors_exit(0, res);
     }
     i = 0;
-    parse_exit(inf.pipes[index].cmd[i + 1]);
+    parse_exit(inf.pipes[index].cmd[i]);
     res = ft_atoi_exit(inf.pipes[index].cmd[1]);
     if (res > 255 && res <= 2147483647)
         errors_exit(1, res);

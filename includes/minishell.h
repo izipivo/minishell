@@ -82,9 +82,11 @@ typedef struct		s_pipes
 
 typedef	struct		s_mshell
 {
+	char			*line;
 	char			**env;
 	char 			**env_cpy;
 	int				mask;					//	первые 16 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара; 3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица; 4 bit update_lenv
+	int				code;
 	t_env			*lenv;
 	t_list			*tokens;
 	t_pipes			*pipes;
@@ -120,6 +122,8 @@ void	print_pipes(t_pipes *pipe);
 int		unset_main(int index);
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
 int	 	env_main(void);
+char    *expand_dol(char *line);
+char	*find_env(char *find);
 
 int	cd_main(char **cmd, int index);
 

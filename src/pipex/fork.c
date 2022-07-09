@@ -60,7 +60,6 @@ void	child_hd(t_pipes *pipe, int index, int **fd)
 		buf = get_next_line(0);
 		if (!buf)
 			break ;
-		// printf("b: %s\ni: %s\nbl: %d il: %d\n", buf, pipe->in, ft_strlen(buf), ft_strlen(pipe->in));
 		if (ft_strncmp(buf, pipe->in, ft_strlen(pipe->in)) == 0)
 		{
 			free(buf);
@@ -73,9 +72,6 @@ void	child_hd(t_pipes *pipe, int index, int **fd)
 
 void	child_in(t_pipes *pipe, int index, int **fd)
 {
-	// int		file;
-
-	printf("est' infile\n");
 	fd[index][0] = open(pipe->in, O_RDONLY);
 	if (fd[index][0] < 0)
 	{
@@ -86,33 +82,60 @@ void	child_in(t_pipes *pipe, int index, int **fd)
 
 void	child_out(t_pipes *pipe, int index, int **fd, int app)
 {
-	printf("est' outfile\n");
-	if (!app && access(pipe->out, F_OK) == 0)
+	if (!app && pipe->out && access(pipe->out, F_OK) == 0)
 	{
 		if (unlink(pipe->out) == -1)
 			exitpipex(fd, pipe->out);
 	}
-	if (!app)
+	if (!app && pipe->out)
 		fd[index + 1][1] = open(pipe->out, O_RDONLY);
-	else
+	else if (app && pipe->out)
 		fd[index + 1][1] = open(pipe->out, O_APPEND | O_CREAT | O_WRONLY, 0664);
+	else if (!pipe->out && index == PIPES - 1)
+	{
+		dup2(STDOUT_FILENO, fd[index + 1][1]);
+		// close(
+	}
 	if (fd[index + 1][1] < 0)
 		exitpipex(fd, pipe->out);
+}
+
+int	close_all(int **fd)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	j = -1;
+	while (++i <= PIPES)
+	{
+		j = -1;
+		while (++j < 2)
+		{
+			if (close(fd[i][j]))
+				return (1);
+		}
+	}
+	return (0);
 }
 
 void	child_fd(int index, int **fd)
 {
 	t_pipes	*pipe;
-	// char	*buf;
-	// int		file;
 
 	pipe = &inf.pipes[index];
-	if (index && INPUT(pipe->mask) && pipe->in)
+	if (pipe->in && INPUT(pipe->mask))
 		child_in(pipe, index, fd);
-	else if (index && HD(pipe->mask) && pipe->in)
+	else if (pipe->in && HD(pipe->mask))
 		child_hd(pipe, index, fd);
-	if (index + 1 != PIPES && pipe->out)
-		child_out(pipe, index, fd, APP(pipe->mask));
+	else if (!pipe->in)
+		dup2(STDIN_FILENO, fd[index][0]);
+	child_out(pipe, index, fd, APP(pipe->mask));
+	dup2(fd[index][0], STDIN_FILENO);
+	close(fd[index][0]);
+	dup2(fd[index + 1][1], STDOUT_FILENO);
+	close(fd[index + 1][1]);
+	close_all(fd);
 }
 
 int	check_func(t_pipes *pipes, int parent, int index)
@@ -124,37 +147,37 @@ int	check_func(t_pipes *pipes, int parent, int index)
 		else if (!parent && !pipes->cmd[1])
 			return (export_main(index));
 		else
-			return (0);
+			return (256);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
 	{
 		if (!parent)
 			return (env_main());
 		else
-			return (0);
+			return (256);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "unset", 7)))
 	{
 		if (parent)
 			return (unset_main(index));
 		else
-			return (0);
+			return (256);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "exit", 5)))
 	{
 		if (parent)
 			exit_main(index);
 		else
-			return (0);
+			return (256);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
 	{
 		if (parent)
 			cd_main(pipes->cmd, index);
 		else
-			return (0);
+			return (256);
 	}
-	return (-1);
+	return (256);
 }
 
 ///////////////////////////////////////////////////////
@@ -223,9 +246,8 @@ int	child(int **fd, t_pipes *pipes, int index)
 	int		exit_status;
 
 	child_fd(index, fd);
-	close_fd(index, fd);
 	exit_status = check_func(pipes, 0, index);
-	if (exit_status != -1)
+	if (exit_status != 256)
 		exit(exit_status);
 	cmd = cmdparse(pipes->cmd, inf.env, fd);
 	if (!cmd[0])
@@ -239,6 +261,7 @@ int	child(int **fd, t_pipes *pipes, int index)
 pid_t	*forks(int **fd)
 {
 	int		m;
+	int		tmp;
 	pid_t	*pid;
 	t_pipes	*pipes;
 
@@ -253,7 +276,9 @@ pid_t	*forks(int **fd)
 		else if (!pid[m])
 			child(fd, pipes, m);
 		// printf("forks: %p %s\n", pipes->cmd, pipes->cmd[1]);
-		check_func(pipes, 1, m);
+		tmp = check_func(pipes, 1, m);
+		if (tmp != 256)
+			inf.code = tmp;
 		pipes = pipes->next;
 	}
 	return (pid);
