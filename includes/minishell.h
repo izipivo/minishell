@@ -118,7 +118,11 @@ void	sig_quit(int sig);
 void	exec(void);
 void	print_pipes(t_pipes *pipe);
 int		unset_main(int index);
-t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
+// t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
+
+void    unset_env_list(t_env *lenv, char **del);
+
+
 int	 	env_main(void);
 
 int	cd_main(char **cmd, int index);
@@ -126,7 +130,7 @@ int	cd_main(char **cmd, int index);
 void	exit_ms(char *err, int status);
 
 int 	ft_strlen_env(char *en); //del; -->minishell.h
-t_env	*add_variable(t_env	*lenv, int ac, char **av); //del; -->minishell.h
+void	add_variable(t_env	*lenv, char **av);
 char	 *parse_inf_key(char *s); //del; -->minishell.h
 char 	*parse_inf_val(char *s); //del -->minishell.h
 void	print_exp(char **exp); // //del -->minishell.h

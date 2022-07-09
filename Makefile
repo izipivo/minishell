@@ -34,7 +34,7 @@ NAME =				minishell
 
 SRC =				parser/token_list.c parser/parser.c exec/exec.c parser/env_list.c pipex/pipex.c pipex/parents.c pipex/fork.c\
 					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
-					pipex/get_next_line_utils.c export/export.c export/export_utils.c export/update.c export/unset.c export/unset_utils.c\
+					pipex/get_next_line_utils.c export/export.c export/export_utils.c export/update.c export/unset.c\
 					export/same_for_export.c env/env.c exit/exit.c cd/cd.c main.c
 
 SRC_PWD =			pwd.c

@@ -4,7 +4,6 @@ extern t_mshell inf;
 
 void print_env(void)
 {
-	// int	i;
 	void *tmp;
 
 	tmp = inf.lenv;
