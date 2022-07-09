@@ -21,6 +21,54 @@ int	ft_arrlen(char **arr)
 		;
 	return (i);
 }
+/*
+void	freearr(char **arr)
+{
+	int	i;
+
+	i = -1;
+	while (arr[++i])
+	{
+		free(arr[i]);
+		arr[i] = NULL;
+	}
+	free(arr[i]);
+	arr[i] = NULL;
+	free(arr);
+	arr = NULL;
+}
+
+char	*ft_arrcat(char **arr)
+{
+	int		i;
+	char	*cated;
+	char	*tmp;
+
+	i = -1;
+	if (!arr || !arr[0])
+		return (NULL);
+	cated = ft_strdup(arr[0]);
+	if (ft_arrlen(arr) == 1)
+	{
+		printf("gg\n");
+		return (cated);
+	}
+	while (arr[++i])
+	{
+		if (arr[i + 1])
+		{
+			tmp = cated;
+			cated = ft_strjoin(cated, arr[i + 1]);
+			free(tmp);
+		}
+	}
+	tmp = ft_strjoin("'", cated);
+	free(cated);
+	cated = tmp;
+	tmp = ft_strjoin(cated, "'");
+	free(cated);
+	return (tmp);
+}*/
 
 t_env	*make_env_list(char **envp)
 {
@@ -45,6 +93,7 @@ t_env	*make_env_list(char **envp)
 		}
 		lenv[i].val = ft_strdup(sep + 1);
 		*sep = '\0';
+		//printf("%s=%s\n", lenv[i].key, lenv[i].val);
 		if (i > 0)
 			lenv[i - 1].next = &lenv[i];
 	}
@@ -58,7 +107,7 @@ void	*free_lenv(t_env *lenv)
 	t_env	*bl;
 
 	bl = lenv;
-	while (lenv)
+	while(lenv)
 	{
 		if (lenv->key)
 		{

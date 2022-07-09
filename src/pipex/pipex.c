@@ -25,6 +25,21 @@ void	cleansplit(char **cmd)
 	cmd = NULL;
 }
 
+char	*check_buildin(char *pwd, char *tmp)
+{
+	char	*buf;
+	char	*buf2;
+
+	buf = ft_strjoin(pwd, "/bin/");
+	buf2 = ft_strjoin(buf, tmp);
+	if (buf)
+		free(buf);
+	if (access(buf2, F_OK) == 0)
+		return (buf2);
+	free(buf2);
+	return (NULL);
+}
+
 char	*checkpath(char *tmp, char **envp, int **fd)
 {
 	char	**paths;
@@ -35,6 +50,15 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	i = -1;
 	if (access(tmp, F_OK) == 0)
 		return (tmp);
+	while (ft_strnstr(envp[++i], "PWD", 4) == 0)
+		;
+	path = check_buildin(&envp[i][4], tmp);
+	if (path)
+	{
+		free(tmp);
+		return (path);
+	}
+	i = -1;
 	while (ft_strnstr(envp[++i], "PATH", 4) == 0)
 		;
 	paths = ft_split(envp[i] + 5, ':');
@@ -54,6 +78,7 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	}
 	cleansplit(paths);
 	exitpipex(fd, tmp);
+	// free(tmp);
 	return (NULL);
 }
 
@@ -91,48 +116,43 @@ static int	**multipipe(int m)
 
 	fd = (int **)malloc(sizeof(int *) * m);
 	if (!fd)
-		exitmalloc(fd);
+		exitmalloc( fd);
 	i = -1;
 	while (++i < m)
 	{
 		fd[i] = (int *)malloc(sizeof(int) * 2);
 		if (!fd[i])
-			exitmalloc(fd);
+			exitmalloc( fd);
 		if (pipe(fd[i]) == -1)
 			exitmalloc(fd);
 	}
 	return (fd);
 }
 
-void	close_all(int **fd)
-{
-	int	i;
-	int	j;
-
-	i = -1;
-	printf("PIPES: %d\n", PIPES);
-	while (++i < PIPES + 1)
-	{
-		j = -1;
-		while (++j < 2)
-			close(fd[i][j]);
-	}
-}
-
 int	pipex(void)
 {
 	int		**fd;
+	// int		check;
+	pid_t	*pid;
 
 	fd = multipipe(PIPES + 1);
-	forks(fd);
-	// close_fd(-1, fd);
-	printf("pipex.c: %s\n", inf.pipes[0].in);
-	// if (inf.pipes[0].in)
-	// 	parentread(fd[0][1], inf.pipes[0].in, HD(inf.pipes[0].mask));
-	// else
-	// 	dup2(0, fd[0][0]);
-	parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, \
-		APP(inf.pipes[PIPES - 1].mask));
-	waitchildren(fd, PIPES);
+	pid = forks(fd);
+	close_fd(-1, fd);
+	if (inf.pipes[0].in)
+		// check = 
+		parentread(fd[0][1], inf.pipes[0].in, HD(inf.pipes[0].mask));
+	else
+	{
+		dup2(0, fd[0][0]);
+		// close(0);
+	}
+	//if (check == -1)
+	//	exitpid(fd, pid, argc, "parentread");
+	// check = 
+	parentwrite(fd[PIPES][0], inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
+	// close_all(fd);
+	// if (check == -1)
+	// 	exitpid(fd, pid, argc, "parentwrite");
+	waitchildren(pid, fd, PIPES);
 	return (0);
 }

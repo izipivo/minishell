@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-extern t_mshell	inf;
+extern t_mshell inf;
 
-char	**join_env(t_mshell	*inf, char **result, int i)
+char **join_env(t_mshell	*inf, char **result, int i)
 {
-	char	*tmp_del;
+	char *tmp_del;
 
 	while ((unsigned long) i != (unsigned long) -1)
 	{
@@ -23,8 +23,19 @@ char	**join_env(t_mshell	*inf, char **result, int i)
 			i --;
 			inf->lenv = inf->lenv->next;
 			continue ;
+
 		}
-		result[i] = ft_strjoin_exp(result[i], tmp_del, inf);
+		result[i] = ft_strjoin(result[i], "=");
+		free(tmp_del);
+		tmp_del = result[i];
+		result[i] = ft_strjoin(result[i], "\"");
+		free(tmp_del);
+		tmp_del = result[i];
+		result[i] = ft_strjoin(result[i], inf->lenv->val);
+		free(tmp_del);
+		tmp_del = result[i];
+		result[i] = ft_strjoin(result[i], "\"");
+		free(tmp_del);
 		i --;
 		inf->lenv = inf->lenv->next;
 	}
@@ -33,9 +44,9 @@ char	**join_env(t_mshell	*inf, char **result, int i)
 
 char	**ft_exp(t_mshell	*inf)
 {
-	int		i;
-	char	**result;
-	void	*tmp;
+	int i;
+	char **result;
+	void *tmp;
 
 	i = 0;
 	tmp = inf->lenv;
@@ -83,16 +94,79 @@ void	sort_env(t_mshell	*inf)
 	free_exp(exp);
 }
 
+void error_print(char *str, int i)
+{
+	if (str[i] == 33)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		while (str[i])
+		{
+			write(2, &str[i], 1);
+			i ++;
+		}
+		ft_putstr_fd(": event not found\n", 2);
+	}
+	else
+	{
+		ft_putstr_fd("minishell: export: `", 2);
+		ft_putstr_fd(str, 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
+	}
+}
+
+char *new_pipes_cmd(char *cmd)
+{
+	int i;
+	int j;
+	char *res;
+
+	i = 0;
+	j = 0;
+	while (cmd[i])
+		i ++;
+	res = (char *)malloc(sizeof(char) * i);
+	if (!res)
+		exit_ms("error malloc", -1);
+	i = 0;
+	while (cmd[i])
+	{
+		if (cmd[i] == 43 && cmd[i + 1] == 61)
+		{
+			i ++;
+			continue;
+		}
+		res[j] = cmd[i];
+		// printf("%c", res[i]);
+		i ++;
+		j ++;
+	}
+	res[j] = 0;
+	free(cmd);
+	return(res);
+
+}
+
 int	check_pipes_cmd(char *str)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	if (str[i] >= '0' && str[i] <= '9')
 		return (1);
-	while (str[i] && str[i] != 61)
+	while (str[i])
 	{
+		if (str[i] == 61)
+			break ;
 		if ((check_key(str[i])) == 1)
+		{
+			error_print(str, i);
+			return (1);
+		}
+		i ++;
+	}
+	while (str[i])
+	{
+		if ((check_val(str[i])) == 1)
 		{
 			error_print(str, i);
 			return (1);
@@ -102,14 +176,57 @@ int	check_pipes_cmd(char *str)
 	return (-1);
 }
 
-int	export_main(int index)
+char **back_cmd(char **cmd, char **tmp)
 {
-	int		i;
-	int		flag;
+	int i;
+
+	i = 0;
+	while (tmp[i])
+	{
+		free(cmd[i]);
+		cmd[i] = ft_strdup(tmp[i]);
+		i ++;
+	}
+	i = 0;
+	while (tmp[i])
+	{
+		free(tmp[i]);
+		i ++;
+	}
+		free(tmp[i]);
+	free(tmp);
+	return (cmd);
+}
+
+char **tmp_cmd(char **cmd, char **tmp)
+{
+	int i;
+
+	i = 0;
+	while(cmd[i])
+	{
+		free(cmd[i]);
+		cmd[i] = parse_inf_key(tmp[i]);
+		i ++;
+	}
+	return (cmd);
+}
+
+int export_main(int index)
+{
+	char **tmp;
+	int i;
+	int flag;
 
 	flag = 0;
 	i = 0;
-	dubl_exp(index);
+	if (same_key() == -1)
+	{
+		tmp = new_key(inf.pipes[index].cmd);
+		inf.pipes[index].cmd = tmp_cmd(inf.pipes[index].cmd, tmp);
+		unset_main(index);
+		inf.pipes[index].cmd = back_cmd(inf.pipes[index].cmd, tmp);
+	}
 	while (inf.pipes[index].cmd[i])
 	{
 		flag = check_pipes_cmd(inf.pipes[index].cmd[i]);
@@ -118,7 +235,7 @@ int	export_main(int index)
 		else if (flag == 2)
 		{
 			i = 0;
-			continue ;
+			continue;
 		}
 		i ++;
 	}

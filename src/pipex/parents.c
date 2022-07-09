@@ -16,6 +16,7 @@ extern t_mshell	inf;
 
 int	open_outfile(char *filename, int app)
 {
+	// printf("pipe out: %s APP: %d\n", inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
 	if (!inf.pipes[PIPES - 1].out)
 		return (1);
 	if (app)
@@ -63,7 +64,7 @@ int	parentwrite(int fd, char *filename, int app)
 	int		file;
 
 	file = 1;
-	file = open_outfile(filename, app);
+    file = open_outfile(filename, app);
 	if (file == -1)
 		return (-1);
 	while (1)
@@ -74,22 +75,24 @@ int	parentwrite(int fd, char *filename, int app)
 		ft_putstr_fd(buf, file);
 		free(buf);
 	}
-	// close(fd);
+	close(fd);
 	if (file != 1)
 		close(file);
 	return (0);
 }
 
-void	waitchildren(int **fd, int argc)
+void	waitchildren(pid_t *pid, int **fd, int argc)
 {
 	int	m;
 
 	m = -1;
-	close_all(fd);
 	while (++m < argc)
 	{
+		if (pid[m] != -228 && (waitpid(pid[m], NULL, 0) == -1))
+			exitpipex(fd, "waitpid()");
 		free(fd[m]);
 	}
 	free(fd[m]);
 	free(fd);
+	free(pid);
 }

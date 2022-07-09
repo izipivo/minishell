@@ -1,50 +1,40 @@
 #include "minishell.h"
 
-int	i_num(t_env	*lenv_tmp)
+void    ft_strdup_env(t_env *lenv, t_env *lenv_tmp, int j)
 {
-	int	i;
-
-	i = 0;
-	while (lenv_tmp)
-	{
-		i ++;
-		lenv_tmp = lenv_tmp->next;
-	}
-	return (i);
-}
-
-void	ft_strdup_env(t_env *lenv, t_env *lenv_tmp, int j)
-{
-	lenv_tmp[j].key = ft_strdup(lenv->key);
+    lenv_tmp[j].key = ft_strdup(lenv->key);
 	lenv_tmp[j].val = ft_strdup(lenv->val);
 	if (j > 0)
-		lenv_tmp[j - 1].next = &lenv_tmp[j];
+	    lenv_tmp[j - 1].next = &lenv_tmp[j];
 }
 
 t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del)
 {
-	int		i;
-	int		j;
-	void	*tmp;
+    int i;
+    int j;
+    void *tmp;
 
-	j = 0;
-	tmp = lenv;
-	while (lenv)
-	{
-		i = 1;
-		while (del[i])
-		{
-			if (ft_strncmp(lenv->key, del[i], ft_strlen(del[i])))
-				i ++;
-			else
-				break ;
-			if (i == num)
-				ft_strdup_env(lenv, lenv_tmp, j ++);
-		}
-		lenv = lenv->next;
-	}
-	if (j > 0)
+    j = 0;
+    tmp = lenv;
+    while (lenv)
+    {
+        i = 1;                                              //изменить потом, не учитывая ./a.out
+        while (del[i])
+        {
+            if (ft_strncmp(lenv->key, del[i], ft_strlen(del[i])))
+                i ++;
+            else
+                break ;
+            if (i == num)
+            {
+                ft_strdup_env(lenv, lenv_tmp, j);
+		        j ++;
+            }
+        }
+        lenv = lenv->next;
+    }
+    if (j > 0)
 		lenv_tmp[j - 1].next = NULL;
-	lenv = tmp;
-	return (lenv_tmp);
+    lenv = tmp;
+    return (lenv_tmp);
 }

@@ -10,6 +10,32 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+// #include "minishell.h"
+
+// void	cd(char	*path)
+// {
+// 	int	error;
+
+// 	if (!path)
+// 		return ;
+// 	if (access(path, F_OK) != 0)
+// 	{
+// 		ft_putendl_fd("not existing directory!", 2);
+// 		return ;
+// 	}
+// 	error = chdir(path);
+// 	if (!error)
+// 		return ;
+// 	perror(PERROR);
+// }
+
+// int	main(int argc, char **argv)
+// {
+// 	if (argc > 1)
+// 		cd(argv[1]);
+// 	return (0);
+// }
+
 #include "minishell.h"
 
 extern t_mshell	inf;
@@ -27,13 +53,10 @@ void	free_strs(char **strs)
 char	**cp_cmd(void)
 {
 	char	**buf;
-	int		i;
 
-	i = -1;
 	buf = (char **)malloc(sizeof(char *) * (3));
 	if (!buf)
 		exit_ms("malloc rip", 1);
-	i = -1;
 	buf[0] = ft_strdup("export");
 	if (!buf[0])
 		exit_ms("malloc rip", 1);
@@ -50,13 +73,10 @@ char	**cp_cmd(void)
 char	**cp_oldpwd(void)
 {
 	char	**buf;
-	int		i;
 
-	i = -1;
 	buf = (char **)malloc(sizeof(char *) * (3));
 	if (!buf)
 		exit_ms("malloc rip", 1);
-	i = -1;
 	buf[0] = ft_strdup("export");
 	if (!buf[0])
 		exit_ms("malloc rip", 1);

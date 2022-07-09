@@ -12,6 +12,37 @@
 
 #include "minishell.h"
 
+// static void	check_outfile(char *outfile)
+// {
+// 	if (!ft_strncmp("/", outfile, 2))
+// 		return ;
+// 	if (access(outfile, F_OK) != 0)
+// 		return ;
+// 	if (access(outfile, W_OK) != 0)
+// 	{
+// 		perror(outfile);
+// 		exit(EXIT_FAILURE);
+// 	}
+// }
+
+// static void	check_infile(char *infile, char *outfile)
+// {
+// 	if (!ft_strncmp("/", infile, 2))
+// 		return ;
+// 	if (access(infile, F_OK) != 0)
+// 	{
+// 		perror(infile);
+// 		check_outfile(outfile);
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	if (access(infile, R_OK) != 0)
+// 	{
+// 		perror(infile);
+// 		check_outfile(outfile);
+// 		exit(EXIT_FAILURE);
+// 	}
+// }
+
 int	validate(int argc, char **argv)
 {
 	int	m;
@@ -25,6 +56,10 @@ int	validate(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	if (m)
+	{
+//		check_outfile(argv[argc - 1]);
 		return (m);
+	}
+//	check_infile(argv[1], argv[argc - 1]);
 	return (0);
 }
