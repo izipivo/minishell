@@ -119,7 +119,7 @@ void	exec(void);
 void	print_pipes(t_pipes *pipe);
 int		unset_main(int index);
 void    unset_env_list(t_env *lenv, char **del);
-int	 	env_main(void);
+int		env_main(int index);
 char    *expand_dol(char *line);
 char	*find_env(char *find);
 int		cd_main(char **cmd, int index);

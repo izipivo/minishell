@@ -18,8 +18,22 @@ void print_env(void)
 	inf.lenv = tmp;
 }
 
-int env_main(void)
+int env_main(int index)
 {
-    print_env();
+	int i;
+
+	i = -1;
+	while (inf.pipes[index].cmd[++ i])
+		;
+	if (i != 1)
+	{
+		ft_putstr_fd("env: ", 2);  // ‘228’: No such file or directory"
+		ft_putchar_fd('\'', 2);
+		ft_putstr_fd(inf.pipes[index].cmd[1], 2);
+		ft_putchar_fd('\'', 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
+		return (1);
+	}
+	print_env();
     return (0);
 }
