@@ -10,6 +10,7 @@ void    del_unset(t_env *prev)
     prev->next = lenv->next;
     free(lenv->key);
     free(lenv->val);
+    free(lenv);
 }
 
 void    unset_env_list(t_env *lenv, char **del)
@@ -25,6 +26,7 @@ void    unset_env_list(t_env *lenv, char **del)
             tmp = inf.lenv->next;
             free(inf.lenv->key);
             free(inf.lenv->val);
+            free(inf.lenv);
             inf.lenv = tmp;
         }
         ++i;
@@ -46,8 +48,6 @@ void    unset_env_list(t_env *lenv, char **del)
         if (lenv)
             lenv = lenv->next;
     }
-    // return (lenv);
-
 }
 
 void error_print_unset(char *str, int i)
