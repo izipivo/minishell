@@ -92,7 +92,7 @@ char	**cp_oldpwd(void)
 
 void	cd(char	*path, int index)
 {
-	void	*cp;
+	char	**cp;
 	int		error;
 
 	if (!path)
@@ -114,8 +114,12 @@ void	cd(char	*path, int index)
 		free_strs(inf.pipes[index].cmd);
 	}
 	else
+	{
+		free_strs(inf.pipes[index].cmd);
 		perror(PERROR);
-	inf.pipes[index].cmd = (char **)cp;
+	}
+	// free(inf.pipes[index].cmd);
+	inf.pipes[index].cmd = cp;
 }
 
 int	cd_main(char **cmd, int index)

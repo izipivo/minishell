@@ -149,7 +149,7 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
 	{
 		if (!parent)
-			return (env_main());
+			return (env_main(index));
 		else
 			return (256);
 	}
@@ -171,6 +171,13 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	{
 		if (parent)
 			cd_main(pipes->cmd, index);
+		else
+			return (256);
+	}
+	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 4)))
+	{
+		if (parent)
+			return (pwd_main());
 		else
 			return (256);
 	}

@@ -22,12 +22,11 @@ int	pwd(void)
 		perror(PERROR);
 		return (1);
 	}
-	printf("%s\n", path);
 	free(path);
 	return (0);
 }
 
-int main(void)
+int pwd_main(void)
 {
 	return (pwd());
 }

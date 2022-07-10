@@ -93,8 +93,6 @@ typedef	struct		s_mshell
 	pid_t			*pids;
 }					t_mshell;
 
-// t_mshell	inf;
-
 void	*free_pipes(t_pipes *pipes);
 void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
@@ -120,23 +118,16 @@ void	sig_quit(int sig);
 void	exec(void);
 void	print_pipes(t_pipes *pipe);
 int		unset_main(int index);
-// t_env	*delete_env_unset(t_env *lenv, t_env *lenv_tmp, int num, char **del);
-
 void    unset_env_list(t_env *lenv, char **del);
-
-
-int	 	env_main(void);
+int		env_main(int index);
 char    *expand_dol(char *line);
 char	*find_env(char *find);
-
-int	cd_main(char **cmd, int index);
-
+int		cd_main(char **cmd, int index);
 void	exit_ms(char *err, int status);
-
 int 	ft_strlen_env(char *en); //del; -->minishell.h
 void	add_variable(t_env	*lenv, char **av);
-char	 *parse_inf_key(char *s); //del; -->minishell.h
-char 	*parse_inf_val(char *s); //del -->minishell.h
+char	*parse_inf_key(char *s); //del; -->minishell.h
+char	*parse_inf_val(char *s); //del -->minishell.h
 void	print_exp(char **exp); // //del -->minishell.h
 void 	free_exp(char **exp); // //del -->minishell.h
 int		check_key(char c); //del -->minishell.h
@@ -147,4 +138,6 @@ void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
 void	exit_main(int index);
 
+
+int pwd_main(void);
 #endif
