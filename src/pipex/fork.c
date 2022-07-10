@@ -122,12 +122,13 @@ void	child_fd(int index, int **fd)
 	t_pipes	*pipe;
 
 	pipe = &inf.pipes[index];
+	printf("infile: %s\n", pipe->in);
 	if (pipe->in && INPUT(pipe->mask))
 		child_in(pipe, index, fd);
 	else if (pipe->in && HD(pipe->mask))
 		child_hd(pipe, index, fd);
-	else if (!pipe->in)
-		dup2(STDIN_FILENO, fd[index][0]);
+	// else if (!pipe->in)
+	// 	dup2(STDIN_FILENO, fd[index][0]);
 	child_out(pipe, index, fd, APP(pipe->mask));
 	dup2(fd[index][0], STDIN_FILENO);
 	close(fd[index][0]);
