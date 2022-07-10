@@ -181,6 +181,13 @@ int	check_func(t_pipes *pipes, int parent, int index)
 		else
 			return (256);
 	}
+	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 4)))
+	{
+		if (parent)
+			return (pwd_main());
+		else
+			return (256);
+	}
 	return (256);
 }
 

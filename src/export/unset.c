@@ -54,14 +54,9 @@ void error_print_unset(char *str, int i)
 {
     if (str[i] == 45)
     {
-        // ft_putstr_fd("minishell: unset: -",)
-        // ft_putstr_fd("unset: использование: unset [-f] [-v] [-n] [имя ...]", 2);
-        // ft_putchar_fd('\n', 2);
-        // sig_hand(2);
-        // exit (2);
         return ;
     }
-	if (str[i] == 33 || str[i] == 59)
+    if (str[i] == 33 || str[i] == 59)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		while (str[i])
