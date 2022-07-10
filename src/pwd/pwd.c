@@ -27,7 +27,7 @@ int	pwd(void)
 	return (0);
 }
 
-int main(void)
+int pwd_main(void)
 {
 	return (pwd());
 }
