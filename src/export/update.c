@@ -42,15 +42,18 @@ void	add_variable(t_env	*lenv, char **av)
 {
 	int i;
 
-	i = 1;
+	i = 0;
 	while (lenv->next)
 		lenv = lenv->next;
-	while (av[i])
+	while (av[++ i])
 	{
 		lenv->next = malloc(sizeof(t_env));
+		if (!lenv->next)
+			exit_ms("malloc", 1);
+		lenv = lenv->next;
 		lenv->next->key = parse_inf_key(av[i]);
 		lenv->next->val = parse_inf_val(av[i]);
-		++ i;
+		// ++ i;
 		lenv = lenv->next;
 	}
 	lenv->next = NULL;
