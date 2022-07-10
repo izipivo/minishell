@@ -29,11 +29,11 @@ t_list	*newlst(char *val, int start, int end, char *str)
 
 int	isdollar(char *line, int i)
 {
-	if (ft_isdigit(line[i] && i && line[i - 1] == '$'))
-		return (1);
+	if (i - 1 && line[i - 2] == '$' && ft_isdigit(line[i - 1]))
+		return (0);
 	if (line[i] == '?' && i && line[i - 1] == '$')
 		return (1);
-	if (ft_isalpha(line[i]) || line[i] == '_'
+	if (ft_isalnum(line[i]) || line[i] == '_'
 		|| (line[i] == '$' && i && line[i - 1] == '$'))
 		return (1);
 	return (0);
@@ -46,7 +46,8 @@ char *replace_dollar(char *line, int start, int end)
 
 	str = NULL;
 	i = -2;
-	if (start == end)
+	// printf("%d %d\n", start, end);
+	if (start == end + 1)
 	{
 		str = ft_strdup("$");
 		if (!str)
@@ -65,7 +66,7 @@ char *replace_dollar(char *line, int start, int end)
 	if (!str)
 		exit_ms("malloc rip", 1);
 	ft_strlcpy(str, &line[start], end - start + 2);
-	printf("%s;%d;%d\n", str, start, end);
+	// printf("rd: %s\n", str);
 	return (find_env(str));
 }
 
@@ -91,19 +92,22 @@ char	*joinlist(t_list **bl)
 char	*expand_dol(char *line)
 {
 	t_list	**bl;
+	char	dquot;
 	int		i;
 	int		start;
 
 	i = -1;
 	start = 0;
+	dquot = 0;
 	bl = (t_list **)malloc(sizeof(t_list *));
 	if (!bl)
 		exit_ms("malloc rip", 1);
 	*bl = NULL;
 	while (line[++i])
 	{
-		// printf("%d\n", i);
-		if (line[i] == '\'')
+		if (line[i] == '"')
+			dquot = dquot - 1;
+		else if (line[i] == '\'' && !dquot)
 		{
 			while (line[++i] && line[i] != '\'')
 				;
@@ -118,15 +122,10 @@ char	*expand_dol(char *line)
 				;
 			ft_lstadd_back(bl, newlst(line, 0, 0, replace_dollar(line, start, i - 1)));
 			start = i--;
-			// if (!line[i])
-			// 	break ;
 		}
 	}
 	if (start != i)
-	{
-		// ft_putendl_fd("ll", 1);
 		ft_lstadd_back(bl, newlst(line, start, i, NULL));
-	}
 	if (!*bl)
 	{
 		free(bl);

@@ -49,6 +49,7 @@ void	print_pipes(t_pipes *pipe)
 		ft_putnbr_fd(++i, 1);
 		ft_putchar_fd('\n', 1);
 		print_string(pipe->cmd);
+		printf("input: %s\noutput: %s\n", pipe->in, pipe->out);
 		ft_putstr_fd("_______________________\n", 1);
 		pipe = pipe->next;
 	}
