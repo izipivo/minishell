@@ -110,7 +110,6 @@ int	close_all(int **fd)
 		while (++j < 2)
 		{
 			close(fd[i][j]);
-			// printf("%d %d\n", i , j);
 		}
 	}
 	return (0);
@@ -121,7 +120,6 @@ void	child_fd(int index, int **fd)
 	t_pipes	*pipe;
 
 	pipe = &inf.pipes[index];
-	printf("outfile: %s\n", pipe->out);
 	if (pipe->in && INPUT(pipe->mask))
 		child_in(pipe, index, fd);
 	else if (pipe->in && HD(pipe->mask))
@@ -129,7 +127,6 @@ void	child_fd(int index, int **fd)
 	if (!index && !pipe->in)
 	{
 		close(fd[index][0]);
-		// fd[index][0] = 0;
 	}
 	else
 	{
@@ -226,7 +223,6 @@ pid_t	*forks(int **fd)
 			exitpipex(fd, "fork");
 		else if (!pid[m])
 			child(fd, pipes, m);
-		// printf("forks: %p %s\n", pipes->cmd, pipes->cmd[1]);
 		tmp = check_func(pipes, 1, m);
 		if (tmp != 256)
 			inf.code = tmp;
