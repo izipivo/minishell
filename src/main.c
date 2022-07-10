@@ -85,7 +85,7 @@ int     main(int argc, char **argv, char **envp)
 // 	inf.lenv = make_env_list(envp);
 // 	signal(SIGQUIT, sig_quit);
 // 	signal(SIGINT, sig_hand);
-// 	line = "echo $USER $USER9999 $USER8888 $USER7777";
+// 	line = "cat Makefile | grep all";
 // 	inf.pipes = parse(line);
 // 	if (PIPES)
 // 	{

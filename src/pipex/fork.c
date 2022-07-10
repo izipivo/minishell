@@ -104,14 +104,13 @@ int	close_all(int **fd)
 	int	j;
 
 	i = -1;
-	j = -1;
 	while (++i <= PIPES)
 	{
 		j = -1;
 		while (++j < 2)
 		{
-			if (close(fd[i][j]))
-				return (1);
+			close(fd[i][j]);
+			// printf("%d %d\n", i , j);
 		}
 	}
 	return (0);
@@ -122,16 +121,22 @@ void	child_fd(int index, int **fd)
 	t_pipes	*pipe;
 
 	pipe = &inf.pipes[index];
-	printf("infile: %s\n", pipe->in);
+	printf("outfile: %s\n", pipe->out);
 	if (pipe->in && INPUT(pipe->mask))
 		child_in(pipe, index, fd);
 	else if (pipe->in && HD(pipe->mask))
 		child_hd(pipe, index, fd);
-	// else if (!pipe->in)
-	// 	dup2(STDIN_FILENO, fd[index][0]);
+	if (!index && !pipe->in)
+	{
+		close(fd[index][0]);
+		// fd[index][0] = 0;
+	}
+	else
+	{
+		dup2(fd[index][0], STDIN_FILENO);
+		close(fd[index][0]);
+	}
 	child_out(pipe, index, fd, APP(pipe->mask));
-	dup2(fd[index][0], STDIN_FILENO);
-	close(fd[index][0]);
 	dup2(fd[index + 1][1], STDOUT_FILENO);
 	close(fd[index + 1][1]);
 	close_all(fd);

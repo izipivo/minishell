@@ -364,7 +364,7 @@ void	check_redirs(void)
 			token->key = APPEND;
 		else if (token->key == INFILE && ft_strlen(token->val) == 2)
 			token->key = HEREDOC;
-		else if (token->key == DOLLAR || token->key == SQUOTES || token->key == DQUOTES)
+		else if (token->key == SQUOTES || token->key == DQUOTES)
 			token->key = COMMAND;
 		token = token->next;
 	}
