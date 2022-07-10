@@ -34,7 +34,7 @@ int	isdollar(char *line, int i)
 	if (line[i] == '?' && i && line[i - 1] == '$')
 		return (1);
 	if (ft_isalpha(line[i]) || line[i] == '_'
-		|| (line[i] == '$' && i && line[i - 1] != '$'))
+		|| (line[i] == '$' && i && line[i - 1] == '$'))
 		return (1);
 	return (0);
 }
@@ -65,6 +65,7 @@ char *replace_dollar(char *line, int start, int end)
 	if (!str)
 		exit_ms("malloc rip", 1);
 	ft_strlcpy(str, &line[start], end - start + 2);
+	printf("%s;%d;%d\n", str, start, end);
 	return (find_env(str));
 }
 

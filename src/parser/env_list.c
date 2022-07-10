@@ -28,30 +28,31 @@ t_env	*make_env_list(char **envp)
 	void *tmp;
 	t_env	*lenv;
 
-	i = -1;
+	i = 0;
 	if (!envp)
 		exit(1);
 	lenv = malloc(sizeof(t_env));
-	if (i == -1)
+	if (i == 0)
 		tmp = lenv;
+	lenv->key = parse_inf_key(envp[i]);
+	lenv->val = parse_inf_val(envp[i]);
 	while (envp[++ i])
 	{
-		lenv->key = parse_inf_key(envp[i]);
-		lenv->val = parse_inf_val(envp[i]);
 		lenv->next = malloc(sizeof(t_env));
 		if (!lenv)
 			exit(1);
 		lenv = lenv->next;
+		lenv->key = parse_inf_key(envp[i]);
+		lenv->val = parse_inf_val(envp[i]);
 	}
-	lenv = tmp;
-	return (lenv);
+	lenv->next = 0;
+	return (tmp);
 }
 
 void	*free_lenv(t_env *lenv)
 {
-	t_env	*bl;
+	void *tmp;
 
-	bl = lenv;
 	while(lenv)
 	{
 		if (lenv->key)
@@ -64,9 +65,9 @@ void	*free_lenv(t_env *lenv)
 			free(lenv->val);
 			lenv->val = NULL;
 		}
+		tmp = lenv;
 		lenv = lenv->next;
+		free(tmp);
 	}
-	free(bl);
-	bl = NULL;
 	return (NULL);
 }
