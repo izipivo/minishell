@@ -54,5 +54,4 @@ void	add_variable(t_env	*lenv, char **av)
 		lenv = lenv->next;
 	}
 	lenv->next = NULL;
-	// return (new_lenv(lenv));
 }
