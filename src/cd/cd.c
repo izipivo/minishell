@@ -91,6 +91,7 @@ int	cd(char	*path, int index)
 	{
 		free_strs(inf.pipes[index].cmd);
 		perror(PERROR);
+	}
 	inf.pipes[index].cmd = (char **)cp;
 	if (error)
 		return (1);
