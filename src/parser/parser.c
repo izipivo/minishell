@@ -381,10 +381,10 @@ void	remove_quotes(t_list *token)
 				token = token->next;
 				continue ;
 			}
-			buf = token->val;
 			token->val[ft_strlen(token->val) - 1] = 0;
-			token->val = ft_strdup(&token->val[1]);
-			free(buf);
+			buf = ft_strdup(&token->val[1]);
+			free(token->val);
+			token->val = buf;
 		}
 		token = token->next;
 	}

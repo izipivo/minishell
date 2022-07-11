@@ -182,19 +182,7 @@ void	exec(void)
 
 
 
-	//child = fork();
-	//if (child == -1)
-	//	exit(1);								//!
-	//if (!child)
-	//{
-	//	execve("./bin/pipex", inf.pipex_args, inf.env);
-	//}
-	//else
-	//{
-	//	inf.pipex_child = child;
-	//	waitpid(child, NULL, 0);
-	//	inf.pipex_child = 0;
-	//}
+
 }
 
 void	*free_pipex_args(char **ar, int pipes)

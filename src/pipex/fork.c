@@ -198,7 +198,7 @@ int	check_func(t_pipes *pipes, int parent, int index)
 		else
 			return (1);
 	}
-	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 5)))
+	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 4)))
 	{
 		if (!parent)
 		{
@@ -207,13 +207,6 @@ int	check_func(t_pipes *pipes, int parent, int index)
 		}
 		else
 			return (0);
-	}
-	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 4)))
-	{
-		if (parent)
-			return (pwd_main());
-		else
-			return (256);
 	}
 	return (256);
 }
@@ -229,7 +222,7 @@ int	child(int **fd, t_pipes *pipes, int index)
 		exit(0);
 	cmd = cmdparse(pipes->cmd, inf.env, fd);
 	if (!cmd[0])
-		exitpipex(fd, "bin not found");
+		exitpipex(fd, PERROR": bin not found");
 	if (execve(cmd[0], cmd, inf.env) == -1)
 		exitpipex(fd, cmd[0]);
 	killchild(cmd, fd);

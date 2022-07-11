@@ -45,6 +45,36 @@ extern t_mshell	inf;
 //		main для тестера
 */
 
+// int     main(int argc, char **argv, char **envp)
+// {
+// 	(void)argc;
+// 	(void)argv;
+// 	ft_memset(&inf, 0, sizeof(t_mshell));
+// 	inf.env = envp;
+// 	inf.lenv = make_env_list(envp);
+// 	signal(SIGQUIT, sig_quit);
+// 	signal(SIGINT, sig_hand);
+	
+// 	inf.line = ft_strdup(argv[2]);
+// 	// printf("%s\n", inf.line);
+// 	if (inf.line == NULL)
+// 		exit_ms("exit", 0);
+// 	inf.line = expand_dol(inf.line);
+// 	// printf("%s\n", inf.line);
+// 	inf.pipes = parse(inf.line);
+// 	free(inf.line);
+// 	inf.line = NULL;
+// 	// print_pipes(inf.pipes);
+// 	if (PIPES)
+// 		exec();
+// 	inf.pipes = free_pipes(inf.pipes);
+// 	inf.mask = 0;
+// 	return (inf.code);
+// }
+
+/*
+//		main для gdb
+*/
 int     main(int argc, char **argv, char **envp)
 {
 	(void)argc;
@@ -55,7 +85,7 @@ int     main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
 	
-	inf.line = ft_strdup(argv[2]);
+	inf.line = ft_strdup("echo '$USER'\"$USER\"'$USER'");
 	// printf("%s\n", inf.line);
 	if (inf.line == NULL)
 		exit_ms("exit", 0);
@@ -71,30 +101,3 @@ int     main(int argc, char **argv, char **envp)
 	inf.mask = 0;
 	return (inf.code);
 }
-
-/*
-//		main для gdb
-*/
-
-// int     main(int argc, char **argv, char **envp)
-// {
-// 	char		*line;
-// 	// t_list		*tokens;
-// 	(void)argc;
-// 	(void)argv;
-// 	ft_memset(&inf, 0, sizeof(t_mshell));
-// 	inf.env = envp;
-// 	inf.lenv = make_env_list(envp);
-// 	signal(SIGQUIT, sig_quit);
-// 	signal(SIGINT, sig_hand);
-// 	line = "cd lol";
-// 	inf.pipes = parse(line);
-// 	if (PIPES)
-// 	{
-// 		// ft_putnbr_fd(PIPES, 1);
-// 		exec();
-// 	}
-// 	inf.pipes = free_pipes(inf.pipes);
-// 	inf.mask = 0;
-// 	return (inf.code);
-// }

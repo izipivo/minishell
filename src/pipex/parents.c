@@ -16,7 +16,6 @@ extern t_mshell	inf;
 
 int	open_(char *filename, int app)
 {
-	// printf("pipe out: %s APP: %d\n", inf.pipes[PIPES - 1].out, APP(inf.pipes[PIPES - 1].mask));
 	if (!inf.pipes[PIPES - 1].out)
 		return (1);
 	if (app)
@@ -94,7 +93,7 @@ void	waitchildren(pid_t *pid, int **fd, int argc)
 		free(fd[m]);
 	}
 	if (!inf.code)
-		inf.code = status;
+		inf.code = WEXITSTATUS(status);
 	free(fd[m]);
 	free(fd);
 	free(pid);

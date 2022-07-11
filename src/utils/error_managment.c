@@ -48,9 +48,10 @@ void	exitpipex(int **fd, char *desc)
 	// if (cmd)
 	// 	cleansplit(cmd);
 	perror(desc);
+	// printf("%s hello\n", desc);
 	fd = free_fd(fd);
 	free(inf.pids);
 	inf.pids = NULL;
 	free_pipes(inf.pipes);
-	exit(22);
+	exit(127);
 }
