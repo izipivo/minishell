@@ -129,7 +129,7 @@ int	 	env_main(void);
 char    *expand_dol(char *line);
 char	*find_env(char *find);
 
-int	cd_main(char **cmd, int index);
+int		cd_main(char **cmd, int index);
 
 void	exit_ms(char *err, int status);
 
@@ -146,5 +146,7 @@ char	**new_key(char **cmd);
 void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
 void	exit_main(int index);
+int 	echo_main(int argc, char **argv);
+int		pwd_main(void);
 
 #endif

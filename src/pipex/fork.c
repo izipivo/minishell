@@ -135,6 +135,16 @@ void	child_fd(int index, int **fd)
 	close_all(fd);
 }
 
+int	str_len(char **str)
+{
+	int	i;
+
+	i = -1;
+	while (str[++i])
+		;
+	return (i);
+}
+
 int	check_func(t_pipes *pipes, int parent, int index)
 {
 	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
@@ -144,35 +154,59 @@ int	check_func(t_pipes *pipes, int parent, int index)
 		else if (!parent && !pipes->cmd[1])
 			return (export_main(index));
 		else
-			return (256);
+			return (1);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
 	{
 		if (!parent)
 			return (env_main());
 		else
-			return (256);
+			return (1);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "unset", 7)))
 	{
 		if (parent)
-			return (unset_main(index));
+		{
+			inf.code = unset_main(index);
+			return (1);
+		}
 		else
-			return (256);
+			return (1);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "exit", 5)))
 	{
 		if (parent)
 			exit_main(index);
 		else
-			return (256);
+			return (1);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
 	{
 		if (parent)
-			cd_main(pipes->cmd, index);
+			inf.code = cd_main(pipes->cmd, index);
 		else
-			return (256);
+			return (1);
+	}
+
+	else if (!(ft_strncmp(pipes->cmd[0], "echo", 5)))
+	{
+		if (!parent)
+		{
+			inf.code = echo_main(str_len(pipes->cmd), pipes->cmd);
+			return (1);
+		}
+		else
+			return (1);
+	}
+	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 5)))
+	{
+		if (!parent)
+		{
+			inf.code = pwd_main();
+			return (1);
+		}
+		else
+			return (0);
 	}
 	return (256);
 }
@@ -185,7 +219,7 @@ int	child(int **fd, t_pipes *pipes, int index)
 	child_fd(index, fd);
 	exit_status = check_func(pipes, 0, index);
 	if (exit_status != 256)
-		exit(exit_status);
+		exit(0);
 	cmd = cmdparse(pipes->cmd, inf.env, fd);
 	if (!cmd[0])
 		exitpipex(fd, "bin not found");
@@ -198,7 +232,7 @@ int	child(int **fd, t_pipes *pipes, int index)
 pid_t	*forks(int **fd)
 {
 	int		m;
-	int		tmp;
+	// int		tmp;
 	pid_t	*pid;
 	t_pipes	*pipes;
 
@@ -212,9 +246,9 @@ pid_t	*forks(int **fd)
 			exitpipex(fd, "fork");
 		else if (!pid[m])
 			child(fd, pipes, m);
-		tmp = check_func(pipes, 1, m);
-		if (tmp != 256)
-			inf.code = tmp;
+		check_func(pipes, 1, m);
+		// if (tmp != 256)
+		// 	inf.code = tmp;
 		pipes = pipes->next;
 	}
 	return (pid);

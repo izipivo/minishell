@@ -10,32 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "minishell.h"
-
-// void	cd(char	*path)
-// {
-// 	int	error;
-
-// 	if (!path)
-// 		return ;
-// 	if (access(path, F_OK) != 0)
-// 	{
-// 		ft_putendl_fd("not existing directory!", 2);
-// 		return ;
-// 	}
-// 	error = chdir(path);
-// 	if (!error)
-// 		return ;
-// 	perror(PERROR);
-// }
-
-// int	main(int argc, char **argv)
-// {
-// 	if (argc > 1)
-// 		cd(argv[1]);
-// 	return (0);
-// }
-
 #include "minishell.h"
 
 extern t_mshell	inf;
@@ -90,18 +64,18 @@ char	**cp_oldpwd(void)
 	return (buf);
 }
 
-void	cd(char	*path, int index)
+int	cd(char	*path, int index)
 {
 	void	*cp;
 	int		error;
 
 	if (!path)
-		return ;
+		return (1);
 	cp = inf.pipes[index].cmd;
 	if (access(path, F_OK) != 0)
 	{
-		ft_putendl_fd("not existing directory!", 2);
-		return ;
+		perror(path);
+		return (1);
 	}
 	inf.pipes[index].cmd = cp_oldpwd();
 	error = chdir(path);
@@ -116,11 +90,14 @@ void	cd(char	*path, int index)
 	else
 		perror(PERROR);
 	inf.pipes[index].cmd = (char **)cp;
+	if (error)
+		return (1);
+	return (0);
 }
 
 int	cd_main(char **cmd, int index)
 {
 	if (cmd && cmd[0] && cmd[1])
-		cd(cmd[1], index);
+		return (cd(cmd[1], index));
 	return (0);
 }
