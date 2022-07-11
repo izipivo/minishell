@@ -84,14 +84,17 @@ int	parentwrite(int fd, char *filename, int app)
 void	waitchildren(pid_t *pid, int **fd, int argc)
 {
 	int	m;
+	int status;
 
 	m = -1;
 	while (++m < argc)
 	{
-		if (pid[m] != -228 && (waitpid(pid[m], &inf.code, 0) == -1))
+		if (pid[m] != -228 && (waitpid(pid[m], &status, 0) == -1))
 			exitpipex(fd, "waitpid()");
 		free(fd[m]);
 	}
+	if (!inf.code)
+		inf.code = status;
 	free(fd[m]);
 	free(fd);
 	free(pid);

@@ -14,17 +14,17 @@ CC =				cc
 
 RM =				rm -rf
 
-PWD_CMD =			pwd
+# PWD_CMD =			pwd
 
-CD_CMD =			cd
+# CD_CMD =			cd
 
-ECHO_CMD =			echo
+# ECHO_CMD =			echo
 
 # PWD =				$(addprefix ${BINDIR}, ${PWD_CMD})
 
 # CD =				$(addprefix ${BINDIR}, ${CD_CMD})
 
-ECHO =				$(addprefix ${BINDIR}, ${ECHO_CMD})
+# ECHO =				$(addprefix ${BINDIR}, ${ECHO_CMD})
 
 NAME =				minishell
 
@@ -32,18 +32,19 @@ SRC =				parser/expand_dolar.c parser/token_list.c parser/parser.c exec/exec.c p
 					pipex/pipex.c pipex/parents.c pipex/fork.c\
 					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
 					pipex/get_next_line_utils.c export/export.c export/export_utils.c\
-					export/update.c export/unset.c pwd/pwd.c\
-					export/same_for_export.c env/env.c exit/exit.c cd/cd.c main.c
+					export/update.c export/unset.c\
+					export/same_for_export.c env/env.c exit/exit.c cd/cd.c main.c\
+					echo/echo.c pwd/pwd.c
 
 # SRC_PWD =			pwd.c
 
-SRC_ECHO =			echo.c
+# SRC_ECHO =			echo.c
 
 SRC_DIR =			./src/
 
 # PWD_DIR =			pwd/
 
-ECHO_DIR =			echo/
+# ECHO_DIR =			echo/
 
 HEADERS =			$(addprefix ${HDRS_DIR}, ${HDRS})
 
@@ -51,11 +52,11 @@ SOURCES =			$(addprefix ${SRC_DIR}, ${SRC})
 
 # SOURCES_PWD =		$(addprefix ${PWD_DIR}, ${SRC_PWD})
 
-SOURCES_ECHO =		$(addprefix ${ECHO_DIR}, ${SRC_ECHO})
+# SOURCES_ECHO =		$(addprefix ${ECHO_DIR}, ${SRC_ECHO})
 
 BUILDIR = ./obj/
 
-BUILDIRS =			echo/ cd/ env/ pwd/ utils/ pipex/ exec/ parser/ export/ exit/ libft/ cd/
+BUILDIRS =			echo/ cd/ env/ pwd/ utils/ pipex/ exec/ parser/ export/ exit/ libft/
 
 BLDRS =				$(addprefix ${BUILDIR}, ${BUILDIRS})
 
@@ -65,7 +66,7 @@ OBJS =				$(addprefix ${BUILDIR}, ${SRC:.c=.o})
 
 # OBJS_PWD =			$(addprefix ${BUILDIR}, ${SOURCES_PWD:.c=.o})
 
-OBJS_ECHO =			$(addprefix ${BUILDIR}, ${SOURCES_ECHO:.c=.o})
+# OBJS_ECHO =			$(addprefix ${BUILDIR}, ${SOURCES_ECHO:.c=.o})
 
 LIBFT_NAME =		libft.a
 
@@ -75,7 +76,7 @@ LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 
 .PHONY:				clean all fclean re
 
-all:				${BUILDIR} ${BLDRS} ${LIBFT} ${BINDIR} ${ECHO} ${NAME}
+all:				${BUILDIR} ${BLDRS} ${LIBFT} ${BINDIR} ${NAME}
 
 ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
@@ -97,18 +98,14 @@ ${BINDIR}:
 # 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_PWD} -o $@
 # 					${CC} ${CFLAGS} ${OBJS_PWD} -o $@ ${LIBS}
 
-${ECHO}:			${OBJS_ECHO} ${HEADERS} 
-					#${CC} ${CFLAGS} ${LIBS} ${OBJS_ECHO} -o $@
-					${CC} ${CFLAGS} ${OBJS_ECHO} -o $@ ${LIBS}
-
 ${BUILDIR}%.o:		${SRC_DIR}%.c ${HEADERS} Makefile
 					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
 
-${BUILDIR}%.o:		${PWD_DIR}%.c ${HEADERS} Makefile
-					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
+# ${BUILDIR}%.o:		${PWD_DIR}%.c ${HEADERS} Makefile
+# 					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
 
-${BUILDIR}%.o:		${ECHO_DIR}%.c ${HEADERS} Makefile
-					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
+# ${BUILDIR}%.o:		${ECHO_DIR}%.c ${HEADERS} Makefile
+# 					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
 
 clean:
 					${MAKE} clean -C ${LIBFTDIR}

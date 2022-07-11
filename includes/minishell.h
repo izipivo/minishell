@@ -137,7 +137,6 @@ char	**new_key(char **cmd);
 void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
 void	exit_main(int index);
-
-
-int pwd_main(void);
+int 	echo_main(int argc, char **argv);
+int		pwd_main(void);
 #endif
