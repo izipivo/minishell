@@ -90,7 +90,7 @@ int     main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
 	
-	inf.line = ft_strdup("echo '$USER'\"$USER\"'$USER'");
+	inf.line = ft_strdup("echo \"-n -n -n\"-n bonjour");
 	// printf("%s\n", inf.line);
 	if (inf.line == NULL)
 		exit_ms("exit", 0);

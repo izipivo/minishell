@@ -29,7 +29,8 @@ int	join_commands(t_list *token)
 			cpy = token->next;
 			while (cpy && cpy->key == COMMAND)
 			{
-				strapp(&buf, cpy->val, 1);
+				strapp(&buf, cpy->val, 2);
+				cpy->val = 0;
 				cpy = cpy->next;
 				f = 1;
 			}
