@@ -10,23 +10,29 @@ HDRS_DIR =			./includes/
 
 INCLUDE = 			-I ${HDRS_DIR}
 
-CC =				cc
+ifeq ($(MAKECMDGOALS), main)
+CC =				cc -D MAIN=0
+endif
+
+ifeq ($(MAKECMDGOALS), test)
+CC =				cc -D TEST=0
+endif
+
+ifeq ($(MAKECMDGOALS), gdb)
+CC =				cc -D GDB=0
+endif
+
+CC ?=				cc
 
 RM =				rm -rf
 
-# PWD_CMD =			pwd
-
-# CD_CMD =			cd
-
-# ECHO_CMD =			echo
-
-# PWD =				$(addprefix ${BINDIR}, ${PWD_CMD})
-
-# CD =				$(addprefix ${BINDIR}, ${CD_CMD})
-
-# ECHO =				$(addprefix ${BINDIR}, ${ECHO_CMD})
-
 NAME =				minishell
+
+# NAME_TEST =			minishell
+
+# NAME_GDB =			minishell
+
+# NAME_MAIN =			minishell
 
 SRC =				parser/expand_dolar.c parser/token_list.c parser/parser.c exec/exec.c parser/env_list.c\
 					pipex/pipex.c pipex/parents.c pipex/fork.c\
@@ -76,7 +82,13 @@ LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 
 .PHONY:				clean all fclean re
 
-all:				${BUILDIR} ${BLDRS} ${LIBFT} ${BINDIR} ${NAME}
+all:				${BUILDIR} ${BLDRS} ${LIBFT} ${NAME}
+
+main:				all
+
+test:				all
+
+gdb:				all
 
 ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
@@ -94,18 +106,8 @@ ${BLDRS}:
 ${BINDIR}:
 					mkdir -p ${BINDIR}
 
-# ${PWD}:				${OBJS_PWD} ${HEADERS} 
-# 					#${CC} ${CFLAGS} ${LIBS} ${OBJS_PWD} -o $@
-# 					${CC} ${CFLAGS} ${OBJS_PWD} -o $@ ${LIBS}
-
 ${BUILDIR}%.o:		${SRC_DIR}%.c ${HEADERS} Makefile
 					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
-
-# ${BUILDIR}%.o:		${PWD_DIR}%.c ${HEADERS} Makefile
-# 					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
-
-# ${BUILDIR}%.o:		${ECHO_DIR}%.c ${HEADERS} Makefile
-# 					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
 
 clean:
 					${MAKE} clean -C ${LIBFTDIR}
