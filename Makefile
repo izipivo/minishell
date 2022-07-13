@@ -10,9 +10,7 @@ HDRS_DIR =			./includes/
 
 INCLUDE = 			-I ${HDRS_DIR}
 
-ifeq ($(MAKECMDGOALS), main)
 CC =				cc -D MAIN=0
-endif
 
 ifeq ($(MAKECMDGOALS), test)
 CC =				cc -D TEST=0
@@ -21,8 +19,6 @@ endif
 ifeq ($(MAKECMDGOALS), gdb)
 CC =				cc -D GDB=0
 endif
-
-CC ?=				cc
 
 RM =				rm -rf
 
