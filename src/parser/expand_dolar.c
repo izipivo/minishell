@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+extern t_mshell	inf;
 // int	sizeofline(char *)
 // {
 // 	int	count;
@@ -33,7 +34,7 @@ int	isdollar(char *line, int i)
 		return (0);
 	if (line[i] == '?' && i && line[i - 1] == '$')
 		return (1);
-	if (ft_isalnum(line[i]) || line[i] == '_'
+	if ((ft_isalnum(line[i]) && i && line[i - 1] != '?') || line[i] == '_'
 		|| (line[i] == '$' && i && line[i - 1] == '$'))
 		return (1);
 	return (0);
@@ -47,6 +48,10 @@ char *replace_dollar(char *line, int start, int end)
 	str = NULL;
 	i = -2;
 	// printf("%d %d\n", start, end);
+	if (line[start] == '?')
+	{
+		return (ft_itoa(inf.code));
+	}
 	if (start == end + 1)
 	{
 		str = ft_strdup("$");

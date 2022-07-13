@@ -20,10 +20,10 @@ void	echo(char **string, int n)
 {
 	while (*string)
 	{
-		if (ft_strncmp(" ", *string, 2) != 0)
-		{
+		// if (ft_strncmp(" ", *string, 2) != 0)
+		// {
 			ft_putstr_fd(*string, 1);
-		}
+		// }
 		if (*(++string))// && ft_strncmp(" ", *(string), 1) && ft_strncmp(" ", *(string - 1), 1))
 			ft_putchar_fd(' ', 1);
 	}

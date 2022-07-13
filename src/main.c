@@ -12,11 +12,13 @@ int     main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
+	
 	ft_memset(&inf, 0, sizeof(t_mshell));
 	inf.env = envp;
 	inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
-	signal(SIGINT, sig_hand);
+	signal(SIGINT, sig_quit);
+	// signal(SIGINT, sig_hand);
 	while (3)
 	{
 		inf.line = readline(PROMPT);
@@ -34,6 +36,7 @@ int     main(int argc, char **argv, char **envp)
 		free(inf.line);
 		inf.line = NULL;
 		// print_pipes(inf.pipes);
+		inf.code = 0;
 		if (PIPES)
 			exec();
 		inf.pipes = free_pipes(inf.pipes);
@@ -90,12 +93,12 @@ int     main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
 	
-	inf.line = ft_strdup("echo \"-n -n -n\"-n bonjour");
-	// printf("%s\n", inf.line);
+	inf.line = ft_strdup("echo $?lol");
+	// ft_putendl_fd(inf.line, 2);
 	if (inf.line == NULL)
 		exit_ms("exit", 0);
 	inf.line = expand_dol(inf.line);
-	// printf("%s\n", inf.line);
+	// ft_putendl_fd(inf.line, 2);
 	inf.pipes = parse(inf.line);
 	free(inf.line);
 	inf.line = NULL;
@@ -107,3 +110,4 @@ int     main(int argc, char **argv, char **envp)
 	return (inf.code);
 }
 #endif
+ 

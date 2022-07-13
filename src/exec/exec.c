@@ -221,19 +221,32 @@ void	sig_quit(int sig)
 	int	i;
 
 	i = -1;
-	(void)sig;
+	// (void)sig;
 	if (inf.pids)
 	{
 		while (++i < PIPES)
 		{
 			if (inf.pids[i])
 			{
-				kill(inf.pids[i], SIGKILL);
-				// printf("\nquited process with ID: %d\n", inf.pids[i]);
+				if (sig == SIGINT)
+					kill(inf.pids[i], SIGKILL);
+				else
+					kill(inf.pids[i], SIGQUIT);
 				inf.pids[i] = 0;
 			}
 		}
 	}
+	else if (sig == SIGQUIT)
+	{
+		rl_redisplay();
+		// ft_putstr_fd(PROMPT, 1);
+		return ;
+	}
+	inf.code = 128 + sig;
+	if (sig == SIGQUIT)
+		ft_putstr_fd("\nQuit\n"PROMPT, 1);
+	else
+		ft_putstr_fd("\n"PROMPT, 1);
 }
 
 void	exit_ms(char *err, int status)
@@ -250,5 +263,6 @@ void	exit_ms(char *err, int status)
 		inf.pipes = free_pipes(inf.pipes);
 	if (status >= 0)
 		exit(status);
+	rl_clear_history();
 	exit(1);
 }

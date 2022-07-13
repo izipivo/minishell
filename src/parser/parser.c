@@ -251,6 +251,19 @@ void	strapp(char **s1, char *s2, int f)
 		exit_ms("malloc", 1);
 }
 
+
+void	strapp2(char *str, char **s2)
+{
+	char	*tmp;
+
+	tmp = ft_strjoin(str, *s2);
+	if (!tmp)
+		exit_ms("malloc rip", 1);
+	free(*s2);
+	*s2 = tmp;
+	ft_putendl_fd(*s2, 2);
+}
+
 char	*find_env(char *find)
 {
 	t_env	*lenv;
@@ -348,7 +361,7 @@ void	check_redirs(void)
 			token->key = HEREDOC;
 		if (token->key > 2 && token->key < 7)
 		{
-			if (!token->next || token->next->key != COMMAND)
+			if (!token->next)
 				exit_ms("syntax error near unexpected token", 0);
 			free(token->val);
 			token->val = ft_strdup(token->next->val);
@@ -364,21 +377,36 @@ void	check_redirs(void)
 void	remove_quotes(t_list *token)
 {
 	char	*buf;
+	t_list	*tmp;
 
 	while (token)
 	{
 		if (token->key == SQUOTES || token->key == DQUOTES)
 		{
 			token->key = COMMAND;
-			if (ft_strlen(token->val) == 2)
+			if (ft_strlen(token->val) < 3)
 			{
+				// ft_putendl_fd("lollollollollollollollollollollollollollollollollol", 2);
 				free(token->val);
 				while (token->next && token->next->key == SPC)
 					token->next = token->next->next;
 				if (token->next && token->next->key == COMMAND)
-					token->val = ft_strdup(" ");
-				else
+				{
+					strapp2(" ", &token->next->val);
 					token->val = NULL;
+					// ft_putendl_fd(token->next->val, 2);					
+				}
+				else
+				{
+					tmp = token->prev;
+					// ft_putendl_fd("lol", 2);
+					while (tmp && tmp->key == SPC)
+						tmp = tmp->prev;
+					if (tmp && tmp->key == COMMAND)
+						token->val = ft_strdup(" ");
+					else
+						token->val = NULL;
+				}
 				token = token->next;
 				continue ;
 			}
@@ -394,12 +422,12 @@ void	remove_quotes(t_list *token)
 t_pipes	*cleaning(void)
 {
 	// print_list(inf.tokens);
-	// ft_putstr_fd("_______________________\n",1);
+	// printf("_______________________\n");
 	if (QUOTS(inf.mask))
 	{
 		remove_quotes(inf.tokens);
 		// print_list(inf.tokens);
-		// ft_putstr_fd("_______________________\n",1);
+		// printf("_______________________\n");
 	}
 	check_redirs();
 	// print_list(inf.tokens);
@@ -505,11 +533,11 @@ t_pipes	*parse(char *line)
 	key = 64;
 	while (line[++i])
 	{
-		if (line[i] == line[i + 1] && (line[i] == '\'' || line[i] == '"'))
-		{
-			++i;
-			continue ;
-		}
+		// if (line[i] == line[i + 1] && (line[i] == '\'' || line[i] == '"'))
+		// {
+		// 	++i;
+		// 	continue ;
+		// }
 		fill_token(key, line[i], &n, &j);
 		if (j == -1)
 		{
