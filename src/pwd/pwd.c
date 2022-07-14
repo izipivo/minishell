@@ -22,6 +22,7 @@ int	pwd(void)
 		perror(PERROR);
 		return (1);
 	}
+	ft_putendl_fd(path, 1);
 	free(path);
 	return (0);
 }
