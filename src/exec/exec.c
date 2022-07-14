@@ -243,10 +243,10 @@ void	sig_quit(int sig)
 		return ;
 	}
 	inf.code = 128 + sig;
-	if (sig == SIGQUIT)
-		ft_putstr_fd("\nQuit\n"PROMPT, 1);
-	else
-		ft_putstr_fd("\n"PROMPT, 1);
+	// if (sig == SIGQUIT)
+	// 	ft_putstr_fd("\nQuit\n"PROMPT, 1);
+	// else
+	// 	ft_putstr_fd("\n"PROMPT, 1);
 }
 
 void	exit_ms(char *err, int status)

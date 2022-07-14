@@ -421,6 +421,8 @@ void	remove_quotes(t_list *token)
 
 t_pipes	*cleaning(void)
 {
+	if (inf.tokens->key == PIPE)
+		exit_ms("syntax error near unexpected token `|'", 1);
 	// print_list(inf.tokens);
 	// printf("_______________________\n");
 	if (QUOTS(inf.mask))
@@ -461,7 +463,7 @@ int	tok_quant(char *line)
 	int		i;
 
 	count = 19;
-	i = 0 ;
+	i = -1;
 	key = 64;
 	while (line[++i])
 	{

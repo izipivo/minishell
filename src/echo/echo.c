@@ -43,7 +43,7 @@ int echo_main(int argc, char **argv)
 		ft_putchar_fd('\n', 2);
 		return (0);
 	}
-	while (!ft_strncmp("-n", argv[++i], 2))
+	while (argv[++i] && !ft_strncmp("-n", argv[i], 2))
 	{
 		// ft_putendl_fd(argv[i], 1);
 		f = 1;
