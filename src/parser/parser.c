@@ -365,7 +365,7 @@ void	check_redirs(void)
 				exit_ms("syntax error near unexpected token", 0);
 			free(token->val);
 			token->val = ft_strdup(token->next->val);
-			free(token->next->val);
+			// free(token->next->val);
 			token->next = token->next->next;
 		}
 		else if (token->key == SQUOTES || token->key == DQUOTES)
