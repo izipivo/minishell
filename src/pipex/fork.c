@@ -150,9 +150,17 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
 	{
 		if (parent && pipes->cmd[1])
-			return (export_main(index));
+		{
+			inf.code = export_main(index);
+			return (1);
+		}
+			// return (export_main(index));
 		else if (!parent && !pipes->cmd[1])
-			return (export_main(index));
+		{
+			inf.code = export_main(index);
+			return (1);
+		}
+			// return (export_main(index));
 		else
 			return (1);
 	}

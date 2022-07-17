@@ -74,11 +74,19 @@ int	check_pipes_cmd_unset(char *str)
 {
 	int i;
 
-	i = 0;
-	if (str[i] >= '0' && str[i] <= '9')
+	i = -1;
+	if (str[0] >= '0' && str[0] <= '9')
 		return (1);
+    while (str[++ i])
+    {
+        if (str[i] == 59)
+            return (127);
+    }
+    i = 0;
 	while (str[i])
 	{
+        if (str[0] == 45)
+            return (2);
 		if ((check_key(str[i])) == 1)
 		{
 			error_print_unset(str, i);  //потом изменить!
@@ -92,12 +100,19 @@ int	check_pipes_cmd_unset(char *str)
 int unset_main(int index)
 {
 	int i;
+    int flag;
 
+    flag = 0;
 	i = 0;
 	while (inf.pipes[index].cmd[i])
     {
-        if (check_pipes_cmd_unset(inf.pipes[index].cmd[i]) == 1)
+        flag = check_pipes_cmd_unset(inf.pipes[index].cmd[i]);
+        if (flag == 1)
 			return (0);
+        if (flag == 2)
+            return (2);
+        if (flag == 127)
+            return (127);
         i ++;
     }
 	if (i == 1)

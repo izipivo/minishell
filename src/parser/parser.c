@@ -354,7 +354,7 @@ void	check_redirs(void)
 	while(token)
 	{
 		if ((token->key == OUTFILE || token->key == INFILE) && ft_strlen(token->val) > 2)
-			exit_ms("parser error near '>'", 1);
+			exit_ms("parser error near '>'", 2);
 		if (token->key == OUTFILE && ft_strlen(token->val) == 2)
 			token->key = APPEND;
 		else if (token->key == INFILE && ft_strlen(token->val) == 2)
@@ -362,10 +362,9 @@ void	check_redirs(void)
 		if (token->key > 2 && token->key < 7)
 		{
 			if (!token->next)
-				exit_ms("syntax error near unexpected token", 0);
+				exit_ms("syntax error near unexpected token", 2);
 			free(token->val);
 			token->val = ft_strdup(token->next->val);
-			// free(token->next->val);
 			token->next = token->next->next;
 		}
 		else if (token->key == SQUOTES || token->key == DQUOTES)
@@ -386,15 +385,13 @@ void	remove_quotes(t_list *token)
 			token->key = COMMAND;
 			if (ft_strlen(token->val) < 3)
 			{
-				// ft_putendl_fd("lollollollollollollollollollollollollollollollollol", 2);
 				free(token->val);
 				while (token->next && token->next->key == SPC)
 					token->next = token->next->next;
 				if (token->next && token->next->key == COMMAND)
 				{
 					strapp2(" ", &token->next->val);
-					token->val = NULL;
-					// ft_putendl_fd(token->next->val, 2);					
+					token->val = NULL;					
 				}
 				else
 				{
@@ -422,7 +419,7 @@ void	remove_quotes(t_list *token)
 t_pipes	*cleaning(void)
 {
 	if (inf.tokens->key == PIPE)
-		exit_ms("syntax error near unexpected token `|'", 1);
+		exit_ms("syntax error near unexpected token `|'", 2);
 	// print_list(inf.tokens);
 	// printf("_______________________\n");
 	if (QUOTS(inf.mask))

@@ -136,7 +136,6 @@ char *new_pipes_cmd(char *cmd)
 			continue;
 		}
 		res[j] = cmd[i];
-		// printf("%c", res[i]);
 		i ++;
 		j ++;
 	}
@@ -155,8 +154,15 @@ int	check_pipes_cmd(char *str)
 		return (1);
 	while (str[i])
 	{
-		if (str[i] == 61)
+		if (str[0] == 61 || (str[0] == ' ' && str[1] == 61))
+			return (1);
+		if (str[i] == 43 && str[i + 1] == 61)
+		{
+			++ i;
 			break ;
+		}
+		if (str[0] == 45)
+			return (2);
 		if ((check_key(str[i])) == 1)
 		{
 			error_print(str, i);
@@ -231,7 +237,9 @@ int export_main(int index)
 	{
 		flag = check_pipes_cmd(inf.pipes[index].cmd[i]);
 		if (flag == 1)
-			return (0);
+			return (1);
+		if (flag == 2)
+			return (2);
 		else if (flag == 2)
 		{
 			i = 0;
