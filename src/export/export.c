@@ -170,15 +170,15 @@ int	check_pipes_cmd(char *str)
 		}
 		i ++;
 	}
-	while (str[i])
-	{
-		if ((check_val(str[i])) == 1)
-		{
-			error_print(str, i);
-			return (1);
-		}
-		i ++;
-	}
+	// while (str[i])
+	// {
+	// 	if ((check_val(str[i])) == 1)
+	// 	{
+	// 		error_print(str, i);
+	// 		return (1);
+	// 	}
+	// 	i ++;
+	// }
 	return (-1);
 }
 
