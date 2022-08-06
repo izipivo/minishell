@@ -63,6 +63,9 @@
 # define QUOTS(x) ((x >> 1) & 1)
 # define DIGIT(x) ((x >> 2) & 1)
 # define UPDATELENV(x) ((x >> 4) & 1)
+# define PIPE_OK 1
+# define PIPE_KO 0
+# define EXIT_ERROR 1
 
 typedef struct	s_env
 {
@@ -139,4 +142,5 @@ void	print_string(char **str);
 void	exit_main(int index);
 int 	echo_main(int argc, char **argv);
 int		pwd_main(void);
+void    check_pipes(t_list *token);
 #endif

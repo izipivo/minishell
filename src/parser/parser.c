@@ -416,6 +416,29 @@ void	remove_quotes(t_list *token)
 	}
 }
 
+void    check_pipes(t_list *token)
+{
+    char    check;
+
+    while (token)
+    {
+        check = PIPE_KO;
+        while (token && token->key != PIPE)
+        {
+//            printf("lol: %s, %d\n", token->val, token->key);
+            if (token->key == COMMAND)
+            {
+                check = PIPE_OK;
+            }
+            token = token->next;
+        }
+        if (check == PIPE_KO)
+            exit_ms("wrong syntax!", EXIT_ERROR);
+        if (token)
+            token = token->next;
+    }
+}
+
 t_pipes	*cleaning(void)
 {
 	if (inf.tokens->key == PIPE)
@@ -429,6 +452,7 @@ t_pipes	*cleaning(void)
 		// printf("_______________________\n");
 	}
 	check_redirs();
+    check_pipes(inf.tokens);
 	// print_list(inf.tokens);
 	// ft_putstr_fd("_______________________\n",1);
 	join_commands(inf.tokens);

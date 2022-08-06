@@ -60,8 +60,12 @@ int     main(int argc, char **argv, char **envp)
 	inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
-	
+
+    if (argc < 3)
+        exit(228);
 	inf.line = ft_strdup(argv[2]);
+    if (!inf.line || ft_strlen(inf.line) == 0)
+        exit_ms(NULL, 0);
 	// printf("%s\n", inf.line);
 	if (inf.line == NULL)
 		exit_ms("exit", 0);
@@ -93,7 +97,9 @@ int     main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
 	
-	inf.line = ft_strdup("echo $?lol");
+	inf.line = ft_strdup("");
+    if (!inf.line || ft_strlen(inf.line) == 0)
+        exit(0);
 	// ft_putendl_fd(inf.line, 2);
 	if (inf.line == NULL)
 		exit_ms("exit", 0);

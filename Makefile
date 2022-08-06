@@ -12,11 +12,11 @@ INCLUDE = 			-I ${HDRS_DIR}
 
 CC =				cc -D MAIN=0
 
-ifeq ($(MAKECMDGOALS), test)
+ifeq ($(MAKECMDGOALS), t)
 CC =				cc -D TEST=0
 endif
 
-ifeq ($(MAKECMDGOALS), gdb)
+ifeq ($(MAKECMDGOALS), g)
 CC =				cc -D GDB=0
 endif
 
@@ -80,11 +80,9 @@ LIBFT =				$(addprefix ${LIBFTDIR}, ${LIBFT_NAME})
 
 all:				${BUILDIR} ${BLDRS} ${LIBFT} ${NAME}
 
-main:				all
+t:					all
 
-test:				all
-
-gdb:				all
+g:					all
 
 ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
