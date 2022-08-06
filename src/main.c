@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
+/*   Updated: 2022/06/12 15:14:55 by sdonny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 /*
@@ -6,19 +18,22 @@
 
 extern t_mshell	inf;
 
-# ifdef MAIN
+#ifdef MAIN
 
-int     main(int argc, char **argv, char **envp)
+void	init(char **envp)
 {
-	(void)argc;
-	(void)argv;
-	
 	ft_memset(&inf, 0, sizeof(t_mshell));
 	inf.env = envp;
 	inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_quit);
-	// signal(SIGINT, sig_hand);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	(void)argc;
+	(void)argv;
+	init(envp);
 	while (3)
 	{
 		inf.line = readline(PROMPT);
@@ -31,11 +46,9 @@ int     main(int argc, char **argv, char **envp)
 		}
 		add_history(inf.line);
 		inf.line = expand_dol(inf.line);
-		// printf("%s\n", line);
 		inf.pipes = parse(inf.line);
 		free(inf.line);
 		inf.line = NULL;
-		// print_pipes(inf.pipes);
 		inf.code = 0;
 		if (PIPES)
 			exec();
@@ -96,7 +109,7 @@ int     main(int argc, char **argv, char **envp)
 	inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
-	
+
 	inf.line = ft_strdup("");
     if (!inf.line || ft_strlen(inf.line) == 0)
         exit(0);
@@ -116,4 +129,4 @@ int     main(int argc, char **argv, char **envp)
 	return (inf.code);
 }
 #endif
- 
+

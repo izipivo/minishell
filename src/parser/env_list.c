@@ -12,20 +12,10 @@
 
 #include "minishell.h"
 
-int	ft_arrlen(char **arr)
-{
-	int	i;
-
-	i = -1;
-	while (arr[++i])
-		;
-	return (i);
-}
-
 t_env	*make_env_list(char **envp)
 {
 	int		i;
-	void *tmp;
+	void	*tmp;
 	t_env	*lenv;
 
 	i = 0;
@@ -51,9 +41,9 @@ t_env	*make_env_list(char **envp)
 
 void	*free_lenv(t_env *lenv)
 {
-	void *tmp;
+	void	*tmp;
 
-	while(lenv)
+	while (lenv)
 	{
 		if (lenv->key)
 		{

@@ -99,23 +99,23 @@ typedef	struct		s_mshell
 void	*free_pipes(t_pipes *pipes);
 void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
-int		ft_arrlen(char **arr);
-void	free_list(t_list *list);
+//int		ft_arrlen(char **arr);
+//void	free_list(t_list *list);
 t_pipes	*parse(char *line);
 void	print_list(t_list *tok);
 void	free_val(t_list *token);
 void	*free_tokens(t_list *tokens);
-void	*free_pipex_args(char **ar, int pipes);
+//void	*free_pipex_args(char **ar, int pipes);
 int		count_pipes(t_list *token);
-int		ft_strapp(char **s1, char *s2);
-void	dol_spc_str(void);
-int		dollar(t_list *dlr);
-int		dollar_find(t_list *token);
-void	streams(t_list *token);
-int		is_separator(char c);
-int		make_token(t_list *token, char *line, int end, int shift, int sep);
+//int		ft_strapp(char **s1, char *s2);
+//void	dol_spc_str(void);
+//int		dollar(t_list *dlr);
+//int		dollar_find(t_list *token);
+//void	streams(t_list *token);
+//int		is_separator(char c);
+//int		make_token(t_list *token, char *line, int end, int shift, int sep);
 int		token_key(char line);
-t_pipes	*invalid_args(void);
+//t_pipes	*invalid_args(void);
 void	sig_hand(int sig);
 void	sig_quit(int sig);
 void	exec(void);
@@ -134,7 +134,7 @@ char	*parse_inf_val(char *s); //del -->minishell.h
 void	print_exp(char **exp); // //del -->minishell.h
 void 	free_exp(char **exp); // //del -->minishell.h
 int		check_key(char c); //del -->minishell.h
-int		check_val(char c);
+//int		check_val(char c);
 int 	same_key(void); //del -->minishell.h
 char	**new_key(char **cmd);
 void	strapp(char **s1, char *s2, int f);

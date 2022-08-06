@@ -24,12 +24,6 @@ RM =				rm -rf
 
 NAME =				minishell
 
-# NAME_TEST =			minishell
-
-# NAME_GDB =			minishell
-
-# NAME_MAIN =			minishell
-
 SRC =				parser/expand_dolar.c parser/token_list.c parser/parser.c exec/exec.c parser/env_list.c\
 					pipex/pipex.c pipex/parents.c pipex/fork.c\
 					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
@@ -38,23 +32,11 @@ SRC =				parser/expand_dolar.c parser/token_list.c parser/parser.c exec/exec.c p
 					export/same_for_export.c env/env.c exit/exit.c cd/cd.c main.c\
 					echo/echo.c pwd/pwd.c
 
-# SRC_PWD =			pwd.c
-
-# SRC_ECHO =			echo.c
-
 SRC_DIR =			./src/
-
-# PWD_DIR =			pwd/
-
-# ECHO_DIR =			echo/
 
 HEADERS =			$(addprefix ${HDRS_DIR}, ${HDRS})
 
 SOURCES =			$(addprefix ${SRC_DIR}, ${SRC})
-
-# SOURCES_PWD =		$(addprefix ${PWD_DIR}, ${SRC_PWD})
-
-# SOURCES_ECHO =		$(addprefix ${ECHO_DIR}, ${SRC_ECHO})
 
 BUILDIR = ./obj/
 
@@ -65,10 +47,6 @@ BLDRS =				$(addprefix ${BUILDIR}, ${BUILDIRS})
 BINDIR =			./bin/
 
 OBJS =				$(addprefix ${BUILDIR}, ${SRC:.c=.o})
-
-# OBJS_PWD =			$(addprefix ${BUILDIR}, ${SOURCES_PWD:.c=.o})
-
-# OBJS_ECHO =			$(addprefix ${BUILDIR}, ${SOURCES_ECHO:.c=.o})
 
 LIBFT_NAME =		libft.a
 
@@ -88,7 +66,6 @@ ${LIBFT}:
 					${MAKE} -C ${LIBFTDIR}
 
 ${NAME}:			${OBJS} ${HEADERS} 
-					#${CC} ${CFLAGS} ${LIBS} ${OBJS} -o $@				#MacOS
 					${CC} ${CFLAGS} ${OBJS} -o $@ ${LIBS}				#Linux
 
 ${BUILDIR}:

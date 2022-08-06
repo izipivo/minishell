@@ -78,36 +78,35 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	}
 	cleansplit(paths);
 	exitpipex(fd, tmp);
-	// free(tmp);
 	return (NULL);
 }
 
-void	close_fd(int proc, int **fd)
-{
-	int	i;
-	int	j;
-
-	i = -1;
-	while (++i < PIPES + 1)
-	{
-		j = -1;
-		while (++j < 2)
-		{
-			if ((i == proc && j == 0) || (i == proc + 1 && j == 1)
-				|| (((i == PIPES && j == 0) || (i == 0 && j == 1))
-					&& proc == -1))
-				continue ;
-			close(fd[i][j]);
-		}
-	}
-	if (proc >= 0)
-	{
-		dup2(fd[proc][0], 0);
-		close(fd[proc][0]);
-		dup2(fd[proc + 1][1], 1);
-		close(fd[proc + 1][1]);
-	}
-}
+//void	close_fd(int proc, int **fd)
+//{
+//	int	i;
+//	int	j;
+//
+//	i = -1;
+//	while (++i < PIPES + 1)
+//	{
+//		j = -1;
+//		while (++j < 2)
+//		{
+//			if ((i == proc && j == 0) || (i == proc + 1 && j == 1)
+//				|| (((i == PIPES && j == 0) || (i == 0 && j == 1))
+//					&& proc == -1))
+//				continue ;
+//			close(fd[i][j]);
+//		}
+//	}
+//	if (proc >= 0)
+//	{
+//		dup2(fd[proc][0], 0);
+//		close(fd[proc][0]);
+//		dup2(fd[proc + 1][1], 1);
+//		close(fd[proc + 1][1]);
+//	}
+//}
 
 static int	**multipipe(int m)
 {

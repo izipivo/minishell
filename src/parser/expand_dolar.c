@@ -1,12 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_dolar.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sdonny <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/01 15:32:12 by sdonny            #+#    #+#             */
+/*   Updated: 2022/06/12 15:14:55 by sdonny           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 extern t_mshell	inf;
-// int	sizeofline(char *)
-// {
-// 	int	count;
-
-
-// }
 
 t_list	*newlst(char *val, int start, int end, char *str)
 {
@@ -40,18 +46,24 @@ int	isdollar(char *line, int i)
 	return (0);
 }
 
-char *replace_dollar(char *line, int start, int end)
+char	*extra_dolar(char *line, int start, char *str, int end)
+{
+	str = (char *)malloc(sizeof(char) * (end - start + 2));
+	if (!str)
+		exit_ms("malloc rip", 1);
+	ft_strlcpy(str, &line[start], end - start + 2);
+	return (find_env(str));
+}
+
+char	*replace_dollar(char *line, int start, int end)
 {
 	char	*str;
 	int		i;
 
 	str = NULL;
 	i = -2;
-	// printf("%d %d\n", start, end);
 	if (line[start] == '?')
-	{
 		return (ft_itoa(inf.code));
-	}
 	if (start == end + 1)
 	{
 		str = ft_strdup("$");
@@ -67,12 +79,7 @@ char *replace_dollar(char *line, int start, int end)
 			strapp(&str, "$", 1);
 		return (str);
 	}
-	str = (char *)malloc(sizeof(char) * (end - start + 2));
-	if (!str)
-		exit_ms("malloc rip", 1);
-	ft_strlcpy(str, &line[start], end - start + 2);
-	// printf("rd: %s\n", str);
-	return (find_env(str));
+	return (extra_dolar(line, start, str, end));
 }
 
 char	*joinlist(t_list **bl)
@@ -94,6 +101,41 @@ char	*joinlist(t_list **bl)
 	return (str);
 }
 
+static void	ed_init(int *i, int *start, char *dquot, t_list ***bl)
+{
+	*i = -1;
+	*start = 0;
+	*dquot = 0;
+	*bl = (t_list **)malloc(sizeof(t_list *));
+	if (!*bl)
+		exit_ms("malloc rip", 1);
+	**bl = NULL;
+}
+
+static char	*ed_end(int start, t_list **bl, char *line, int i)
+{
+	if (start != i)
+		ft_lstadd_back(bl, newlst(line, start, i, NULL));
+	if (!*bl)
+	{
+		free(bl);
+		return (line);
+	}
+	free(line);
+	return (joinlist(bl));
+}
+
+static void	dolr(t_list **bl, char *line, int *start, int *i)
+{
+	ft_lstadd_back(bl, newlst(line, *start, *i, NULL));
+	*start = 1 + *i;
+	while (line[++(*i)] && isdollar(line, *i))
+		;
+	ft_lstadd_back(bl, newlst(line, 0, 0, replace_dollar(line, *start,
+				*i - 1)));
+	*start = (*i)--;
+}
+
 char	*expand_dol(char *line)
 {
 	t_list	**bl;
@@ -101,13 +143,7 @@ char	*expand_dol(char *line)
 	int		i;
 	int		start;
 
-	i = -1;
-	start = 0;
-	dquot = 0;
-	bl = (t_list **)malloc(sizeof(t_list *));
-	if (!bl)
-		exit_ms("malloc rip", 1);
-	*bl = NULL;
+	ed_init(&i, &start, &dquot, &bl);
 	while (line[++i])
 	{
 		if (line[i] == '"')
@@ -120,22 +156,7 @@ char	*expand_dol(char *line)
 				exit_ms("not closed quote", 1);
 		}
 		else if (line[i] == '$')
-		{
-			ft_lstadd_back(bl, newlst(line, start, i, NULL));
-			start = 1 + i;
-			while(line[++i] && isdollar(line, i))
-				;
-			ft_lstadd_back(bl, newlst(line, 0, 0, replace_dollar(line, start, i - 1)));
-			start = i--;
-		}
+			dolr(bl, line, &start, &i);
 	}
-	if (start != i)
-		ft_lstadd_back(bl, newlst(line, start, i, NULL));
-	if (!*bl)
-	{
-		free(bl);
-		return (line);
-	}
-	free(line);
-	return (joinlist(bl));
+	return (ed_end(start, bl, line, i));
 }

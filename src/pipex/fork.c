@@ -25,7 +25,6 @@ static char	**cmdparse(char **new, char **envp, int **fd)
 
 static void	killchild(char **cmd, int **fd)
 {
-	// cleansplit(cmd);
 	(void)cmd;
 	(void)fd;
 	free_pipes(inf.pipes);

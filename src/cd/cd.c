@@ -69,14 +69,7 @@ int	cd(char	*path, int index)
 	char	**cp;
 	int		error;
 
-	if (!path)
-		return (1);
 	cp = inf.pipes[index].cmd;
-	if (access(path, F_OK) != 0)
-	{
-		perror(path);
-		return (1);
-	}
 	inf.pipes[index].cmd = cp_oldpwd();
 	error = chdir(path);
 	if (!error)
@@ -101,6 +94,13 @@ int	cd(char	*path, int index)
 int	cd_main(char **cmd, int index)
 {
 	if (cmd && cmd[0] && cmd[1])
+	{
+		if (access(cmd[1], F_OK) != 0)
+		{
+			perror(cmd[1]);
+			return (1);
+		}
 		return (cd(cmd[1], index));
+	}
 	return (0);
 }
