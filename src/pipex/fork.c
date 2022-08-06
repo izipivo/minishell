@@ -12,26 +12,7 @@
 
 #include "minishell.h"
 
-extern t_mshell g_inf;
-
-static char	**cmdparse(char **new, char **envp, int **fd)
-{
-	char	*tmp;
-
-	tmp = new[0];
-	new[0] = checkpath(tmp, envp, fd);
-	return (new);
-}
-
-static void	killchild(char **cmd, int **fd)
-{
-	(void)cmd;
-	(void)fd;
-	free_pipes(g_inf.pipes);
-	close(0);
-	close(1);
-	exit(EXIT_SUCCESS);
-}
+extern t_mshell	g_inf;
 
 static pid_t	*createpids(int **fd)
 {
@@ -48,92 +29,6 @@ static pid_t	*createpids(int **fd)
 	return (pid);
 }
 
-void	child_hd(t_pipes *pipe, int index, int **fd)
-{
-	char	*buf;
-
-	while (1)
-	{
-		buf = get_next_line(0);
-		if (!buf)
-			break ;
-		if (ft_strncmp(buf, pipe->in, ft_strlen(pipe->in)) == 0)
-		{
-			free(buf);
-			break ;
-		}
-		ft_putstr_fd(buf, fd[index][1]);
-		free(buf);
-	}
-}
-
-void	child_in(t_pipes *pipe, int index, int **fd)
-{
-	fd[index][0] = open(pipe->in, O_RDONLY);
-	if (fd[index][0] < 0)
-	{
-		ft_putendl_fd("not valid infile", 2);
-		exitpipex(fd, pipe->in);
-	}
-}
-
-void	child_out(t_pipes *pipe, int index, int **fd, int app)
-{
-	if (!app && pipe->out && access(pipe->out, F_OK) == 0)
-	{
-		if (unlink(pipe->out) == -1)
-			exitpipex(fd, pipe->out);
-	}
-	if (!app && pipe->out)
-		fd[index + 1][1] = open(pipe->out, O_WRONLY | O_CREAT);
-	else if (app && pipe->out)
-		fd[index + 1][1] = open(pipe->out, O_APPEND | O_CREAT | O_WRONLY, 0664);
-	else if (!pipe->out && index == PIPES - 1)
-	{
-		close(fd[index + 1][1]);
-		return ;
-	}
-	if (fd[index + 1][1] < 0)
-		exitpipex(fd, pipe->out);
-	dup2(fd[index + 1][1], STDOUT_FILENO);
-	close(fd[index + 1][1]);
-}
-
-int	close_all(int **fd)
-{
-	int	i;
-	int	j;
-
-	i = -1;
-	while (++i <= PIPES)
-	{
-		j = -1;
-		while (++j < 2)
-			close(fd[i][j]);
-	}
-	return (0);
-}
-
-void	child_fd(int index, int **fd)
-{
-	t_pipes	*pipe;
-
-	pipe = &g_inf.pipes[index];
-	if (pipe->in && INPUT(pipe->mask))
-		child_in(pipe, index, fd);
-	else if (pipe->in && HD(pipe->mask))
-		child_hd(pipe, index, fd);
-	if (!index && !pipe->in)
-		close(fd[index][0]);
-	else
-	{
-		dup2(fd[index][0], STDIN_FILENO);
-		close(fd[index][0]);
-	}
-	child_out(pipe, index, fd, APP(pipe->mask));
-	close_all(fd);
-}
-
 int	str_len(char **str)
 {
 	int	i;
@@ -142,80 +37,6 @@ int	str_len(char **str)
 	while (str[++i])
 		;
 	return (i);
-}
-
-int	check_func(t_pipes *pipes, int parent, int index)
-{
-	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
-	{
-		if (parent && pipes->cmd[1])
-		{
-			g_inf.code = export_main(index);
-			return (1);
-		}
-			// return (export_main(index));
-		else if (!parent && !pipes->cmd[1])
-		{
-			g_inf.code = export_main(index);
-			return (1);
-		}
-			// return (export_main(index));
-		else
-			return (1);
-	}
-	else if (!(ft_strncmp(pipes->cmd[0], "env", 4)))
-	{
-		if (!parent)
-			return (env_main(index));
-		else
-			return (1);
-	}
-	else if (!(ft_strncmp(pipes->cmd[0], "unset", 7)))
-	{
-		if (parent)
-		{
-			g_inf.code = unset_main(index);
-			return (1);
-		}
-		else
-			return (1);
-	}
-	else if (!(ft_strncmp(pipes->cmd[0], "exit", 5)))
-	{
-		if (parent)
-			exit_main(index);
-		else
-			return (1);
-	}
-	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
-	{
-		if (parent)
-			g_inf.code = cd_main(pipes->cmd, index);
-		else
-			return (1);
-	}
-
-	else if (!(ft_strncmp(pipes->cmd[0], "echo", 5)))
-	{
-		if (!parent)
-		{
-			g_inf.code = echo_main(str_len(pipes->cmd), pipes->cmd);
-			return (1);
-		}
-		else
-			return (1);
-	}
-	else if (!(ft_strncmp(pipes->cmd[0], "pwd", 4)))
-	{
-		if (!parent)
-		{
-			g_inf.code = pwd_main();
-			return (1);
-		}
-		else
-			return (0);
-	}
-	return (256);
 }
 
 int	child(int **fd, t_pipes *pipes, int index)
@@ -239,7 +60,6 @@ int	child(int **fd, t_pipes *pipes, int index)
 pid_t	*forks(int **fd)
 {
 	int		m;
-	// int		tmp;
 	pid_t	*pid;
 	t_pipes	*pipes;
 
@@ -254,8 +74,6 @@ pid_t	*forks(int **fd)
 		else if (!pid[m])
 			child(fd, pipes, m);
 		check_func(pipes, 1, m);
-		// if (tmp != 256)
-		// 	g_inf.code = tmp;
 		pipes = pipes->next;
 	}
 	return (pid);

@@ -14,17 +14,6 @@
 
 extern t_mshell	g_inf;
 
-void	cleansplit(char **cmd)
-{
-	int	i;
-
-	i = -1;
-	while (cmd[++i])
-		free(cmd[i]);
-	free(cmd);
-	cmd = NULL;
-}
-
 char	*check_buildin(char *pwd, char *tmp)
 {
 	char	*buf;

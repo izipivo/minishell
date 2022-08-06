@@ -12,23 +12,13 @@
 
 #include "minishell.h"
 
-//int	validate(int argc, char **argv)
-//{
-//	int	m;
-//
-//	m = 0;
-//	if (ft_strncmp("here_doc", argv[1], 9) == 0)
-//		m = 1;
-//	if (argc < 4 + m)
-//	{
-//		ft_putstr_fd("Error!\nToo few arguments!\n", 2);
-//		exit(EXIT_FAILURE);
-//	}
-//	if (m)
-//	{
-////		check_outfile(argv[argc - 1]);
-//		return (m);
-//	}
-////	check_INFILE(argv[1], argv[argc - 1]);
-//	return (0);
-//}
+void	cleansplit(char **cmd)
+{
+	int	i;
+
+	i = -1;
+	while (cmd[++i])
+		free(cmd[i]);
+	free(cmd);
+	cmd = NULL;
+}

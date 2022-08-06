@@ -29,7 +29,8 @@ SRC =				parser/expand_dolar.c parser/expand_dollar2.c parser/token_list.c parse
 					parser/fill_token.c \
 					pipex/pipex.c pipex/parents.c pipex/fork.c\
 					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
-					pipex/get_next_line_utils.c export/export.c export/export_utils.c\
+					pipex/get_next_line_utils.c  pipex/child_fd.c pipex/check_func.c\
+					export/export.c export/export_utils.c\
 					export/update.c export/unset.c\
 					export/same_for_export.c env/env.c exit/exit.c cd/cd.c main.c\
 					echo/echo.c pwd/pwd.c

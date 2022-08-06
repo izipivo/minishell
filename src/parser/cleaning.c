@@ -86,25 +86,38 @@ void	check_pipes(t_list *token)
 	}
 }
 
+//t_pipes	*cleaning(void)
+//{
+//	if (g_inf.tokens->key == PIPE)
+//		exit_ms("syntax error near unexpected token `|'", 2);
+////	print_list(g_inf.tokens);
+//// printf("_______________________\n");
+//	if (QUOTS(g_inf.mask))
+//	{
+//		remove_quotes(g_inf.tokens);
+//// print_list(g_inf.tokens);
+//// printf("_______________________\n");
+//	}
+//	check_redirs();
+//	check_pipes(g_inf.tokens);
+//// print_list(g_inf.tokens);
+//// ft_putstr_fd("_______________________\n",1);
+//	join_commands(g_inf.tokens);
+//// print_list(g_inf.tokens);
+//// ft_putstr_fd("_______________________\n",1);
+//	return (remalloc());
+//}
 t_pipes	*cleaning(void)
 {
 	if (g_inf.tokens->key == PIPE)
 		exit_ms("syntax error near unexpected token `|'", 2);
-	// print_list(g_inf.tokens);
-	// printf("_______________________\n");
 	if (QUOTS(g_inf.mask))
 	{
 		remove_quotes(g_inf.tokens);
-		// print_list(g_inf.tokens);
-		// printf("_______________________\n");
 	}
 	check_redirs();
 	check_pipes(g_inf.tokens);
-	// print_list(g_inf.tokens);
-	// ft_putstr_fd("_______________________\n",1);
 	join_commands(g_inf.tokens);
-	// print_list(g_inf.tokens);
-	// ft_putstr_fd("_______________________\n",1);
 	return (remalloc());
 }
 

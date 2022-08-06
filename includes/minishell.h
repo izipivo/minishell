@@ -153,4 +153,10 @@ char	*joinlist(t_list **bl);
 char	*replace_dollar(char *line, int start, int end);
 int		isdollar(char *line, int i);
 t_list	*newlst(char *val, int start, int end, char *str);
+char	**cmdparse(char **new, char **envp, int **fd);
+void	killchild(char **cmd, int **fd);
+int		close_all(int **fd);
+int		str_len(char **str);
+void	child_fd(int index, int **fd);
+int	check_func(t_pipes *pipes, int parent, int index);
 #endif
