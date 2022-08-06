@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-extern t_mshell inf;
+extern t_mshell g_inf;
 
 char *parse_inf_key(char *s); //del; -->minishell.h
 char *parse_inf_val(char *s); //del -->minishell.h

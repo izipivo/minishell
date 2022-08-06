@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-extern t_mshell	inf;
+extern t_mshell	g_inf;
 
 void	free_strs(char **strs)
 {
@@ -69,23 +69,23 @@ int	cd(char	*path, int index)
 	char	**cp;
 	int		error;
 
-	cp = inf.pipes[index].cmd;
-	inf.pipes[index].cmd = cp_oldpwd();
+	cp = g_inf.pipes[index].cmd;
+	g_inf.pipes[index].cmd = cp_oldpwd();
 	error = chdir(path);
 	if (!error)
 	{
 		export_main(index);
-		free_strs(inf.pipes[index].cmd);
-		inf.pipes[index].cmd = cp_cmd();
+		free_strs(g_inf.pipes[index].cmd);
+		g_inf.pipes[index].cmd = cp_cmd();
 		export_main(index);
-		free_strs(inf.pipes[index].cmd);
+		free_strs(g_inf.pipes[index].cmd);
 	}
 	else
 	{
-		free_strs(inf.pipes[index].cmd);
+		free_strs(g_inf.pipes[index].cmd);
 		perror(PERROR);
 	}
-	inf.pipes[index].cmd = (char **)cp;
+	g_inf.pipes[index].cmd = (char **)cp;
 	if (error)
 		return (1);
 	return (0);

@@ -1,27 +1,27 @@
 #include "minishell.h"
 
-extern t_mshell inf;
+extern t_mshell g_inf;
 
-char **join_env(t_mshell	*inf, char **result, int i)
+char **join_env(t_mshell	*g_inf, char **result, int i)
 {
 	char *tmp_del;
 
 	while ((unsigned long) i != (unsigned long) -1)
 	{
-		result[i] = ft_strdup(inf->lenv->key);
+		result[i] = ft_strdup(g_inf->lenv->key);
 		tmp_del = result[i];
-		if (inf->lenv->val[0] == '\0')
+		if (g_inf->lenv->val[0] == '\0')
 		{
 			i --;
-			inf->lenv = inf->lenv->next;
+			g_inf->lenv = g_inf->lenv->next;
 			continue ;
 		}
-		if (inf->lenv->val[0] == '=' && inf->lenv->val[1] == '\0')
+		if (g_inf->lenv->val[0] == '=' && g_inf->lenv->val[1] == '\0')
 		{
 			result[i] = ft_strjoin(result[i], "=");
 			free(tmp_del);
 			i --;
-			inf->lenv = inf->lenv->next;
+			g_inf->lenv = g_inf->lenv->next;
 			continue ;
 
 		}
@@ -31,42 +31,42 @@ char **join_env(t_mshell	*inf, char **result, int i)
 		result[i] = ft_strjoin(result[i], "\"");
 		free(tmp_del);
 		tmp_del = result[i];
-		result[i] = ft_strjoin(result[i], inf->lenv->val);
+		result[i] = ft_strjoin(result[i], g_inf->lenv->val);
 		free(tmp_del);
 		tmp_del = result[i];
 		result[i] = ft_strjoin(result[i], "\"");
 		free(tmp_del);
 		i --;
-		inf->lenv = inf->lenv->next;
+		g_inf->lenv = g_inf->lenv->next;
 	}
 	return (result);
 }
 
-char	**ft_exp(t_mshell	*inf)
+char	**ft_exp(t_mshell	*g_inf)
 {
 	int i;
 	char **result;
 	void *tmp;
 
 	i = 0;
-	tmp = inf->lenv;
-	while (inf->lenv)
+	tmp = g_inf->lenv;
+	while (g_inf->lenv)
 	{
 		i ++;
-		inf->lenv = inf->lenv->next;
+		g_inf->lenv = g_inf->lenv->next;
 	}
-	inf->lenv = tmp;
+	g_inf->lenv = tmp;
 	result = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!result)
 		exit_ms("error malloc", -1);
 	result[i] = 0;
 	i --;
-	result = join_env(inf, result, i);
-	inf->lenv = tmp;
+	result = join_env(g_inf, result, i);
+	g_inf->lenv = tmp;
 	return (result);
 }
 
-void	sort_env(t_mshell	*inf)
+void	sort_env(t_mshell	*g_inf)
 {
 	char	**exp;
 	char	*tmp;
@@ -74,7 +74,7 @@ void	sort_env(t_mshell	*inf)
 	int		j;
 
 	i = 0;
-	exp = ft_exp(inf);
+	exp = ft_exp(g_inf);
 	while (exp[i])
 	{
 		j = i + 1;
@@ -228,14 +228,14 @@ int export_main(int index)
 	i = 0;
 	if (same_key() == -1)
 	{
-		tmp = new_key(inf.pipes[index].cmd);
-		inf.pipes[index].cmd = tmp_cmd(inf.pipes[index].cmd, tmp);
+		tmp = new_key(g_inf.pipes[index].cmd);
+		g_inf.pipes[index].cmd = tmp_cmd(g_inf.pipes[index].cmd, tmp);
 		unset_main(index);
-		inf.pipes[index].cmd = back_cmd(inf.pipes[index].cmd, tmp);
+		g_inf.pipes[index].cmd = back_cmd(g_inf.pipes[index].cmd, tmp);
 	}
-	while (inf.pipes[index].cmd[i])
+	while (g_inf.pipes[index].cmd[i])
 	{
-		flag = check_pipes_cmd(inf.pipes[index].cmd[i]);
+		flag = check_pipes_cmd(g_inf.pipes[index].cmd[i]);
 		if (flag == 1)
 			return (1);
 		if (flag == 2)
@@ -249,9 +249,9 @@ int export_main(int index)
 	}
 	if (i > 1)
 	{
-		add_variable(inf.lenv, inf.pipes[index].cmd);
+		add_variable(g_inf.lenv, g_inf.pipes[index].cmd);
 		return (0);
 	}
-	sort_env(&inf);
+	sort_env(&g_inf);
 	return (0);
 }

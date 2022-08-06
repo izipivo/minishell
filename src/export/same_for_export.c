@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-extern t_mshell inf;
+extern t_mshell g_inf;
 
 char  **new_key(char **cmd)
 {
@@ -29,22 +29,22 @@ int same_key(void)
     int i;
     void *tmp;
 
-    tmp = inf.lenv;
-    while (inf.lenv)
+    tmp = g_inf.lenv;
+    while (g_inf.lenv)
     {
         i = 1;
-        while (inf.pipes[0].cmd[i])
+        while (g_inf.pipes[0].cmd[i])
         {
-            if (!(ft_strncmp(inf.lenv->key, inf.pipes[0].cmd[i], ft_strlen(inf.lenv->key))))
+            if (!(ft_strncmp(g_inf.lenv->key, g_inf.pipes[0].cmd[i], ft_strlen(g_inf.lenv->key))))
             {
-                inf.lenv = tmp;
+                g_inf.lenv = tmp;
                 return (-1);
             }
             else
                 i ++;
         }
-        inf.lenv = inf.lenv->next;
+        g_inf.lenv = g_inf.lenv->next;
     }
-    inf.lenv = tmp;
+    g_inf.lenv = tmp;
     return (1);
 }

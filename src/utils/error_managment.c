@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-extern t_mshell	inf;
+extern t_mshell	g_inf;
 
 void	*free_fd(int **fd)
 {
@@ -44,8 +44,8 @@ void	exitpipex(int **fd, char *desc)
 {
 	perror(desc);
 	fd = free_fd(fd);
-	free(inf.pids);
-	inf.pids = NULL;
-	free_pipes(inf.pipes);
+	free(g_inf.pids);
+	g_inf.pids = NULL;
+	free_pipes(g_inf.pipes);
 	exit(127);
 }

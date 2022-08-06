@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-extern t_mshell	inf;
+extern t_mshell	g_inf;
 
 long long	ft_atoi_exit(const char *str)
 {
@@ -99,19 +99,19 @@ void exit_main(int index)
 
     i = -1;
     res = 0;
-    while (inf.pipes[index].cmd[++ i])
+    while (g_inf.pipes[index].cmd[++ i])
         ;
     if (i == 1)
         errors_exit(2, res);
     if (i > 2)
     {
-        if (check_cmd(inf.pipes[index].cmd[1]) == 1)
+        if (check_cmd(g_inf.pipes[index].cmd[1]) == 1)
             errors_exit(2, res);
         errors_exit(0, res);
     }
     i = 0;
-    parse_exit(inf.pipes[index].cmd[1]);
-    res = ft_atoi_exit(inf.pipes[index].cmd[1]);
+    parse_exit(g_inf.pipes[index].cmd[1]);
+    res = ft_atoi_exit(g_inf.pipes[index].cmd[1]);
     if (res > 255 && res <= 2147483647)
         errors_exit(1, res);
     if (res > 2147483647)

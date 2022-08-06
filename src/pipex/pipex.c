@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-extern t_mshell	inf;
+extern t_mshell	g_inf;
 
 void	cleansplit(char **cmd)
 {
@@ -40,28 +40,11 @@ char	*check_buildin(char *pwd, char *tmp)
 	return (NULL);
 }
 
-char	*checkpath(char *tmp, char **envp, int **fd)
+char	*findpathh(char **paths, char *path, int **fd, char *tmp)
 {
-	char	**paths;
-	char	*path;
-	char	*slesh;
 	int		i;
+	char	*slesh;
 
-	i = -1;
-	if (access(tmp, F_OK) == 0)
-		return (tmp);
-	while (ft_strnstr(envp[++i], "PWD", 4) == 0)
-		;
-	path = check_buildin(&envp[i][4], tmp);
-	if (path)
-	{
-		free(tmp);
-		return (path);
-	}
-	i = -1;
-	while (ft_strnstr(envp[++i], "PATH", 4) == 0)
-		;
-	paths = ft_split(envp[i] + 5, ':');
 	i = -1;
 	while (paths[++i])
 	{
@@ -81,32 +64,29 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	return (NULL);
 }
 
-//void	close_fd(int proc, int **fd)
-//{
-//	int	i;
-//	int	j;
-//
-//	i = -1;
-//	while (++i < PIPES + 1)
-//	{
-//		j = -1;
-//		while (++j < 2)
-//		{
-//			if ((i == proc && j == 0) || (i == proc + 1 && j == 1)
-//				|| (((i == PIPES && j == 0) || (i == 0 && j == 1))
-//					&& proc == -1))
-//				continue ;
-//			close(fd[i][j]);
-//		}
-//	}
-//	if (proc >= 0)
-//	{
-//		dup2(fd[proc][0], 0);
-//		close(fd[proc][0]);
-//		dup2(fd[proc + 1][1], 1);
-//		close(fd[proc + 1][1]);
-//	}
-//}
+char	*checkpath(char *tmp, char **envp, int **fd)
+{
+	char	**paths;
+	char	*path;
+	int		i;
+
+	i = -1;
+	if (access(tmp, F_OK) == 0)
+		return (tmp);
+	while (ft_strnstr(envp[++i], "PWD", 4) == 0)
+		;
+	path = check_buildin(&envp[i][4], tmp);
+	if (path)
+	{
+		free(tmp);
+		return (path);
+	}
+	i = -1;
+	while (ft_strnstr(envp[++i], "PATH", 4) == 0)
+		;
+	paths = ft_split(envp[i] + 5, ':');
+	return (findpathh(paths, path, fd, tmp));
+}
 
 static int	**multipipe(int m)
 {
@@ -115,13 +95,13 @@ static int	**multipipe(int m)
 
 	fd = (int **)malloc(sizeof(int *) * m);
 	if (!fd)
-		exitmalloc( fd);
+		exitmalloc(fd);
 	i = -1;
 	while (++i < m)
 	{
 		fd[i] = (int *)malloc(sizeof(int) * 2);
 		if (!fd[i])
-			exitmalloc( fd);
+			exitmalloc(fd);
 		if (pipe(fd[i]) == -1)
 			exitmalloc(fd);
 	}

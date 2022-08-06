@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-extern t_mshell inf;
+extern t_mshell g_inf;
 
 void    del_unset(t_env *prev)
 {
@@ -21,13 +21,13 @@ void    unset_env_list(t_env *lenv, char **del)
     i = 0;
     while (del[i])
     {
-        if (!ft_strncmp(inf.lenv->key, del[i], ft_strlen(inf.lenv->key)))
+        if (!ft_strncmp(g_inf.lenv->key, del[i], ft_strlen(g_inf.lenv->key)))
         {
-            tmp = inf.lenv->next;
-            free(inf.lenv->key);
-            free(inf.lenv->val);
-            free(inf.lenv);
-            inf.lenv = tmp;
+            tmp = g_inf.lenv->next;
+            free(g_inf.lenv->key);
+            free(g_inf.lenv->val);
+            free(g_inf.lenv);
+            g_inf.lenv = tmp;
         }
         ++i;
     }
@@ -104,9 +104,9 @@ int unset_main(int index)
 
     flag = 0;
 	i = 0;
-	while (inf.pipes[index].cmd[i])
+	while (g_inf.pipes[index].cmd[i])
     {
-        flag = check_pipes_cmd_unset(inf.pipes[index].cmd[i]);
+        flag = check_pipes_cmd_unset(g_inf.pipes[index].cmd[i]);
         if (flag == 1)
 			return (0);
         if (flag == 2)
@@ -117,8 +117,8 @@ int unset_main(int index)
     }
 	if (i == 1)
         return (0);
-    unset_env_list(inf.lenv, inf.pipes[index].cmd);
-    if (!inf.lenv)
+    unset_env_list(g_inf.lenv, g_inf.pipes[index].cmd);
+    if (!g_inf.lenv)
         return (0);
     return (0);
 }

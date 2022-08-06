@@ -24,7 +24,9 @@ RM =				rm -rf
 
 NAME =				minishell
 
-SRC =				parser/expand_dolar.c parser/token_list.c parser/parser.c exec/exec.c parser/env_list.c\
+SRC =				parser/expand_dolar.c parser/expand_dollar2.c parser/token_list.c parser/parser.c exec/exec.c\
+					parser/env_list.c parser/copy_pipes.c parser/copy_pipes2.c parser/utils.c parser/cleaning.c\
+					parser/fill_token.c \
 					pipex/pipex.c pipex/parents.c pipex/fork.c\
 					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
 					pipex/get_next_line_utils.c export/export.c export/export_utils.c\

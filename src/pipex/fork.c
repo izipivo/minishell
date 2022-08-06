@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-extern t_mshell inf;
+extern t_mshell g_inf;
 
 static char	**cmdparse(char **new, char **envp, int **fd)
 {
@@ -27,7 +27,7 @@ static void	killchild(char **cmd, int **fd)
 {
 	(void)cmd;
 	(void)fd;
-	free_pipes(inf.pipes);
+	free_pipes(g_inf.pipes);
 	close(0);
 	close(1);
 	exit(EXIT_SUCCESS);
@@ -44,7 +44,7 @@ static pid_t	*createpids(int **fd)
 		exitmalloc(fd);
 	while (++i < PIPES)
 		pid[i] = 0;
-	inf.pids = pid;
+	g_inf.pids = pid;
 	return (pid);
 }
 
@@ -118,7 +118,7 @@ void	child_fd(int index, int **fd)
 {
 	t_pipes	*pipe;
 
-	pipe = &inf.pipes[index];
+	pipe = &g_inf.pipes[index];
 	if (pipe->in && INPUT(pipe->mask))
 		child_in(pipe, index, fd);
 	else if (pipe->in && HD(pipe->mask))
@@ -150,13 +150,13 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	{
 		if (parent && pipes->cmd[1])
 		{
-			inf.code = export_main(index);
+			g_inf.code = export_main(index);
 			return (1);
 		}
 			// return (export_main(index));
 		else if (!parent && !pipes->cmd[1])
 		{
-			inf.code = export_main(index);
+			g_inf.code = export_main(index);
 			return (1);
 		}
 			// return (export_main(index));
@@ -174,7 +174,7 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	{
 		if (parent)
 		{
-			inf.code = unset_main(index);
+			g_inf.code = unset_main(index);
 			return (1);
 		}
 		else
@@ -190,7 +190,7 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
 	{
 		if (parent)
-			inf.code = cd_main(pipes->cmd, index);
+			g_inf.code = cd_main(pipes->cmd, index);
 		else
 			return (1);
 	}
@@ -199,7 +199,7 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	{
 		if (!parent)
 		{
-			inf.code = echo_main(str_len(pipes->cmd), pipes->cmd);
+			g_inf.code = echo_main(str_len(pipes->cmd), pipes->cmd);
 			return (1);
 		}
 		else
@@ -209,7 +209,7 @@ int	check_func(t_pipes *pipes, int parent, int index)
 	{
 		if (!parent)
 		{
-			inf.code = pwd_main();
+			g_inf.code = pwd_main();
 			return (1);
 		}
 		else
@@ -227,10 +227,10 @@ int	child(int **fd, t_pipes *pipes, int index)
 	exit_status = check_func(pipes, 0, index);
 	if (exit_status != 256)
 		exit(0);
-	cmd = cmdparse(pipes->cmd, inf.env, fd);
+	cmd = cmdparse(pipes->cmd, g_inf.env, fd);
 	if (!cmd[0])
 		exitpipex(fd, PERROR": bin not found");
-	if (execve(cmd[0], cmd, inf.env) == -1)
+	if (execve(cmd[0], cmd, g_inf.env) == -1)
 		exitpipex(fd, cmd[0]);
 	killchild(cmd, fd);
 	return (1);
@@ -244,7 +244,7 @@ pid_t	*forks(int **fd)
 	t_pipes	*pipes;
 
 	m = -1;
-	pipes = inf.pipes;
+	pipes = g_inf.pipes;
 	pid = createpids(fd);
 	while (pipes)
 	{
@@ -255,7 +255,7 @@ pid_t	*forks(int **fd)
 			child(fd, pipes, m);
 		check_func(pipes, 1, m);
 		// if (tmp != 256)
-		// 	inf.code = tmp;
+		// 	g_inf.code = tmp;
 		pipes = pipes->next;
 	}
 	return (pid);

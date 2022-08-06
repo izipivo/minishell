@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_mshell	inf;
+extern t_mshell	g_inf;
 
 void	*free_pipes(t_pipes *pipes)
 {
@@ -206,12 +206,12 @@ void	*free_pipex_args(char **ar, int pipes)
 void	sig_hand(int sig)
 {
 	sig_quit(0);
-	if (inf.tokens)
-		inf.tokens = free_tokens(inf.tokens);
-	if (inf.lenv)
-		inf.lenv = free_lenv(inf.lenv);
-	if (inf.pipes)
-		inf.pipes = free_pipes(inf.pipes);
+	if (g_inf.tokens)
+		g_inf.tokens = free_tokens(g_inf.tokens);
+	if (g_inf.lenv)
+		g_inf.lenv = free_lenv(g_inf.lenv);
+	if (g_inf.pipes)
+		g_inf.pipes = free_pipes(g_inf.pipes);
 	ft_putendl_fd("\nbye", 1);
 	exit(sig);
 }
@@ -222,17 +222,17 @@ void	sig_quit(int sig)
 
 	i = -1;
 	// (void)sig;
-	if (inf.pids)
+	if (g_inf.pids)
 	{
 		while (++i < PIPES)
 		{
-			if (inf.pids[i])
+			if (g_inf.pids[i])
 			{
 				if (sig == SIGINT)
-					kill(inf.pids[i], SIGKILL);
+					kill(g_inf.pids[i], SIGKILL);
 				else
-					kill(inf.pids[i], SIGQUIT);
-				inf.pids[i] = 0;
+					kill(g_inf.pids[i], SIGQUIT);
+				g_inf.pids[i] = 0;
 			}
 		}
 	}
@@ -242,7 +242,7 @@ void	sig_quit(int sig)
 		// ft_putstr_fd(PROMPT, 1);
 		return ;
 	}
-	inf.code = 128 + sig;
+	g_inf.code = 128 + sig;
 	// if (sig == SIGQUIT)
 	// 	ft_putstr_fd("\nQuit\n"PROMPT, 1);
 	// else
@@ -253,14 +253,14 @@ void	exit_ms(char *err, int status)
 {
 	ft_putendl_fd(err, 2);
 	sig_quit(0);
-	if (inf.line)
-		free(inf.line);
-	if (inf.tokens)
-		inf.tokens = free_tokens(inf.tokens);
-	if (inf.lenv)
-		inf.lenv = free_lenv(inf.lenv);
-	if (inf.pipes)
-		inf.pipes = free_pipes(inf.pipes);
+	if (g_inf.line)
+		free(g_inf.line);
+	if (g_inf.tokens)
+		g_inf.tokens = free_tokens(g_inf.tokens);
+	if (g_inf.lenv)
+		g_inf.lenv = free_lenv(g_inf.lenv);
+	if (g_inf.pipes)
+		g_inf.pipes = free_pipes(g_inf.pipes);
 	if (status >= 0)
 		exit(status);
 	rl_clear_history();

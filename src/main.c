@@ -16,15 +16,15 @@
 //		main 
 */
 
-extern t_mshell	inf;
+t_mshell	g_inf;
 
 #ifdef MAIN
 
 void	init(char **envp)
 {
-	ft_memset(&inf, 0, sizeof(t_mshell));
-	inf.env = envp;
-	inf.lenv = make_env_list(envp);
+	ft_memset(&g_inf, 0, sizeof(t_mshell));
+	g_inf.env = envp;
+	g_inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_quit);
 }
@@ -36,24 +36,24 @@ int	main(int argc, char **argv, char **envp)
 	init(envp);
 	while (3)
 	{
-		inf.line = readline(PROMPT);
-		if (inf.line == NULL)
+		g_inf.line = readline(PROMPT);
+		if (g_inf.line == NULL)
 			exit_ms("exit", 0);
-		if (!ft_strlen(inf.line))
+		if (!ft_strlen(g_inf.line))
 		{
-			free(inf.line);
+			free(g_inf.line);
 			continue ;
 		}
-		add_history(inf.line);
-		inf.line = expand_dol(inf.line);
-		inf.pipes = parse(inf.line);
-		free(inf.line);
-		inf.line = NULL;
-		inf.code = 0;
+		add_history(g_inf.line);
+		g_inf.line = expand_dol(g_inf.line);
+		g_inf.pipes = parse(g_inf.line);
+		free(g_inf.line);
+		g_inf.line = NULL;
+		g_inf.code = 0;
 		if (PIPES)
 			exec();
-		inf.pipes = free_pipes(inf.pipes);
-		inf.mask = 0;
+		g_inf.pipes = free_pipes(g_inf.pipes);
+		g_inf.mask = 0;
 	}
 }
 
@@ -68,31 +68,31 @@ int     main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	ft_memset(&inf, 0, sizeof(t_mshell));
-	inf.env = envp;
-	inf.lenv = make_env_list(envp);
+	ft_memset(&g_inf, 0, sizeof(t_mshell));
+	g_inf.env = envp;
+	g_inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
 
     if (argc < 3)
         exit(228);
-	inf.line = ft_strdup(argv[2]);
-    if (!inf.line || ft_strlen(inf.line) == 0)
+	g_inf.line = ft_strdup(argv[2]);
+    if (!g_inf.line || ft_strlen(g_inf.line) == 0)
         exit_ms(NULL, 0);
-	// printf("%s\n", inf.line);
-	if (inf.line == NULL)
+	// printf("%s\n", g_inf.line);
+	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
-	inf.line = expand_dol(inf.line);
-	// printf("%s\n", inf.line);
-	inf.pipes = parse(inf.line);
-	free(inf.line);
-	inf.line = NULL;
-	// print_pipes(inf.pipes);
+	g_inf.line = expand_dol(g_inf.line);
+	// printf("%s\n", g_inf.line);
+	g_inf.pipes = parse(g_inf.line);
+	free(g_inf.line);
+	g_inf.line = NULL;
+	// print_pipes(g_inf.pipes);
 	if (PIPES)
 		exec();
-	inf.pipes = free_pipes(inf.pipes);
-	inf.mask = 0;
-	return (inf.code);
+	g_inf.pipes = free_pipes(g_inf.pipes);
+	g_inf.mask = 0;
+	return (g_inf.code);
 }
 #endif
 
@@ -104,29 +104,29 @@ int     main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	ft_memset(&inf, 0, sizeof(t_mshell));
-	inf.env = envp;
-	inf.lenv = make_env_list(envp);
+	ft_memset(&g_inf, 0, sizeof(t_mshell));
+	g_inf.env = envp;
+	g_inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
 
-	inf.line = ft_strdup("");
-    if (!inf.line || ft_strlen(inf.line) == 0)
+	g_inf.line = ft_strdup("");
+    if (!g_inf.line || ft_strlen(g_inf.line) == 0)
         exit(0);
-	// ft_putendl_fd(inf.line, 2);
-	if (inf.line == NULL)
+	// ft_putendl_fd(g_inf.line, 2);
+	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
-	inf.line = expand_dol(inf.line);
-	// ft_putendl_fd(inf.line, 2);
-	inf.pipes = parse(inf.line);
-	free(inf.line);
-	inf.line = NULL;
-	// print_pipes(inf.pipes);
+	g_inf.line = expand_dol(g_inf.line);
+	// ft_putendl_fd(g_inf.line, 2);
+	g_inf.pipes = parse(g_inf.line);
+	free(g_inf.line);
+	g_inf.line = NULL;
+	// print_pipes(g_inf.pipes);
 	if (PIPES)
 		exec();
-	inf.pipes = free_pipes(inf.pipes);
-	inf.mask = 0;
-	return (inf.code);
+	g_inf.pipes = free_pipes(g_inf.pipes);
+	g_inf.mask = 0;
+	return (g_inf.code);
 }
 #endif
 

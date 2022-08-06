@@ -32,7 +32,7 @@
 /* # define PROMPT RED "MI"ORANGE"NI"LYELLOW"GA"GREEN"YS"BRIGHT_BLUE"HE"SINIY"LL"\
 	//PURPLE "$> "RESET*/
 # define PERROR YELLOW "mini" RED "error" RESET
-# define PROMPT "gay?> "
+# define PROMPT "pcheloshell?> "
 // # define RL_PROMT_START_IGNORE '\001'
 // # define RL_PROMT_END_IGNORE '\002'
 
@@ -54,7 +54,7 @@
 # define PARENT_C 12	//	)
 # define DOLLAR 13		//	$
 
-# define PIPES (inf.mask >> 16)
+# define PIPES (g_inf.mask >> 16)
 # define OUT(x) ((x >> 1) & 1)
 # define APP(x) (((x >> 1) & 1) ? (0) : (1))
 # define HD(x) ((x & 1) ? (0) : (1))
@@ -79,7 +79,8 @@ typedef struct		s_pipes
 	char			**cmd;
 	char			*in;
 	char			*out;
-	char 			mask;					//1 значит один знак "<"/">", 0 - два знака "<"/">"
+	//	1 значит один знак "<"/">", 0 - два знака "<"/">"
+	char 			mask;
 	struct s_pipes	*next;
 }					t_pipes;
 
@@ -88,7 +89,9 @@ typedef	struct		s_mshell
 	char			*line;
 	char			**env;
 	char 			**env_cpy;
-	int				mask;					//	первые 16 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара; 3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица; 4 bit update_lenv
+	//	первые 16 бит кол-во пайпов, последний бит 1 если надо поменять доллар; 2ой 1:есть доллар 0:нет доллара;
+	//	3ий с конца бит 1: если в токене доллара первый символ цифра; 0: не единица; 4 bit update_lenv
+	int				mask;
 	int				code;
 	t_env			*lenv;
 	t_list			*tokens;
@@ -99,23 +102,12 @@ typedef	struct		s_mshell
 void	*free_pipes(t_pipes *pipes);
 void	*free_lenv(t_env *lenv);
 t_env	*make_env_list(char **envp);
-//int		ft_arrlen(char **arr);
-//void	free_list(t_list *list);
 t_pipes	*parse(char *line);
 void	print_list(t_list *tok);
 void	free_val(t_list *token);
 void	*free_tokens(t_list *tokens);
-//void	*free_pipex_args(char **ar, int pipes);
 int		count_pipes(t_list *token);
-//int		ft_strapp(char **s1, char *s2);
-//void	dol_spc_str(void);
-//int		dollar(t_list *dlr);
-//int		dollar_find(t_list *token);
-//void	streams(t_list *token);
-//int		is_separator(char c);
-//int		make_token(t_list *token, char *line, int end, int shift, int sep);
 int		token_key(char line);
-//t_pipes	*invalid_args(void);
 void	sig_hand(int sig);
 void	sig_quit(int sig);
 void	exec(void);
@@ -127,15 +119,14 @@ char    *expand_dol(char *line);
 char	*find_env(char *find);
 int		cd_main(char **cmd, int index);
 void	exit_ms(char *err, int status);
-int 	ft_strlen_env(char *en); //del; -->minishell.h
+int 	ft_strlen_env(char *en);
 void	add_variable(t_env	*lenv, char **av);
-char	*parse_inf_key(char *s); //del; -->minishell.h
-char	*parse_inf_val(char *s); //del -->minishell.h
-void	print_exp(char **exp); // //del -->minishell.h
-void 	free_exp(char **exp); // //del -->minishell.h
-int		check_key(char c); //del -->minishell.h
-//int		check_val(char c);
-int 	same_key(void); //del -->minishell.h
+char	*parse_inf_key(char *s);
+char	*parse_inf_val(char *s);
+void	print_exp(char **exp);
+void 	free_exp(char **exp);
+int		check_key(char c);
+int 	same_key(void);
 char	**new_key(char **cmd);
 void	strapp(char **s1, char *s2, int f);
 void	print_string(char **str);
@@ -143,4 +134,23 @@ void	exit_main(int index);
 int 	echo_main(int argc, char **argv);
 int		pwd_main(void);
 void    check_pipes(t_list *token);
+t_pipes	*copy_pipes(t_pipes *new, t_list *old);
+void	cap(t_pipes *new, int i, int j);
+void	copy_out(t_pipes *new, char *val, char key);
+int		q_args(t_list *token);
+void	remove_quotes(t_list *token);
+int		join_commands(t_list *token);
+t_pipes	*remalloc(void);
+void	strapp(char **s1, char *s2, int f);
+void	strapp2(char *str, char **s2);
+t_pipes	*cleaning(void);
+int		same_token(char old, char new);
+void	check_pipes(t_list *token);
+int	fill_token(int old, char new, int *token_index, int *val_index);
+void	make_new_token(int *token_index, int *val_index, char key);
+int		tok_quant(char *line);
+char	*joinlist(t_list **bl);
+char	*replace_dollar(char *line, int start, int end);
+int		isdollar(char *line, int i);
+t_list	*newlst(char *val, int start, int end, char *str);
 #endif
