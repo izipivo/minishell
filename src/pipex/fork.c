@@ -20,10 +20,10 @@ static pid_t	*createpids(int **fd)
 	int		i;
 
 	i = -1;
-	pid = (pid_t *)malloc(sizeof(pid_t) * PIPES);
+	pid = (pid_t *)malloc(sizeof(pid_t) * (g_inf.mask >> 16));
 	if (!pid)
 		exitmalloc(fd);
-	while (++i < PIPES)
+	while (++i < (g_inf.mask >> 16))
 		pid[i] = 0;
 	g_inf.pids = pid;
 	return (pid);

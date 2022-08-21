@@ -20,7 +20,6 @@ char	*ft_strjoin(char const *s1, char const	*s2)
 	i = -1;
 	if (!s1 && !s2)
 	{
-		// ft_putstr_fd("ft_strjoin: no input strings\n", 2);
 		return (0);
 	}
 	else if (!s1)

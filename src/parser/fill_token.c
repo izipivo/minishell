@@ -43,7 +43,8 @@ void	make_new_token(int *token_index, int *val_index, char key)
 	*val_index = 0;
 	++(*token_index);
 	g_inf.tokens[*token_index].key = key;
-	g_inf.tokens[*token_index].val = (char *)malloc(sizeof(char) * 1000);//!!!!
+	g_inf.tokens[*token_index].val = (char *)malloc(sizeof(char)
+			* g_inf.line_len);
 	if (!g_inf.tokens[*token_index].val)
 		exit_ms("malloc", 1);
 }

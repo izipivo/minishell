@@ -111,7 +111,7 @@ t_pipes	*cleaning(void)
 {
 	if (g_inf.tokens->key == PIPE)
 		exit_ms("syntax error near unexpected token `|'", 2);
-	if (QUOTS(g_inf.mask))
+	if (g_inf.mask >> 1 & 1)
 	{
 		remove_quotes(g_inf.tokens);
 	}

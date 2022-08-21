@@ -16,7 +16,7 @@ extern t_mshell	g_inf;
 
 int	open_(char *filename, int app)
 {
-	if (!g_inf.pipes[PIPES - 1].out)
+	if (!g_inf.pipes[(g_inf.mask >> 16) - 1].out)
 		return (1);
 	if (app)
 		return (open(filename, O_APPEND | O_CREAT | O_WRONLY, 0664));

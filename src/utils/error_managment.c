@@ -21,7 +21,7 @@ void	*free_fd(int **fd)
 	i = -1;
 	if (fd)
 	{
-		while (++i <= PIPES)
+		while (++i <= (g_inf.mask >> 16))
 		{
 			if (fd[i])
 				free(fd[i]);

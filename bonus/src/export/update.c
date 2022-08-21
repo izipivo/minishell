@@ -1,13 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   update.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pdursley <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/21 10:21:12 by pdursley          #+#    #+#             */
+/*   Updated: 2022/08/21 10:22:15 by pdursley         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-extern t_mshell g_inf;
+extern t_mshell	g_inf;
 
-char *parse_inf_key(char *s); //del; -->minishell.h
-char *parse_inf_val(char *s); //del -->minishell.h
+char	*parse_inf_key(char *s);
+char	*parse_inf_val(char *s);
 
 void	add_variable(t_env	*lenv, char **av)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (lenv->next)

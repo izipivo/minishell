@@ -46,12 +46,12 @@ int	main(int argc, char **argv, char **envp)
 		}
 		add_history(g_inf.line);
 		g_inf.line = expand_dol(g_inf.line);
-		g_inf.pipes = parse(g_inf.line);
+		g_inf.pipes = parse(g_inf.line, -1, -1);
 		free(g_inf.line);
 		g_inf.line = NULL;
 		g_inf.code = 0;
-		if (PIPES)
-			exec();
+		if ((g_inf.mask >> 16))
+			pipex();
 		g_inf.pipes = free_pipes(g_inf.pipes);
 		g_inf.mask = 0;
 	}
@@ -77,19 +77,19 @@ int     main(int argc, char **argv, char **envp)
     // if (argc < 3)
 	// 	exit(228);
 	g_inf.line = ft_strdup(argv[2]);
-    // if (!g_inf.line || ft_strlen(g_inf.line) == 0)
-    //     exit_ms(NULL, 0);
+	if (!g_inf.line || ft_strlen(g_inf.line) == 0)
+		exit_ms(NULL, 0);
 	// printf("%s\n", g_inf.line);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
 	g_inf.line = expand_dol(g_inf.line);
 	// printf("%s\n", g_inf.line);
-	g_inf.pipes = parse(g_inf.line);
+	g_inf.pipes = parse(g_inf.line, -1, -1);
 	free(g_inf.line);
 	g_inf.line = NULL;
 	// print_pipes(g_inf.pipes);
-	if (PIPES)
-		exec();
+	if ((g_inf.mask >> 16))
+		pipex();
 	g_inf.pipes = free_pipes(g_inf.pipes);
 	g_inf.mask = 0;
 	return (g_inf.code);
@@ -118,12 +118,12 @@ int     main(int argc, char **argv, char **envp)
 		exit_ms("exit", 0);
 	g_inf.line = expand_dol(g_inf.line);
 	// ft_putendl_fd(g_inf.line, 2);
-	g_inf.pipes = parse(g_inf.line);
+	g_inf.pipes = parse(g_inf.line, -1, -1);
 	free(g_inf.line);
 	g_inf.line = NULL;
 	// print_pipes(g_inf.pipes);
-	if (PIPES)
-		exec();
+	if ((g_inf.mask >> 16))
+		pipex();
 	g_inf.pipes = free_pipes(g_inf.pipes);
 	g_inf.mask = 0;
 	return (g_inf.code);

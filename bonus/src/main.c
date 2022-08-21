@@ -50,7 +50,6 @@ int	main(int argc, char **argv, char **envp)
 		free(g_inf.line);
 		g_inf.line = NULL;
 		g_inf.code = 0;
-		 print_pipes(g_inf.pipes);
 		if ((g_inf.mask >> 16))
 			pipex();
 		g_inf.pipes = free_pipes(g_inf.pipes);

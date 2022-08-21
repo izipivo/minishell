@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export_utils.c                                     :+:      :+:    :+:   */
+/*   exp_func.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pdursley <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,86 +12,80 @@
 
 #include "minishell.h"
 
-int	check_key(char c)
-{
-	if (c == '\0')
-		return (0);
-	if ((c >= 33 && c <= 45) || (c == 46) || (c == 64) || (c == 91) \
-			|| (c >= 92 && c <= 94) || (c == 96) || (c >= 123 && c <= 126))
-		return (1);
-	return (-1);
-}
+extern t_mshell	g_inf;
 
-char	*parse_while(char *res, char *s)
+char	*ft_res(char *cmd, char *res)
 {
 	int	i;
 	int	j;
 
 	i = 0;
 	j = 0;
-	while (s[i] != 61)
+	while (cmd[i])
 	{
-		if (check_key(s[i]) == 0)
-			break ;
-		if (s[i] == 92)
+		if (cmd[i] == 43 && cmd[i + 1] == 61)
 		{
 			i ++;
 			continue ;
 		}
-		res[j] = s[i];
+		res[j] = cmd[i];
 		i ++;
 		j ++;
 	}
+	res[j] = 0;
+	free(cmd);
 	return (res);
 }
 
-char	*parse_inf_key(char *s)
+char	*new_pipes_cmd(char *cmd)
 {
 	int		i;
-	int		j;
 	char	*res;
 
 	i = 0;
-	j = 0;
-	while (s[i] != 61)
-	{
-		if (check_key(s[i]) == 0)
-			break ;
-		if (s[i] == 92)
-		{
-			i ++;
-			continue ;
-		}
+	while (cmd[i])
 		i ++;
-		j ++;
-	}
-	res = (char *)malloc(j + 1);
+	res = (char *)malloc(sizeof(char) * i);
 	if (!res)
 		exit_ms("error malloc", -1);
-	res[j] = 0;
-	return (parse_while(res, s));
+	i = 0;
+	return (ft_res(cmd, res));
 }
 
-char	*val_malloc(char *s, char *res)
+char	**tmp_cmd(char **cmd, char **tmp)
 {
-	if (*s == 61 && !(*s + 1))
-		return (one_c(res, 2));
-	s ++;
-	res = ft_strdup(s);
-	return (res);
-}
+	int	i;
 
-char	*parse_inf_val(char *s)
-{
-	char	*res;
-
-	res = 0;
-	while (*s != 61)
+	i = 0;
+	while (cmd[i])
 	{
-		if (*s == '\0')
-			return (one_c(res, 1));
-		s ++;
+		free(cmd[i]);
+		cmd[i] = parse_inf_key(tmp[i]);
+		i ++;
 	}
-	res = val_malloc(s, res);
-	return (res);
+	return (cmd);
+}
+
+void	ft_check(int index)
+{
+	char	**tmp;
+
+	if (same_key() == -1)
+	{
+		tmp = new_key(g_inf.pipes[index].cmd);
+		g_inf.pipes[index].cmd = tmp_cmd(g_inf.pipes[index].cmd, tmp);
+		unset_main(index);
+		g_inf.pipes[index].cmd = back_cmd(g_inf.pipes[index].cmd, tmp);
+	}
+}
+
+int	ft_run(int i, int index)
+{
+	if (i > 1)
+	{
+		add_variable(g_inf.lenv, g_inf.pipes[index].cmd);
+		return (0);
+	}
+	sort_env(&g_inf);
+	return (-1);
 }

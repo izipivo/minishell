@@ -102,9 +102,9 @@ int	pipex(void)
 	int		**fd;
 	pid_t	*pid;
 
-	fd = multipipe(PIPES + 1);
+	fd = multipipe((g_inf.mask >> 16) + 1);
 	pid = forks(fd);
 	close_all(fd);
-	waitchildren(pid, fd, PIPES);
+	waitchildren(pid, fd, (g_inf.mask >> 16));
 	return (0);
 }

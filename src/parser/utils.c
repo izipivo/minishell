@@ -59,7 +59,7 @@ t_pipes	*remalloc(void)
 
 	old = g_inf.tokens;
 	g_inf.mask = count_pipes(old) << 16;
-	new = (t_pipes *) malloc(sizeof(t_pipes) * (PIPES + 1));
+	new = (t_pipes *) malloc(sizeof(t_pipes) * ((g_inf.mask >> 16) + 1));
 	if (!new)
 		exit_ms("malloc rip", 1);
 	ft_memset(&new[0], 0, sizeof(t_pipes));
