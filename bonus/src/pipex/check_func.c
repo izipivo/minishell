@@ -70,6 +70,8 @@ static int	conti(t_pipes *pipes, int parent, int index)
 
 int	check_func(t_pipes *pipes, int parent, int index)
 {
+	if (!pipes->cmd || !pipes->cmd[0])
+		return (12);
 	if (!(ft_strncmp(pipes->cmd[0], "export", 8)))
 	{
 		if (parent && pipes->cmd[1])
@@ -92,8 +94,7 @@ int	check_func(t_pipes *pipes, int parent, int index)
 		else
 			return (1);
 	}
-	else
-		return (conti(pipes, parent, index));
+	return (conti(pipes, parent, index));
 }
 
 char	**cmdparse(char **new, char **envp, int **fd)

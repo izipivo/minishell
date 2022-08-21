@@ -50,7 +50,8 @@ typedef struct s_pipes
 //	первые 16 бит кол-во пайпов, последний бит 1 если надо поменять доллар;
 //	2ой 1:есть доллар 0:нет доллара;
 //	3ий с конца бит 1: если в токене доллара первый символ цифра;
-//	0: не единица; 4 bit update_lenv
+//	0: не единица;
+//	4 bit update_lenv 1:надо обновить 2:не надо
 typedef struct s_mshell
 {
 	char			*line;
@@ -105,7 +106,7 @@ void	print_string(char **str);
 void	exit_main(int index);
 int		echo_main(int argc, char **argv);
 int		pwd_main(void);
-void	check_pipes(t_list *token);
+int		check_pipes(t_list *token);
 t_pipes	*copy_pipes(t_pipes *new, t_list *old);
 void	cap(t_pipes *new, int i, int j);
 void	copy_out(t_pipes *new, char *val, char key);
@@ -117,7 +118,7 @@ void	strapp(char **s1, char *s2, int f);
 void	strapp2(char *str, char **s2);
 t_pipes	*cleaning(void);
 int		same_token(char old, char new);
-void	check_pipes(t_list *token);
+int		check_pipes(t_list *token);
 int		fill_token(int old, char new, int *token_index, int *val_index);
 void	make_new_token(int *token_index, int *val_index, char key);
 int		tok_quant(char *line);
@@ -134,7 +135,6 @@ int		check_func(t_pipes *pipes, int parent, int index);
 char	*wldcrd(char *str);
 void	free_list(t_wldcrd *list);
 char	*select_and_join(t_wldcrd *list, char *str);
-void	check_redirs(t_list *token);
 void	check_wildcards(t_list *tokens);
 char	*find_wildcard_word(char **splt);
 void	ft_check(int index);
@@ -144,5 +144,10 @@ char	*one_c(char *c, int flag);
 void	sort_env(t_mshell	*g_inf);
 char	**back_cmd(char **cmd, char **tmp);
 void	del_unset(t_env *prev);
+int		check_redirs(t_list *token);
+void	ft_check(int index);
+int		return_prompt(char *err, int status);
+int		list_len(t_env *lenv);
+void	*free_env(char **env);
 
 #endif

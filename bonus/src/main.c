@@ -18,23 +18,43 @@
 
 t_mshell	g_inf;
 
-#ifdef MAIN
 
-void	init(char **envp)
+static char **copy_envp(char **envp)
+{
+	char	**copy;
+	int 	i;
+
+	i = -1;
+	copy = (char **)malloc(sizeof(char *) * (str_len(envp) + 1));
+	if (!copy)
+		exit_ms("malloc rip!", EXIT_ERROR);
+	while (envp[++i])
+	{
+		copy[i] = ft_strdup(envp[i]);
+		if (!copy[i])
+			exit_ms("malloc rip!", EXIT_ERROR);
+	}
+	copy[i] = NULL;
+	return (copy);
+}
+
+static void	init(char **envp)
 {
 	ft_memset(&g_inf, 0, sizeof(t_mshell));
-	g_inf.env = envp;
+	g_inf.env = copy_envp(envp);
 	g_inf.lenv = make_env_list(envp);
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_quit);
 }
+
+#ifdef MAIN
 
 int	main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
 	init(envp);
-	while (1)
+	while (3)
 	{
 		g_inf.line = readline(PROMPT);
 		if (g_inf.line == NULL)
@@ -46,14 +66,17 @@ int	main(int argc, char **argv, char **envp)
 		}
 		add_history(g_inf.line);
 		g_inf.line = expand_dol(g_inf.line);
-		g_inf.pipes = parse(g_inf.line, -1, -1);
-		free(g_inf.line);
-		g_inf.line = NULL;
+		if (g_inf.line)
+		{
+			g_inf.pipes = parse(g_inf.line, -1, -1);
+			free(g_inf.line);
+			g_inf.line = NULL;
+		}
 		g_inf.code = 0;
-		if ((g_inf.mask >> 16))
+		if (g_inf.pipes && (g_inf.mask >> 16))
 			pipex();
 		g_inf.pipes = free_pipes(g_inf.pipes);
-		g_inf.mask = 0;
+		g_inf.mask &= 1 << 3;
 	}
 }
 
@@ -68,27 +91,23 @@ int     main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	ft_memset(&g_inf, 0, sizeof(t_mshell));
-	g_inf.env = envp;
-	g_inf.lenv = make_env_list(envp);
-	signal(SIGQUIT, sig_quit);
-	signal(SIGINT, sig_hand);
+	init(envp);
 
-    if (argc < 3)
-		exit(228);
+    // if (argc < 3)
+	// 	exit(228);
 	g_inf.line = ft_strdup(argv[2]);
-    if (!g_inf.line || ft_strlen(g_inf.line) == 0)
+	if (!g_inf.line || ft_strlen(g_inf.line) == 0)
 		exit_ms(NULL, 0);
 	// printf("%s\n", g_inf.line);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
 	g_inf.line = expand_dol(g_inf.line);
-	// printf("%s\n", g_inf.line);
-	g_inf.pipes = parse(g_inf.line, -1, -1);
-	free(g_inf.line);
-	g_inf.line = NULL;
-	// print_pipes(g_inf.pipes);
-	if ((g_inf.mask >> 16))
+	if (g_inf.line) {
+		g_inf.pipes = parse(g_inf.line, -1, -1);
+		free(g_inf.line);
+		g_inf.line = NULL;
+	}
+	if (g_inf.pipes && (g_inf.mask >> 16))
 		pipex();
 	g_inf.pipes = free_pipes(g_inf.pipes);
 	g_inf.mask = 0;
@@ -104,15 +123,11 @@ int     main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	ft_memset(&g_inf, 0, sizeof(t_mshell));
-	g_inf.env = envp;
-	g_inf.lenv = make_env_list(envp);
-	signal(SIGQUIT, sig_quit);
-	signal(SIGINT, sig_hand);
+	init(envp);
 
-	g_inf.line = ft_strdup("whereis ls | cat -e | cat -e > test");
-	if (!g_inf.line || ft_strlen(g_inf.line) == 0)
-		exit(0);
+	g_inf.line = ft_strdup("");
+    if (!g_inf.line || ft_strlen(g_inf.line) == 0)
+        exit(0);
 	// ft_putendl_fd(g_inf.line, 2);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
@@ -122,7 +137,7 @@ int     main(int argc, char **argv, char **envp)
 	free(g_inf.line);
 	g_inf.line = NULL;
 	// print_pipes(g_inf.pipes);
-	if ((g_inf.mask >> 16))
+	if (g_inf.pipes && (g_inf.mask >> 16))
 		pipex();
 	g_inf.pipes = free_pipes(g_inf.pipes);
 	g_inf.mask = 0;

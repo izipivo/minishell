@@ -120,6 +120,7 @@ int	unset_main(int index)
 
 	flag = 0;
 	i = 0;
+	g_inf.mask |= 1 << 3;
 	while (g_inf.pipes[index].cmd[i])
 	{
 		flag = check_pipes_cmd_unset(g_inf.pipes[index].cmd[i]);

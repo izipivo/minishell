@@ -66,7 +66,10 @@ char	*expand_dol(char *line)
 			while (line[++i] && line[i] != '\'')
 				;
 			if (!line[i])
-				exit_ms("not closed quote", 1);
+			{
+				return_prompt("not closed quote", 1);
+				return (NULL);
+			}
 		}
 		else if (line[i] == '$')
 			dolr(bl, line, &start, &i);

@@ -60,19 +60,13 @@ char	*checkpath(char *tmp, char **envp, int **fd)
 	int		i;
 
 	i = -1;
+	path = NULL;
 	if (access(tmp, F_OK) == 0)
 		return (tmp);
-	while (ft_strnstr(envp[++i], "PWD", 4) == 0)
+	while (envp[++i] && ft_strnstr(envp[i], "PATH", 4) == 0)
 		;
-	path = check_buildin(&envp[i][4], tmp);
-	if (path)
-	{
-		free(tmp);
-		return (path);
-	}
-	i = -1;
-	while (ft_strnstr(envp[++i], "PATH", 4) == 0)
-		;
+	if (!envp[i])
+		return (NULL);
 	paths = ft_split(envp[i] + 5, ':');
 	return (findpathh(paths, path, fd, tmp));
 }

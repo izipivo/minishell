@@ -81,10 +81,6 @@ t_pipes	*copy_pipes(t_pipes *new, t_list *old)
 
 	j = -1;
 	i = 0;
-	if (old->key == PIPE)
-	{
-		exit_ms("not closed pipe", 1);
-	}
 	while (old)
 	{
 		iter(old, new, &i, &j);

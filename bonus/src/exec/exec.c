@@ -21,7 +21,7 @@ int	count_pipes(t_list *token)
 	count = 0;
 	while (token)
 	{
-		if (token->key == COMMAND && token->val && !count)
+		if (token->val && !count)
 			++count;
 		else if (count && token->key == PIPE)
 			++count;
@@ -39,6 +39,9 @@ void	sig_hand(int sig)
 		g_inf.lenv = free_lenv(g_inf.lenv);
 	if (g_inf.pipes)
 		g_inf.pipes = free_pipes(g_inf.pipes);
+	if (g_inf.env)
+		g_inf.env = free_env(g_inf.env);
+	rl_clear_history();
 	ft_putendl_fd("\nbye", 1);
 	exit(sig);
 }
@@ -62,10 +65,12 @@ void	sig_quit(int sig)
 			}
 		}
 	}
-	else if (sig == SIGQUIT)
+	if (sig == SIGINT || sig == SIGQUIT)
 	{
+		write(1, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
 		rl_redisplay();
-		return ;
 	}
 	g_inf.code = 128 + sig;
 }
@@ -82,8 +87,16 @@ void	exit_ms(char *err, int status)
 		g_inf.lenv = free_lenv(g_inf.lenv);
 	if (g_inf.pipes)
 		g_inf.pipes = free_pipes(g_inf.pipes);
+	if (g_inf.env)
+		g_inf.env = free_env(g_inf.env);
 	if (status >= 0)
 		exit(status);
-	rl_clear_history();
 	exit(1);
+}
+
+int	return_prompt(char *err, int status)
+{
+	ft_putendl_fd(err, 2);
+	g_inf.code = status;
+	return (RETURN_PROMPT);
 }

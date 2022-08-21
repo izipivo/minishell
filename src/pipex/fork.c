@@ -39,6 +39,30 @@ int	str_len(char **str)
 	return (i);
 }
 
+static void	update_env(void)
+{
+	t_env	*lenv;
+	char	**new;
+
+	if (((g_inf.mask >> 3) & 1) == 0)
+		return ;
+	g_inf.env = free_env(g_inf.env);
+	lenv = g_inf.lenv;
+	new = (char **)malloc(sizeof(char *) * list_len(lenv));
+	if (!new)
+		exit_ms("malloc rip!", EXIT_ERROR);
+	g_inf.env = new;
+	while (lenv)
+	{
+		*new = ft_strjoin(lenv->key, lenv->val);
+		if (!*new)
+			exit_ms("malloc rip!", EXIT_ERROR);
+		++new;
+		lenv = lenv->next;
+	}
+	*new = NULL;
+}
+
 int	child(int **fd, t_pipes *pipes, int index)
 {
 	char	**cmd;
@@ -48,6 +72,7 @@ int	child(int **fd, t_pipes *pipes, int index)
 	exit_status = check_func(pipes, 0, index);
 	if (exit_status != 256)
 		exit(0);
+	update_env();
 	cmd = cmdparse(pipes->cmd, g_inf.env, fd);
 	if (!cmd[0])
 		exitpipex(fd, PERROR": bin not found");

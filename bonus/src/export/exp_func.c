@@ -83,6 +83,7 @@ int	ft_run(int i, int index)
 {
 	if (i > 1)
 	{
+		g_inf.mask |= 1 << 3;
 		add_variable(g_inf.lenv, g_inf.pipes[index].cmd);
 		return (0);
 	}

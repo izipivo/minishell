@@ -14,32 +14,34 @@
 
 extern t_mshell	g_inf;
 
-static void	proof(t_list *token)
+static int	proof(t_list *token)
 {
 	if ((token->key == OUTFILE || token->key == INFILE)
 		&& ft_strlen(token->val) > 2)
-		exit_ms("parser error near '>'", 2);
+		return (return_prompt("parser error near '>'", 2));
 	if (token->key == OUTFILE && ft_strlen(token->val) == 2)
 		token->key = APPEND;
 	else if (token->key == INFILE && ft_strlen(token->val) == 2)
 		token->key = HEREDOC;
+	return (0);
 }
 
-void	check_redirs(t_list *token)
+int	check_redirs(t_list *token)
 {
 	while (token)
 	{
-		proof(token);
+		if (proof(token) == RETURN_PROMPT)
+			return (RETURN_PROMPT);
 		if (token->key > 2 && token->key < 7)
 		{
 			if (!token->next)
-				exit_ms("syntax error near unexpected token", 2);
+				return (return_prompt("syntax error near unexpected token", 2));
 			while (token->next && token->next->key == SPC)
 			{
 				token->next = token->next->next;
 			}
 			if (!token->next || token->next->key != COMMAND)
-				exit_ms("not valid syntax!", 1);
+				return (return_prompt("not valid syntax!", 1));
 			free(token->val);
 			token->val = ft_strdup(token->next->val);
 			free(token->next->val);
@@ -50,6 +52,7 @@ void	check_redirs(t_list *token)
 			token->key = COMMAND;
 		token = token->next;
 	}
+	return (0);
 }
 
 void	check_wildcards(t_list *tokens)

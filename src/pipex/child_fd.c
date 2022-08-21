@@ -51,7 +51,7 @@ static void	child_out(t_pipes *pipe, int index, int **fd, int app)
 			exitpipex(fd, pipe->out);
 	}
 	if (!app && pipe->out)
-		fd[index + 1][1] = open(pipe->out, O_WRONLY | O_CREAT);
+		fd[index + 1][1] = open(pipe->out, O_WRONLY | O_CREAT, 0664);
 	else if (app && pipe->out)
 		fd[index + 1][1] = open(pipe->out, O_APPEND | O_CREAT | O_WRONLY, 0664);
 	else if (!pipe->out && index == (g_inf.mask >> 16) - 1)

@@ -40,6 +40,7 @@
 # define PIPE_OK 1
 # define PIPE_KO 0
 # define EXIT_ERROR 1
+# define RETURN_PROMPT -228
 
 /*
 //		readline colours

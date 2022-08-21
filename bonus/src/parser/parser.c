@@ -16,14 +16,25 @@ extern t_mshell	g_inf;
 
 static t_pipes	*cont(int j, int n)
 {
+	t_pipes	*ret;
+
 	if (j != -1)
 		g_inf.tokens[n].val[++j] = 0;
 	g_inf.tokens[n].next = NULL;
 	g_inf.tokens[0].prev = NULL;
 	if ((g_inf.tokens[n].key == SQUOTES || g_inf.tokens[n].key == DQUOTES)
 		&& j != -1)
-		exit_ms("not closed quote", 1);
-	return (cleaning());
+	{
+		return_prompt("not closed quote", 1);
+		return (NULL);
+	}
+	ret = cleaning();
+	if (!ret)
+	{
+		if (g_inf.tokens)
+			g_inf.tokens = free_tokens(g_inf.tokens);
+	}
+	return (ret);
 }
 
 t_pipes	*parse(char *line, int i, int n)

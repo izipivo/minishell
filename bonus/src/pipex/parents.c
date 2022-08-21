@@ -46,3 +46,29 @@ void	waitchildren(pid_t *pid, int **fd, int argc)
 	free(fd);
 	free(pid);
 }
+
+void	*free_env(char **env)
+{
+	int	i;
+
+	i = -1;
+	while (env[++i])
+	{
+		free(env[i]);
+	}
+	free(env);
+	return (NULL);
+}
+
+int	list_len(t_env *lenv)
+{
+	int	i;
+
+	i = 1;
+	while (lenv)
+	{
+		++i;
+		lenv = lenv->next;
+	}
+	return (i);
+}
