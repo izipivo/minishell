@@ -36,34 +36,6 @@ char	*find_env(char *find)
 	return (NULL);
 }
 
-static void	check_redirs(void)
-{
-	t_list	*token;
-
-	token = g_inf.tokens;
-	while (token)
-	{
-		if ((token->key == OUTFILE || token->key == INFILE)
-			&& ft_strlen(token->val) > 2)
-			exit_ms("parser error near '>'", 2);
-		if (token->key == OUTFILE && ft_strlen(token->val) == 2)
-			token->key = APPEND;
-		else if (token->key == INFILE && ft_strlen(token->val) == 2)
-			token->key = HEREDOC;
-		if (token->key > 2 && token->key < 7)
-		{
-			if (!token->next)
-				exit_ms("syntax error near unexpected token", 2);
-			free(token->val);
-			token->val = ft_strdup(token->next->val);
-			token->next = token->next->next;
-		}
-		else if (token->key == SQUOTES || token->key == DQUOTES)
-			token->key = COMMAND;
-		token = token->next;
-	}
-}
-
 void	check_pipes(t_list *token)
 {
 	char	check;
@@ -107,6 +79,7 @@ void	check_pipes(t_list *token)
 //// ft_putstr_fd("_______________________\n",1);
 //	return (remalloc());
 //}
+
 t_pipes	*cleaning(void)
 {
 	if (g_inf.tokens->key == PIPE)
@@ -115,7 +88,7 @@ t_pipes	*cleaning(void)
 	{
 		remove_quotes(g_inf.tokens);
 	}
-	check_redirs();
+	check_redirs(g_inf.tokens);
 	check_pipes(g_inf.tokens);
 	join_commands(g_inf.tokens);
 	return (remalloc());

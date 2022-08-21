@@ -30,7 +30,7 @@ NAME =				minishell
 
 SRC =				parser/expand_dolar.c parser/expand_dollar2.c parser/token_list.c parser/parser.c\
 					parser/env_list.c parser/copy_pipes.c parser/copy_pipes2.c parser/utils.c parser/cleaning.c\
-					parser/fill_token.c exec/exec.c exec/exec2.c\
+					parser/fill_token.c parser/check.c exec/exec.c exec/exec2.c\
 					pipex/pipex.c pipex/parents.c pipex/fork.c\
 					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
 					pipex/get_next_line_utils.c  pipex/child_fd.c pipex/check_func.c\

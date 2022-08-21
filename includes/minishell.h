@@ -140,5 +140,7 @@ char	*one_c(char *c, int flag);
 void	sort_env(t_mshell	*g_inf);
 char	**back_cmd(char **cmd, char **tmp);
 void	del_unset(t_env *prev);
+void	check_redirs(t_list *token);
+void	ft_check(int index);
 
 #endif
