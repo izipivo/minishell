@@ -159,4 +159,12 @@ int		close_all(int **fd);
 int		str_len(char **str);
 void	child_fd(int index, int **fd);
 int	check_func(t_pipes *pipes, int parent, int index);
+char	*one_c(char *c, int flag);
+char	**join_env(t_mshell *g_inf, char **result, int i);
+void	ft_check(int index);
+int	ft_run(int i, int index);
+char	**back_cmd(char **cmd, char **tmp);
+void	sort_env(t_mshell	*g_inf);
+char	**ft_exp(t_mshell	*g_inf);
+void	unset_env_list(t_env *lenv, char **del);
 #endif

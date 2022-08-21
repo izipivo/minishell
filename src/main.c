@@ -74,11 +74,11 @@ int     main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, sig_quit);
 	signal(SIGINT, sig_hand);
 
-    if (argc < 3)
-        exit(228);
+    // if (argc < 3)
+	// 	exit(228);
 	g_inf.line = ft_strdup(argv[2]);
-    if (!g_inf.line || ft_strlen(g_inf.line) == 0)
-        exit_ms(NULL, 0);
+    // if (!g_inf.line || ft_strlen(g_inf.line) == 0)
+    //     exit_ms(NULL, 0);
 	// printf("%s\n", g_inf.line);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);

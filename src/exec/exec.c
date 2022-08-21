@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pdursley <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/21 10:21:12 by pdursley          #+#    #+#             */
+/*   Updated: 2022/08/21 10:22:15 by pdursley         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 extern t_mshell	g_inf;
@@ -11,12 +23,8 @@ void	*free_pipes(t_pipes *pipes)
 	while (pipes)
 	{
 		i = -1;
-		// ft_putstr_fd(pipes[0].cmd[0], 1);
 		while (pipes->cmd[++i])
-		{
-			// printf("free_pipes: %s\n", pipes->cmd[i]);
 			free(pipes->cmd[i]);
-		}
 		free(pipes->cmd);
 		if (pipes->in)
 			free(pipes->in);
@@ -30,8 +38,9 @@ void	*free_pipes(t_pipes *pipes)
 
 void	print_string(char **str)
 {
-	int i=-1;
+	int	i;
 
+	i = -1;
 	while (str[++i] && *str[i])
 	{
 		ft_putendl_fd(str[i], 1);
@@ -75,7 +84,6 @@ void	find_redir(t_list *token, char ***files, int pipes)
 	file = *files;
 	file[0] = "pipex";
 	file[1] = "/";
-	// ft_putendl_fd("hui", 1);
 	file[pipes - 2] = "/";
 	file[pipes - 1] = NULL;
 	while (token)

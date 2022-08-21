@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   unset_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pdursley <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,38 +14,45 @@
 
 extern t_mshell	g_inf;
 
-void	print_env(void)
+void	ft_del(char **del, int i)
 {
 	void	*tmp;
 
-	tmp = g_inf.lenv;
-	while (g_inf.lenv)
+	if (!ft_strncmp(g_inf.lenv->key, del[i], ft_strlen(g_inf.lenv->key)))
 	{
-		ft_putstr_fd(g_inf.lenv->key, 1);
-		ft_putchar_fd('=', 1);
-		ft_putstr_fd(g_inf.lenv->val, 1);
-		ft_putchar_fd('\n', 1);
-		g_inf.lenv = g_inf.lenv->next;
+		tmp = g_inf.lenv->next;
+		free(g_inf.lenv->key);
+		free(g_inf.lenv->val);
+		free(g_inf.lenv);
+		g_inf.lenv = tmp;
 	}
-	g_inf.lenv = tmp;
 }
 
-int	env_main(int index)
+void	unset_env_list(t_env *lenv, char **del)
 {
-	int	i;
+	int		i;
+	void	*tmp;
 
-	i = -1;
-	while (g_inf.pipes[index].cmd[++ i])
-		;
-	if (i != 1)
+	i = 0;
+	while (del[i])
 	{
-		ft_putstr_fd("env: ", 2);
-		ft_putchar_fd('\'', 2);
-		ft_putstr_fd(g_inf.pipes[index].cmd[1], 2);
-		ft_putchar_fd('\'', 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-		return (1);
+		ft_del(del, i);
+		++i;
 	}
-	print_env();
-	return (0);
+	tmp = NULL;
+	while (lenv)
+	{
+		i = -1;
+		while (del[++ i])
+		{
+			if (!ft_strncmp(lenv->key, del[i], ft_strlen(lenv->key)))
+			{
+				lenv = lenv->next;
+				del_unset(tmp);
+			}
+		}
+		tmp = lenv;
+		if (lenv)
+			lenv = lenv->next;
+	}
 }

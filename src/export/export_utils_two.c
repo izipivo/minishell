@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   export_utils_two.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pdursley <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,40 +12,68 @@
 
 #include "minishell.h"
 
-extern t_mshell	g_inf;
-
-void	print_env(void)
+int	ft_strlen_env(char *en)
 {
-	void	*tmp;
+	int	i;
 
-	tmp = g_inf.lenv;
-	while (g_inf.lenv)
-	{
-		ft_putstr_fd(g_inf.lenv->key, 1);
-		ft_putchar_fd('=', 1);
-		ft_putstr_fd(g_inf.lenv->val, 1);
-		ft_putchar_fd('\n', 1);
-		g_inf.lenv = g_inf.lenv->next;
-	}
-	g_inf.lenv = tmp;
+	i = 0;
+	while (en[i])
+		i ++;
+	return (i);
 }
 
-int	env_main(int index)
+void	print_exp(char **exp)
 {
 	int	i;
 
 	i = -1;
-	while (g_inf.pipes[index].cmd[++ i])
-		;
-	if (i != 1)
+	while (exp[++ i])
 	{
-		ft_putstr_fd("env: ", 2);
-		ft_putchar_fd('\'', 2);
-		ft_putstr_fd(g_inf.pipes[index].cmd[1], 2);
-		ft_putchar_fd('\'', 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-		return (1);
+		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd(exp[i], 1);
+		ft_putstr_fd("\n", 1);
 	}
-	print_env();
-	return (0);
+}
+
+void	free_exp(char **exp)
+{
+	int	i;
+
+	i = 0;
+	while (exp[i])
+	{
+		free(exp[i]);
+		i ++;
+	}
+	free(exp);
+}
+
+int	check_val(char c)
+{
+	if (c == '\0')
+		return (0);
+	if (c == 33 || c == 40 || c == 41)
+		return (1);
+	return (-1);
+}
+
+char	*one_c(char *c, int flag)
+{
+	if (flag == 1)
+	{
+		c = malloc(sizeof(char));
+		if (!c)
+			exit_ms("error malloc", -1);
+		c[0] = '\0';
+		return (c);
+	}
+	else
+	{
+		c = malloc(sizeof(char) + 1);
+		if (!c)
+			exit_ms("error malloc", -1);
+		c[0] = '=';
+		c[1] = '\0';
+		return (c);
+	}
 }
