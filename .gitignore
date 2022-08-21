@@ -1,7 +1,7 @@
 .idea
-.vscode*
+.vscode
 a.out
 test*
 minishell_tes*
-minishell*
+minishell
 bonus/minishell_tester*
