@@ -12,10 +12,6 @@ INCLUDE = 			-I ${HDRS_DIR}
 
 CC =				cc -D MAIN=0
 
-BONUSDIR =			bonus/
-
-BONUS =				$(addprefix ${BONUSDIR}, minishell_bonus)
-
 ifeq ($(MAKECMDGOALS), t)
 CC =				cc -D TEST=0
 endif
@@ -26,19 +22,18 @@ endif
 
 RM =				rm -rf
 
-NAME =				minishell
+NAME =				minishell_bonus
 
-SRC =				parser/expand_dolar.c parser/expand_dollar2.c parser/token_list.c parser/parser.c exec/exec.c\
+SRC =				parser/expand_dolar.c parser/expand_dollar2.c parser/token_list.c parser/parser.c\
 					parser/env_list.c parser/copy_pipes.c parser/copy_pipes2.c parser/utils.c parser/cleaning.c\
-					parser/fill_token.c \
+					parser/fill_token.c  parser/check.c exec/exec.c exec/exec2.c\
 					pipex/pipex.c pipex/parents.c pipex/fork.c\
 					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
 					pipex/get_next_line_utils.c  pipex/child_fd.c pipex/check_func.c\
-					export/export.c export/exp_func_two.c export/export_utils.c export/export_utils_two.c\
-					export/exp_func.c\
-					export/update.c export/unset.c export/unset_utils.c\
+					export/export.c export/export_utils.c\
+					export/update.c export/unset.c\
 					export/same_for_export.c env/env.c exit/exit.c cd/cd.c main.c\
-					echo/echo.c pwd/pwd.c
+					echo/echo.c pwd/pwd.c wildcard/wldcard.c wildcard/wldcard2.c
 
 SRC_DIR =			./src/
 
@@ -46,9 +41,9 @@ HEADERS =			$(addprefix ${HDRS_DIR}, ${HDRS})
 
 SOURCES =			$(addprefix ${SRC_DIR}, ${SRC})
 
-BUILDIR = ./obj/
+BUILDIR = 			./obj/
 
-BUILDIRS =			echo/ cd/ env/ pwd/ utils/ pipex/ exec/ parser/ export/ exit/ libft/
+BUILDIRS =			echo/ wildcard/ cd/ env/ pwd/ utils/ pipex/ exec/ parser/ export/ exit/ libft/
 
 BLDRS =				$(addprefix ${BUILDIR}, ${BUILDIRS})
 
@@ -73,6 +68,7 @@ ${LIBFT}:
 
 ${NAME}:			${OBJS} ${HEADERS} 
 					${CC} ${CFLAGS} ${OBJS} -o $@ ${LIBS}
+					mv $@ ../
 
 ${BUILDIR}:
 					mkdir -p $@
@@ -83,19 +79,12 @@ ${BLDRS}:
 ${BUILDIR}%.o:		${SRC_DIR}%.c ${HEADERS} Makefile
 					${CC} ${INCLUDE} -c ${CFLAGS} $< -o $@
 
-bonus:				${BONUS}
-
-${BONUS}:
-					${MAKE} -C ${BONUSDIR}
-
 clean:
 					${MAKE} clean -C ${LIBFTDIR}
-					${MAKE} clean -C ${BONUSDIR}
 					${RM} ${BUILDIR}
 
 fclean:				clean
 					${MAKE} fclean -C ${LIBFTDIR}
-					${MAKE} fclean -C ${BONUSDIR}
-					${RM} ${NAME}
+					${RM} ../${NAME}
 
 re:					fclean all
