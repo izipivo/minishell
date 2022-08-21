@@ -25,49 +25,6 @@ void	del_unset(t_env *prev)
 	free(lenv);
 }
 
-// void	ft_del(char **del, int i)
-// {
-// 	void	*tmp;
-
-// 	if (!ft_strncmp(g_inf.lenv->key, del[i], ft_strlen(g_inf.lenv->key)))
-// 	{
-// 		tmp = g_inf.lenv->next;
-// 		free(g_inf.lenv->key);
-// 		free(g_inf.lenv->val);
-// 		free(g_inf.lenv);
-// 		g_inf.lenv = tmp;
-// 	}
-// }
-
-// void	unset_env_list(t_env *lenv, char **del)
-// {
-// 	int		i;
-// 	void	*tmp;
-
-// 	i = 0;
-// 	while (del[i])
-// 	{
-// 		ft_del(del, i);
-// 		++i;
-// 	}
-// 	tmp = NULL;
-// 	while (lenv)
-// 	{
-// 		i = -1;
-// 		while (del[++ i])
-// 		{
-// 			if (!ft_strncmp(lenv->key, del[i], ft_strlen(lenv->key)))
-// 			{
-// 				lenv = lenv->next;
-// 				del_unset(tmp);
-// 			}
-// 		}
-// 		tmp = lenv;
-// 		if (lenv)
-// 			lenv = lenv->next;
-// 	}
-// }
-
 void	error_print_unset(char *str, int i)
 {
 	if (str[i] == 45)
@@ -92,11 +49,13 @@ int	check_pipes_cmd_unset(char *str)
 
 	i = -1;
 	if (str[0] >= '0' && str[0] <= '9')
-		return (1);
+		return (0);
 	while (str[++ i])
 	{
 		if (str[i] == 59)
 			return (127);
+		if (str[i] == 61)
+			return (0);
 	}
 	i = 0;
 	while (str[i])
@@ -106,7 +65,7 @@ int	check_pipes_cmd_unset(char *str)
 		if ((check_key(str[i])) == 1)
 		{
 			error_print_unset(str, i);
-			return (1);
+			return (0);
 		}
 		i ++;
 	}
@@ -123,8 +82,8 @@ int	unset_main(int index)
 	while (g_inf.pipes[index].cmd[i])
 	{
 		flag = check_pipes_cmd_unset(g_inf.pipes[index].cmd[i]);
-		if (flag == 1)
-			return (0);
+		if (flag == 0)
+			return (1);
 		if (flag == 2)
 			return (2);
 		if (flag == 127)
