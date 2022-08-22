@@ -50,7 +50,7 @@ int	errors_exit(int signal, int res)
 	if (signal == 1)
 		exit_ms(NULL, res % 256);
 	if (signal == 2)
-		exit_ms(NULL, 255);
+		exit_ms(NULL, 2);
 	if (signal == 255)
 		exit_ms(NULL, 2);
 	if (signal == -1)

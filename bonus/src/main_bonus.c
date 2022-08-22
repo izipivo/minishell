@@ -42,20 +42,12 @@ static void	init(char **envp)
 	signal(SIGINT, sig_quit);
 }
 
-
 /*
 //		main
 */
-
 #ifdef MAIN
-
-int	main(int argc, char **argv, char **envp)
+static void	loop(char *tmp)
 {
-	char	*tmp;
-
-	(void)argc;
-	(void)argv;
-	init(envp);
 	while (3)
 	{
 		g_inf.line = readline(PROMPT);
@@ -68,14 +60,11 @@ int	main(int argc, char **argv, char **envp)
 		}
 		add_history(g_inf.line);
 		tmp = expand_dol(g_inf.line);
-		if (!tmp)
+		if (tmp)
 		{
-			free(g_inf.line);
-			g_inf.line = NULL;
-			continue ;
+			g_inf.line = tmp;
+			g_inf.pipes = parse(g_inf.line, -1, -1);
 		}
-		g_inf.line = tmp;
-		g_inf.pipes = parse(g_inf.line, -1, -1);
 		free(g_inf.line);
 		g_inf.line = NULL;
 		g_inf.code = 0;
@@ -86,81 +75,95 @@ int	main(int argc, char **argv, char **envp)
 	}
 }
 
+int	main(int argc, char **argv, char **envp)
+{
+	char	*tmp;
+
+	(void)argc;
+	(void)argv;
+	init(envp);
+	tmp = NULL;
+	loop(tmp);
+}
+
 #endif
 
+/*
+//		tester
+*/
 #ifdef TEST
-/*
-//		main для тестера
-*/
-
-int     main(int argc, char **argv, char **envp)
+static int	loop(char *tmp)
 {
-	char	*tmp;
-	(void)argc;
-	(void)argv;
-	init(envp);
-
-    // if (argc < 3)
-	// 	exit(228);
-	g_inf.line = ft_strdup(argv[2]);
-	if (!g_inf.line || ft_strlen(g_inf.line) == 0)
-		exit_ms(NULL, 0);
-	// printf("%s\n", g_inf.line);
+	g_inf.line = ft_strdup(tmp);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
-
-	tmp = expand_dol(g_inf.line);
-	if (!tmp)
+	if (!ft_strlen(g_inf.line))
 	{
-		free(g_inf.line);
-		g_inf.line = NULL;
-		return (0);
+		exit_ms(NULL, 0);
 	}
-	g_inf.line = tmp;
-	g_inf.pipes = parse(g_inf.line, -1, -1);
+	tmp = expand_dol(g_inf.line);
+	if (tmp)
+	{
+		g_inf.line = tmp;
+		g_inf.pipes = parse(g_inf.line, -1, -1);
+		g_inf.code = 0;
+	}
+	else
+		g_inf.code = 2;
 	free(g_inf.line);
 	g_inf.line = NULL;
 	if (g_inf.pipes && (g_inf.mask >> 16))
 		pipex();
+	else if (!g_inf.pipes)
+		g_inf.code = 2;
 	g_inf.pipes = free_pipes(g_inf.pipes);
-	g_inf.mask = 0;
+	g_inf.mask &= 1 << 3;
 	return (g_inf.code);
 }
+
+int	main(int argc, char **argv, char **envp)
+{
+	(void)argc;
+	init(envp);
+	return (loop(argv[2]));
+}
+
 #endif
 
-#ifdef GDB
 /*
-//		main для gdb
+//		debugger
 */
-int     main(int argc, char **argv, char **envp)
+#ifdef GDB
+static int	loop(char *tmp)
 {
-	char	*tmp;
-	(void)argc;
-	(void)argv;
-	init(envp);
-
-	g_inf.line = ft_strdup("ls -la > tmp/file");
-	if (!g_inf.line || ft_strlen(g_inf.line) == 0)
-		exit_ms(NULL, 0);
-	// printf("%s\n", g_inf.line);
+	g_inf.line = ft_strdup("ls -la>'tmp/file'");
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
-
-	tmp = expand_dol(g_inf.line);
-	if (!tmp)
+	if (!ft_strlen(g_inf.line))
 	{
-		free(g_inf.line);
-		g_inf.line = NULL;
-		return (0);
+		exit_ms(NULL, 0);
 	}
-	g_inf.line = tmp;
-	g_inf.pipes = parse(g_inf.line, -1, -1);
+	tmp = expand_dol(g_inf.line);
+	if (tmp)
+	{
+		g_inf.line = tmp;
+		g_inf.pipes = parse(g_inf.line, -1, -1);
+	}
 	free(g_inf.line);
 	g_inf.line = NULL;
+	g_inf.code = 0;
 	if (g_inf.pipes && (g_inf.mask >> 16))
 		pipex();
 	g_inf.pipes = free_pipes(g_inf.pipes);
-	g_inf.mask = 0;
+	g_inf.mask &= 1 << 3;
 	return (g_inf.code);
 }
+
+int	main(int argc, char **argv, char **envp)
+{
+	(void)argc;
+	init(envp);
+	return (loop(NULL));
+}
+
 #endif

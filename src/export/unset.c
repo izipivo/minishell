@@ -84,7 +84,7 @@ int	unset_main(int index)
 	{
 		flag = check_pipes_cmd_unset(g_inf.pipes[index].cmd[i]);
 		if (flag == 0)
-			return (1);
+			return (0);
 		if (flag == 2)
 			return (2);
 		if (flag == 127)
