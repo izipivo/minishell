@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_DEFINES_H
-# define MINISHELL_DEFINES_H
+#ifndef MINISHELL_DEFINES_BONUS_H
+# define MINISHELL_DEFINES_BONUS_H
 
 /*
 //		token's keys

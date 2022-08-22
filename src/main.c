@@ -18,11 +18,10 @@
 
 t_mshell	g_inf;
 
-
-static char **copy_envp(char **envp)
+static char	**copy_envp(char **envp)
 {
 	char	**copy;
-	int 	i;
+	int		i;
 
 	i = -1;
 	copy = (char **)malloc(sizeof(char *) * (str_len(envp) + 1));
@@ -125,9 +124,9 @@ int     main(int argc, char **argv, char **envp)
 	(void)argv;
 	init(envp);
 
-	g_inf.line = ft_strdup("");
+	g_inf.line = ft_strdup("ls -la > tmp/file");
     if (!g_inf.line || ft_strlen(g_inf.line) == 0)
-        exit(0);
+		exit(0);
 	// ft_putendl_fd(g_inf.line, 2);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);

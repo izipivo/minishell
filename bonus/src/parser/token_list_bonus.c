@@ -16,19 +16,15 @@ extern t_mshell	g_inf;
 
 void	*free_tokens(t_list *token)
 {
-	t_list	*cpy;
 	int		i;
 
 	i = -1;
-	cpy = token;
-	while (1)
+	while (&token[++i] != g_inf.end_of_tokens)
 	{
-		if (token[++i].val != NULL)
+		if (token[i].val != NULL)
 			free_val(&(token[i]));
-		if (token[i].next == NULL)
-			break ;
 	}
-	free(cpy);
+	free(token);
 	return (NULL);
 }
 

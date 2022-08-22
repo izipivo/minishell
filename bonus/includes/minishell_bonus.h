@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef MINISHELL_BONUS_H
+# define MINISHELL_BONUS_H
 # include <stdlib.h>
 # include <string.h>
 # include <stdio.h>
@@ -62,6 +62,7 @@ typedef struct s_mshell
 	int				line_len;
 	t_env			*lenv;
 	t_list			*tokens;
+	t_list			*end_of_tokens;
 	t_pipes			*pipes;
 	pid_t			*pids;
 }					t_mshell;

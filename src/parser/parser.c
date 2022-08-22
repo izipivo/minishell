@@ -21,6 +21,7 @@ static t_pipes	*cont(int j, int n)
 	if (j != -1)
 		g_inf.tokens[n].val[++j] = 0;
 	g_inf.tokens[n].next = NULL;
+	g_inf.end_of_tokens = &g_inf.tokens[n + 1];
 	g_inf.tokens[0].prev = NULL;
 	if ((g_inf.tokens[n].key == SQUOTES || g_inf.tokens[n].key == DQUOTES)
 		&& j != -1)
