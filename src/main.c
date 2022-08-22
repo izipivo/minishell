@@ -12,10 +12,6 @@
 
 #include "minishell.h"
 
-/*
-//		main 
-*/
-
 t_mshell	g_inf;
 
 static char	**copy_envp(char **envp)
@@ -46,10 +42,17 @@ static void	init(char **envp)
 	signal(SIGINT, sig_quit);
 }
 
+
+/*
+//		main
+*/
+
 #ifdef MAIN
 
 int	main(int argc, char **argv, char **envp)
 {
+	char	*tmp;
+
 	(void)argc;
 	(void)argv;
 	init(envp);
@@ -64,13 +67,17 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		}
 		add_history(g_inf.line);
-		g_inf.line = expand_dol(g_inf.line);
-		if (g_inf.line)
+		tmp = expand_dol(g_inf.line);
+		if (!tmp)
 		{
-			g_inf.pipes = parse(g_inf.line, -1, -1);
 			free(g_inf.line);
 			g_inf.line = NULL;
+			continue ;
 		}
+		g_inf.line = tmp;
+		g_inf.pipes = parse(g_inf.line, -1, -1);
+		free(g_inf.line);
+		g_inf.line = NULL;
 		g_inf.code = 0;
 		if (g_inf.pipes && (g_inf.mask >> 16))
 			pipex();
@@ -88,6 +95,7 @@ int	main(int argc, char **argv, char **envp)
 
 int     main(int argc, char **argv, char **envp)
 {
+	char	*tmp;
 	(void)argc;
 	(void)argv;
 	init(envp);
@@ -100,12 +108,18 @@ int     main(int argc, char **argv, char **envp)
 	// printf("%s\n", g_inf.line);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
-	g_inf.line = expand_dol(g_inf.line);
-	if (g_inf.line) {
-		g_inf.pipes = parse(g_inf.line, -1, -1);
+
+	tmp = expand_dol(g_inf.line);
+	if (!tmp)
+	{
 		free(g_inf.line);
 		g_inf.line = NULL;
+		return (0);
 	}
+	g_inf.line = tmp;
+	g_inf.pipes = parse(g_inf.line, -1, -1);
+	free(g_inf.line);
+	g_inf.line = NULL;
 	if (g_inf.pipes && (g_inf.mask >> 16))
 		pipex();
 	g_inf.pipes = free_pipes(g_inf.pipes);
@@ -120,22 +134,29 @@ int     main(int argc, char **argv, char **envp)
 */
 int     main(int argc, char **argv, char **envp)
 {
+	char	*tmp;
 	(void)argc;
 	(void)argv;
 	init(envp);
 
 	g_inf.line = ft_strdup("ls -la > tmp/file");
-    if (!g_inf.line || ft_strlen(g_inf.line) == 0)
-		exit(0);
-	// ft_putendl_fd(g_inf.line, 2);
+	if (!g_inf.line || ft_strlen(g_inf.line) == 0)
+		exit_ms(NULL, 0);
+	// printf("%s\n", g_inf.line);
 	if (g_inf.line == NULL)
 		exit_ms("exit", 0);
-	g_inf.line = expand_dol(g_inf.line);
-	// ft_putendl_fd(g_inf.line, 2);
+
+	tmp = expand_dol(g_inf.line);
+	if (!tmp)
+	{
+		free(g_inf.line);
+		g_inf.line = NULL;
+		return (0);
+	}
+	g_inf.line = tmp;
 	g_inf.pipes = parse(g_inf.line, -1, -1);
 	free(g_inf.line);
 	g_inf.line = NULL;
-	// print_pipes(g_inf.pipes);
 	if (g_inf.pipes && (g_inf.mask >> 16))
 		pipex();
 	g_inf.pipes = free_pipes(g_inf.pipes);

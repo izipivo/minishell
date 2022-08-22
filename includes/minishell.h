@@ -145,5 +145,6 @@ void	ft_check(int index);
 int		return_prompt(char *err, int status);
 int		list_len(t_env *lenv);
 void	*free_env(char **env);
+void	free_list(t_list **bl);
 
 #endif

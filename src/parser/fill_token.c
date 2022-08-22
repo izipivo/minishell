@@ -83,3 +83,19 @@ int	fill_token(int old, char new, int *token_index, int *val_index)
 	}
 	return (fill_token2(old, val_index, key, token_index));
 }
+
+void	free_list(t_list **bl)
+{
+	t_list	*buf;
+	t_list	*tmp;
+
+	buf = *bl;
+	while (buf)
+	{
+		free(buf->val);
+		tmp = buf;
+		buf = buf->next;
+		free(tmp);
+	}
+	free(bl);
+}

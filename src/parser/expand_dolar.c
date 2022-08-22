@@ -67,6 +67,7 @@ char	*expand_dol(char *line)
 				;
 			if (!line[i])
 			{
+				free_list(bl);
 				return_prompt("not closed quote", 1);
 				return (NULL);
 			}

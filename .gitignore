@@ -5,3 +5,6 @@ test*
 minishell_tes*
 minishell
 bonus/minishell_tester*
+obj*
+tb.sh
+*libft.a
