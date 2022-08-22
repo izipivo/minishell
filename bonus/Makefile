@@ -2,7 +2,7 @@ CFLAGS =			-Wall -Wextra -Werror -fsanitize=address -g
 
 LIBS =				-L./libft -lft -L /usr/include -lreadline
 
-HDRS =				minishell.h pipex.h get_next_line.h
+HDRS =				minishell_bonus.h pipex_bonus.h get_next_line_bonus.h
 
 HDRS_DIR =			./includes/
 
@@ -22,17 +22,17 @@ RM =				rm -rf
 
 NAME =				minishell_bonus
 
-SRC =				parser/expand_dolar.c parser/expand_dollar2.c parser/token_list.c parser/parser.c\
-					parser/env_list.c parser/copy_pipes.c parser/copy_pipes2.c parser/utils.c parser/cleaning.c\
-					parser/fill_token.c parser/check.c exec/exec.c exec/exec2.c\
-					pipex/pipex.c pipex/parents.c pipex/fork.c\
-					utils/error_managment.c pipex/validation.c pipex/get_next_line.c\
-					pipex/get_next_line_utils.c  pipex/child_fd.c pipex/check_func.c\
-					export/export.c export/exp_func_two.c export/export_utils.c export/export_utils_two.c\
-					export/exp_func.c\
-					export/update.c export/unset.c export/unset_utils.c\
-					export/same_for_export.c env/env.c exit/exit.c cd/cd.c main.c\
-					echo/echo.c pwd/pwd.c wildcard/wldcard.c wildcard/wldcard2.c
+SRC =				parser/expand_dolar_bonus.c parser/expand_dollar2_bonus.c parser/token_list_bonus.c parser/parser_bonus.c\
+					parser/env_list_bonus.c parser/copy_pipes_bonus.c parser/copy_pipes2_bonus.c parser/utils_bonus.c parser/cleaning_bonus.c\
+					parser/fill_token_bonus.c parser/check_bonus.c exec/exec_bonus.c exec/exec2_bonus.c\
+					pipex/pipex_bonus.c pipex/parents_bonus.c pipex/fork_bonus.c\
+					utils/error_managment_bonus.c pipex/validation_bonus.c pipex/get_next_line_bonus.c\
+					pipex/get_next_line_utils_bonus.c  pipex/child_fd_bonus.c pipex/check_func_bonus.c\
+					export/export_bonus.c export/exp_func_two_bonus.c export/export_utils_bonus.c export/export_utils_two_bonus.c\
+					export/exp_func_bonus.c\
+					export/update_bonus.c export/unset_bonus.c export/unset_utils_bonus.c\
+					export/same_for_export_bonus.c env/env_bonus.c exit/exit_bonus.c cd/cd_bonus.c main_bonus.c\
+					echo/echo_bonus.c pwd/pwd_bonus.c wildcard/wldcard_bonus.c wildcard/wldcard2_bonus.c
 
 SRC_DIR =			./src/
 
