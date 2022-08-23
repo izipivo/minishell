@@ -48,16 +48,16 @@ int	errors_exit(int signal, int res)
 	if (signal == 0)
 		exit_ms("minishell: exit: too many arguments\n", 1);
 	if (signal == 1)
-		exit_ms(NULL, res % 256);
+		exit_ms("exit", res % 256);
 	if (signal == 2)
-		exit_ms(NULL, 2);
+		exit_ms("exit", 2);
 	if (signal == 255)
-		exit_ms(NULL, 2);
+		exit_ms("exit", 2);
 	if (signal == -1)
 	{
 		if (res < -255)
-			exit_ms(NULL, 2);
-		exit_ms(NULL, 255 + (res + 1));
+			exit_ms("exit", 2);
+		exit_ms("exit", 255 + (res + 1));
 	}
 	return (0);
 }

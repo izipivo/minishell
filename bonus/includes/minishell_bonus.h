@@ -56,7 +56,6 @@ typedef struct s_mshell
 {
 	char			*line;
 	char			**env;
-	char			**env_cpy;
 	int				mask;
 	int				code;
 	int				line_len;
