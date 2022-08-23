@@ -96,6 +96,11 @@ pid_t	*forks(int **fd)
 		pid[++m] = fork();
 		if (pid[m] < 0)
 			exitpipex(fd, "fork");
+		else if (!pid[m] && !ft_strncmp(pipes->cmd[0], "exit", 5))
+		{
+			ft_putstr_fd("\b\b\b\b\b\b\b\b\b\b\b\b", 1);
+			exit(0);
+		}
 		else if (!pid[m])
 			child(fd, pipes, m);
 		check_func(pipes, 1, m);

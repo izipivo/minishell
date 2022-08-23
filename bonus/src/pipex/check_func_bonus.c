@@ -52,12 +52,7 @@ static int	conti(t_pipes *pipes, int parent, int index)
 			return (1);
 	}
 	else if (!(ft_strncmp(pipes->cmd[0], "exit", 5)))
-	{
-		if (parent)
-			exit_main(index);
-		else
-			return (1);
-	}
+		exit_main(index);
 	else if (!(ft_strncmp(pipes->cmd[0], "cd", 5)))
 	{
 		if (parent)
